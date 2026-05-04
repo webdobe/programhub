@@ -23,6 +23,7 @@ require NEXT_PUBLIC_SITE_URL
 require REVALIDATE_SECRET
 require OAUTH_PRIVATE_KEY
 require OAUTH_PUBLIC_KEY
+require ALLOWED_ORIGINS
 
 echo "==> Pushing drupal/ and docker-compose.production.yml to $REMOTE"
 rsync -e "ssh ${SSH_KEY_FLAG[*]} -o StrictHostKeyChecking=accept-new" \
@@ -57,6 +58,7 @@ ssh "${SSH_KEY_FLAG[@]}" -o StrictHostKeyChecking=accept-new "$REMOTE" \
   REVALIDATE_SECRET="$REVALIDATE_SECRET" \
   OAUTH_PRIVATE_KEY="$OAUTH_PRIVATE_KEY" \
   OAUTH_PUBLIC_KEY="$OAUTH_PUBLIC_KEY" \
+  ALLOWED_ORIGINS="$ALLOWED_ORIGINS" \
   REMOTE_DRUPAL_PATH="$REMOTE_DRUPAL_PATH" \
   bash -s <<'REMOTE_EOF'
 set -euo pipefail
@@ -153,11 +155,11 @@ if [ ! -f "$SERVICES_FILE" ]; then
   sudo cp drupal/web/sites/default/default.services.yml "$SERVICES_FILE"
 fi
 
-sudo DRUPAL_DOMAIN="$DRUPAL_DOMAIN" NEXTJS_DOMAIN="$NEXTJS_DOMAIN" yq -i '
+sudo DRUPAL_DOMAIN="$DRUPAL_DOMAIN" ALLOWED_ORIGINS="$ALLOWED_ORIGINS" yq -i '
   .parameters.["cors.config"].enabled = true |
   .parameters.["cors.config"].allowedHeaders = ["*"] |
   .parameters.["cors.config"].allowedMethods = ["GET", "POST", "PATCH", "OPTIONS", "DELETE"] |
-  .parameters.["cors.config"].allowedOrigins = ["https://" + env(DRUPAL_DOMAIN), "https://" + env(NEXTJS_DOMAIN), "http://localhost:3000"] |
+  .parameters.["cors.config"].allowedOrigins = (env(ALLOWED_ORIGINS) | split(",")) |
   .parameters.["cors.config"].supportsCredentials = true |
   .parameters.["session.storage.options"].cookie_domain = env(DRUPAL_DOMAIN)
 ' "$SERVICES_FILE"

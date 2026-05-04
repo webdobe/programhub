@@ -95,10 +95,12 @@ jobs:
           script: |
             cd ${{ vars.REMOTE_PATH }}
 
-            # Install yq on the remote server
-            wget -q https://github.com/mikefarah/yq/releases/download/v4.35.1/yq_linux_amd64 -O yq
-            chmod +x yq
-            sudo mv yq /usr/local/bin/yq
+            # Install yq on the remote server (skip if present)
+            if ! command -v yq &> /dev/null; then
+              wget -q https://github.com/mikefarah/yq/releases/download/v4.35.1/yq_linux_amd64 -O /tmp/yq
+              chmod +x /tmp/yq
+              sudo mv /tmp/yq /usr/local/bin/yq
+            fi
 
             # Generate settings.php from default
             sudo cp -rf drupal/web/sites/default/default.settings.php drupal/web/sites/default/settings.php
@@ -139,11 +141,11 @@ jobs:
             # Generate services.yml from default
             sudo cp -rf drupal/web/sites/default/default.services.yml drupal/web/sites/default/services.yml
 
-            sudo yq -i '
+            sudo ALLOWED_ORIGINS="${{ vars.ALLOWED_ORIGINS }}" yq -i '
               .parameters.["cors.config"].enabled = true |
               .parameters.["cors.config"].allowedHeaders = ["*"] |
               .parameters.["cors.config"].allowedMethods = ["GET", "POST", "PATCH", "OPTIONS", "DELETE"] |
-              .parameters.["cors.config"].allowedOrigins = ["https://${{ vars.DRUPAL_DOMAIN }}", "https://${{ vars.NEXTJS_DOMAIN }}", "http://localhost:3000"] |
+              .parameters.["cors.config"].allowedOrigins = (env(ALLOWED_ORIGINS) | split(",")) |
               .parameters.["cors.config"].supportsCredentials = true |
               .parameters.["session.storage.options"].cookie_domain = "${{ vars.DRUPAL_DOMAIN }}"
             ' drupal/web/sites/default/services.yml
