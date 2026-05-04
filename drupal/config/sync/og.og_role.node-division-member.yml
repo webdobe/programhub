@@ -1,0 +1,15 @@
+uuid: fad6c609-da8e-444c-a10f-5443a6277436
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.division
+id: node-division-member
+label: Member
+weight: 0
+group_id: null
+group_type: node
+group_bundle: division
+is_admin: false
+permissions: {  }
+role_type: required

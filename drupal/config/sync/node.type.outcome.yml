@@ -1,0 +1,11 @@
+uuid: bfcdf7f7-dd6b-40b0-ab57-bc6284375130
+langcode: en
+status: true
+dependencies: {  }
+name: Outcome
+type: outcome
+description: 'Use <em>Outcome</em> to publish learning or career outcomes data.'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: true

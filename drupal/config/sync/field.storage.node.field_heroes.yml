@@ -1,0 +1,20 @@
+uuid: 1c3906b7-98a2-4c85-b7d6-e968c3292561
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - profile
+id: node.field_heroes
+field_name: field_heroes
+entity_type: node
+type: entity_reference
+settings:
+  target_type: profile
+module: core
+locked: false
+cardinality: 3
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

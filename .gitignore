@@ -1,0 +1,83 @@
+.idea
+.claude
+.DS_Store
+# gitignore template for Drupal projects
+#
+# follows official upstream conventions:
+# https://www.drupal.org/docs/develop/using-composer
+
+# Ignore configuration files that may contain sensitive information
+/drupal/web/sites/*/*settings*.php
+/drupal/web/sites/*/*services*.yml
+
+# Ignore paths that may contain user-generated content
+/drupal/web/sites/*/files
+/drupal/web/sites/*/public
+/drupal/web/sites/*/private
+/drupal/web/sites/*/files-public
+/drupal/web/sites/*/files-private
+
+# Ignore paths that may contain temporary files
+/drupal/web/sites/*/translations
+/drupal/web/sites/*/tmp
+/drupal/web/sites/*/cache
+
+# Ignore drupal core (if not versioning drupal sources)
+/drupal/web/vendor
+/drupal/web/core
+/drupal/web/modules/README.txt
+/drupal/web/modules/contrib
+/drupal/web/profiles/README.txt
+/drupal/web/profiles/contrib
+/drupal/web/sites/development.services.yml
+/drupal/web/sites/example.settings.local.php
+/drupal/web/sites/example.sites.php
+/drupal/web/sites/README.txt
+/drupal/web/themes/README.txt
+/drupal/web/themes/contrib
+/drupal/web/.csslintrc
+/drupal/web/.editorconfig
+/drupal/web/.eslintignore
+/drupal/web/.eslintrc.json
+/drupal/web/.gitattributes
+/drupal/web/.htaccess
+/drupal/web/.ht.router.php
+/drupal/web/autoload.php
+/drupal/web/composer.json
+/drupal/web/composer.lock
+/drupal/web/example.gitignore
+/drupal/web/index.php
+/drupal/web/INSTALL.txt
+/drupal/web/LICENSE.txt
+/drupal/web/README.txt
+/drupal/web/robots.txt
+/drupal/web/update.php
+/drupal/web/web.config
+
+# OAuth / simple_oauth keys (written by deploy)
+/drupal/keys/
+
+# Ignore vendor dependencies and scripts
+/drupal/vendor
+/drupal/composer.phar
+/drupal/composer
+/drupal/robo.phar
+/drupal/robo
+/drupal/drush.phar
+/drupal/drush
+/drupal/drupal.phar
+/drupal/drupal
+
+# Production deploy artifacts
+/files
+/.env
+
+# dploy — runtime state, snapshot metadata, and captured artifacts.
+# Keep .dploy/scripts/ and .dploy/.env.production.example tracked.
+.dploy/state/
+.dploy/snapshots/
+.dploy/artifacts/
+.dploy/.env.production.dploy
+.dploy/.env.*.dploy
+
+*.sql

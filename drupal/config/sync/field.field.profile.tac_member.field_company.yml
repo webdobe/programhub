@@ -1,0 +1,19 @@
+uuid: 6831cf9e-dc8f-440e-8085-d501fc011122
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_company
+    - profile.type.tac_member
+id: profile.tac_member.field_company
+field_name: field_company
+entity_type: profile
+bundle: tac_member
+label: Company
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

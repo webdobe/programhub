@@ -1,0 +1,23 @@
+uuid: 40fb584a-96c0-48c4-9221-f7a3bf9f2c5f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_sprite_type
+    - media.type.sprite_resource
+  module:
+    - options
+id: media.sprite_resource.field_sprite_type
+field_name: field_sprite_type
+entity_type: media
+bundle: sprite_resource
+label: 'Sprite Type'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: game_sprite
+default_value_callback: ''
+settings: {  }
+field_type: list_string

@@ -1,0 +1,14 @@
+uuid: ac574849-31b1-4e93-93ae-20850256f6f4
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.tac_member
+  module:
+    - user
+id: user_add_role_action.tac_member
+label: 'Add the TAC Member role to the selected user(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: tac_member

@@ -1,0 +1,58 @@
+uuid: 3829124d-18cc-45d6-b2fc-5576821750a9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.outcome.field_game
+    - field.field.node.outcome.field_heroes
+    - field.field.node.outcome.field_score
+    - field.field.node.outcome.field_win
+    - node.type.outcome
+  module:
+    - user
+id: node.outcome.default
+targetEntityType: node
+bundle: outcome
+mode: default
+content:
+  field_game:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  field_heroes:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_score:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_win:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 103
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden: {  }

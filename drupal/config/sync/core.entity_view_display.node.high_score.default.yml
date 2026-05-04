@@ -1,0 +1,38 @@
+uuid: 8efd1c6c-ad72-49b7-97df-f9b3d45c193a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.high_score.field_game
+    - field.field.node.high_score.field_score
+    - node.type.high_score
+  module:
+    - user
+id: node.high_score.default
+targetEntityType: node
+bundle: high_score
+mode: default
+content:
+  field_game:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  field_score:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden: {  }

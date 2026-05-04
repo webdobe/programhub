@@ -1,0 +1,21 @@
+uuid: 7fd2db54-7b06-4d01-9ce0-f3e04b85c746
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_loop
+    - media.type.audio_resource
+id: media.audio_resource.field_loop
+field_name: field_loop
+entity_type: media
+bundle: audio_resource
+label: Loop
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

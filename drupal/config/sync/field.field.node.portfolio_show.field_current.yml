@@ -1,0 +1,21 @@
+uuid: ef6c67bc-844b-48d9-90b6-f52ef979190d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_current
+    - node.type.portfolio_show
+id: node.portfolio_show.field_current
+field_name: field_current
+entity_type: node
+bundle: portfolio_show
+label: Current
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

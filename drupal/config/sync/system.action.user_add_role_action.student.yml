@@ -1,0 +1,14 @@
+uuid: ffc49241-8583-443b-816e-48af92c01166
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.student
+  module:
+    - user
+id: user_add_role_action.student
+label: 'Add the Student user role to the selected user(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: student

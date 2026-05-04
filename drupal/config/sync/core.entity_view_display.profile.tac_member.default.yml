@@ -1,0 +1,93 @@
+uuid: 061686cb-ccc4-4309-9809-3716392d1a89
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.profile.tac_member.field_biography
+    - field.field.profile.tac_member.field_company
+    - field.field.profile.tac_member.field_company_url
+    - field.field.profile.tac_member.field_image
+    - field.field.profile.tac_member.field_job_title
+    - field.field.profile.tac_member.field_name
+    - field.field.profile.tac_member.og_audience
+    - profile.type.tac_member
+  module:
+    - image
+    - link
+    - name
+    - text
+id: profile.tac_member.default
+targetEntityType: profile
+bundle: tac_member
+mode: default
+content:
+  field_biography:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_company:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 16
+    region: content
+  field_company_url:
+    type: link
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 17
+    region: content
+  field_image:
+    type: image
+    label: above
+    settings:
+      image_link: ''
+      image_style: ''
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 8
+    region: content
+  field_job_title:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 15
+    region: content
+  field_name:
+    type: name_default
+    label: above
+    settings:
+      format: default
+      markup: none
+      list_format: ''
+      link_target: ''
+      preferred_field_reference: ''
+      preferred_field_reference_separator: ', '
+      alternative_field_reference: ''
+      alternative_field_reference_separator: ', '
+    third_party_settings: {  }
+    weight: 11
+    region: content
+  og_audience:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 18
+    region: content
+hidden: {  }

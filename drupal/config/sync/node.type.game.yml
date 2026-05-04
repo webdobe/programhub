@@ -1,0 +1,11 @@
+uuid: c2659e8d-7ad0-4b55-9ee7-626a6de624a4
+langcode: en
+status: true
+dependencies: {  }
+name: Game
+type: game
+description: 'Use <em>Game</em> for interactive games published on the site.'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: true

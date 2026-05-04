@@ -1,0 +1,73 @@
+uuid: b7858644-cadb-41a9-a79a-723891835347
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.award.field_award_type
+    - field.field.node.award.field_description
+    - field.field.node.award.field_path
+    - field.field.node.award.field_profiles
+    - field.field.node.award.field_project
+    - field.field.node.award.og_audience
+    - node.type.award
+  module:
+    - fieldable_path
+    - text
+    - user
+id: node.award.default
+targetEntityType: node
+bundle: award
+mode: default
+content:
+  field_award_type:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 109
+    region: content
+  field_description:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_path:
+    type: fieldable_path_formatter
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 106
+    region: content
+  field_profiles:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 107
+    region: content
+  field_project:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 108
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+  og_audience:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 110
+    region: content
+hidden: {  }

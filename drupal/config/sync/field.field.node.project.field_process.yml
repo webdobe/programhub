@@ -1,0 +1,31 @@
+uuid: b2d3e4f5-a6b7-4c8d-9e0f-1a2b3c4d5e6f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_process
+    - node.type.project
+    - paragraphs.paragraphs_type.process_step
+  module:
+    - entity_reference_revisions
+id: node.project.field_process
+field_name: field_process
+entity_type: node
+bundle: project
+label: Process
+description: 'Add steps documenting the creative process behind this project.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      process_step: process_step
+    negate: 0
+    target_bundles_drag_drop:
+      process_step:
+        weight: 0
+        enabled: true
+field_type: entity_reference_revisions

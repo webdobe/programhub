@@ -1,0 +1,22 @@
+uuid: 76f68c19-3b08-4a77-8698-8c0c8809a110
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_biography
+    - profile.type.graduate
+  module:
+    - text
+id: profile.graduate.field_biography
+field_name: field_biography
+entity_type: profile
+bundle: graduate
+label: Biography
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

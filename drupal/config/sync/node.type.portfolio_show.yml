@@ -1,0 +1,11 @@
+uuid: 2e93b8ba-98e1-47f4-8726-a22f7f40adbb
+langcode: en
+status: true
+dependencies: {  }
+name: 'Portfolio Show'
+type: portfolio_show
+description: 'Use <em>Portfolio Show</em> for end-of-term or showcase events featuring student work.'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: false

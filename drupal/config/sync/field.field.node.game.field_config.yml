@@ -1,0 +1,21 @@
+uuid: d910cf93-cd08-4a66-ae7b-f1bc62943ead
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_config
+    - node.type.game
+  module:
+    - json_field
+id: node.game.field_config
+field_name: field_config
+entity_type: node
+bundle: game
+label: Config
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: json_native

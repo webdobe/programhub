@@ -1,0 +1,20 @@
+uuid: 01b094be-0762-4ad4-a464-eb752a68d1e4
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - profile
+id: node.field_pitched_by
+field_name: field_pitched_by
+entity_type: node
+type: entity_reference
+settings:
+  target_type: profile
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

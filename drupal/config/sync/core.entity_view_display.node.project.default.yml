@@ -1,0 +1,106 @@
+uuid: 50508f7a-0f37-47cc-89a5-15e3942be11e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.project.field_course
+    - field.field.node.project.field_description
+    - field.field.node.project.field_graduate
+    - field.field.node.project.field_main_image
+    - field.field.node.project.field_path
+    - field.field.node.project.field_process
+    - field.field.node.project.field_project_category
+    - field.field.node.project.field_project_gallery
+    - field.field.node.project.field_project_tags
+    - field.field.node.project.field_project_url
+    - field.field.node.project.og_audience
+    - node.type.project
+  module:
+    - fieldable_path
+    - image
+    - link
+    - text
+    - user
+id: node.project.default
+targetEntityType: node
+bundle: project
+mode: default
+content:
+  field_description:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_graduate:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 103
+    region: content
+  field_main_image:
+    type: image
+    label: above
+    settings:
+      image_link: ''
+      image_style: ''
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  field_path:
+    type: fieldable_path_formatter
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 106
+    region: content
+  field_project_category:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 104
+    region: content
+  field_project_tags:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 105
+    region: content
+  field_project_url:
+    type: link
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 107
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+  og_audience:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 108
+    region: content
+hidden:
+  field_course: true
+  field_process: true
+  field_project_gallery: true

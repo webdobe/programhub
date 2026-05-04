@@ -1,0 +1,22 @@
+uuid: 10b84fb1-21ef-40af-8a1c-93120469c0e6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_brand_story
+    - node.type.portfolio_show
+  module:
+    - text
+id: node.portfolio_show.field_brand_story
+field_name: field_brand_story
+entity_type: node
+bundle: portfolio_show
+label: 'Brand Story'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

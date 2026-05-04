@@ -1,0 +1,9 @@
+uuid: 0ca81397-bb4b-4ed2-bd46-17e90e09a08c
+langcode: en
+status: true
+dependencies: {  }
+name: 'Award Types'
+vid: award_types
+description: null
+weight: 0
+new_revision: false

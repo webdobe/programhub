@@ -1,0 +1,19 @@
+uuid: e5a6b7c8-d9e0-4f1a-2b3c-4d5e6f7a8b9c
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_course
+field_name: field_course
+entity_type: node
+type: entity_reference
+settings:
+  target_type: node
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

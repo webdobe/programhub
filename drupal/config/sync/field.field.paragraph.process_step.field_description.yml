@@ -1,0 +1,19 @@
+uuid: 5e6f7a8b-9c0d-4e1f-2a3b-4c5d6e7f8a9b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_description
+    - paragraphs.paragraphs_type.process_step
+id: paragraph.process_step.field_description
+field_name: field_description
+entity_type: paragraph
+bundle: process_step
+label: Description
+description: 'Describe this step of the creative process.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

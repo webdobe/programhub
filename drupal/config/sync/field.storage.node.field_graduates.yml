@@ -1,0 +1,20 @@
+uuid: 27b6a9fb-4b8a-4209-8968-a45beee5c57b
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - profile
+id: node.field_graduates
+field_name: field_graduates
+entity_type: node
+type: entity_reference
+settings:
+  target_type: profile
+module: core
+locked: false
+cardinality: -1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

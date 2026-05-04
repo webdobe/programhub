@@ -1,0 +1,21 @@
+uuid: 7d7a3a29-aba8-4cf6-8a64-e5942846124b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_win
+    - node.type.outcome
+id: node.outcome.field_win
+field_name: field_win
+entity_type: node
+bundle: outcome
+label: Win
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

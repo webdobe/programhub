@@ -1,0 +1,22 @@
+uuid: 3e3fb45f-93d4-432c-a1f4-d01e0bda8ba9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_concept_story
+    - node.type.portfolio_show
+  module:
+    - text
+id: node.portfolio_show.field_concept_story
+field_name: field_concept_story
+entity_type: node
+bundle: portfolio_show
+label: 'Concept Story'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

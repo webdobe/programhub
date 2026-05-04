@@ -1,0 +1,23 @@
+uuid: 756ac154-1d63-41fa-a249-788ad5e46554
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_portfolio
+    - profile.type.instructor
+  module:
+    - link
+id: profile.instructor.field_portfolio
+field_name: field_portfolio
+entity_type: profile
+bundle: instructor
+label: Portfolio
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 0
+  link_type: 17
+field_type: link

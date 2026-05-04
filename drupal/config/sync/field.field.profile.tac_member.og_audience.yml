@@ -1,0 +1,26 @@
+uuid: 2bcde4e9-0cca-4111-8265-2b64892188c9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.og_audience
+    - node.type.program
+    - profile.type.tac_member
+  module:
+    - og
+id: profile.tac_member.og_audience
+field_name: og_audience
+entity_type: profile
+bundle: tac_member
+label: 'Groups audience'
+description: 'OG group audience reference field.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'og:default'
+  handler_settings:
+    target_bundles:
+      program: program
+field_type: og_standard_reference

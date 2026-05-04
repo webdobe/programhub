@@ -1,0 +1,19 @@
+uuid: 34dd0b9c-e132-4ef6-8284-40e5e6785e59
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - text
+id: node.field_brand_story
+field_name: field_brand_story
+entity_type: node
+type: text_long
+settings: {  }
+module: text
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

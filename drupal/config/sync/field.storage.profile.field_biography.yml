@@ -1,0 +1,19 @@
+uuid: d0b55ca6-f6e5-43b3-ae59-c2cfad9d536a
+langcode: en
+status: true
+dependencies:
+  module:
+    - profile
+    - text
+id: profile.field_biography
+field_name: field_biography
+entity_type: profile
+type: text_long
+settings: {  }
+module: text
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

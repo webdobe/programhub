@@ -1,0 +1,14 @@
+uuid: 8fd10b86-3d36-42e7-a2db-0a201e70fa42
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.tac_member
+  module:
+    - user
+id: user_remove_role_action.tac_member
+label: 'Remove the TAC Member role from the selected user(s)'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: tac_member

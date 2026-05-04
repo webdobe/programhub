@@ -1,0 +1,23 @@
+uuid: 28107731-dd92-46ac-af71-c24fc008f1cc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_instagram
+    - profile.type.instructor
+  module:
+    - link
+id: profile.instructor.field_instagram
+field_name: field_instagram
+entity_type: profile
+bundle: instructor
+label: Instagram
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 0
+  link_type: 16
+field_type: link

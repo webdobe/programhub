@@ -1,0 +1,19 @@
+uuid: 0c4dd2f2-9d9f-4bec-962b-d4b3c9f3b26b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_title
+    - paragraphs.paragraphs_type.experience
+id: paragraph.experience.field_title
+field_name: field_title
+entity_type: paragraph
+bundle: experience
+label: Title
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

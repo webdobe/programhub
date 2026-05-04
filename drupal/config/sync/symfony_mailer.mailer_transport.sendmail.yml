@@ -1,0 +1,12 @@
+uuid: 88671555-337e-45d5-9078-4bedc64cb2be
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: JlhtZGzrKvb_1TFIVW-o2lEEoeutUxHkdpZ1WzIkJMY
+id: sendmail
+label: Sendmail
+plugin: sendmail
+configuration:
+  query:
+    command: '/usr/bin/msmtp -t'

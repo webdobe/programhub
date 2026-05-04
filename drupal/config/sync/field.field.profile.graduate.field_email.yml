@@ -1,0 +1,19 @@
+uuid: d9269ee4-bc7b-4174-93dd-6052a06af6bb
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_email
+    - profile.type.graduate
+id: profile.graduate.field_email
+field_name: field_email
+entity_type: profile
+bundle: graduate
+label: Email
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: email

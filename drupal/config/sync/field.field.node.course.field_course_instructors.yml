@@ -1,0 +1,25 @@
+uuid: 6971303f-c721-4662-a458-ae0bd350deba
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_course_instructors
+    - node.type.course
+id: node.course.field_course_instructors
+field_name: field_course_instructors
+entity_type: node
+bundle: course
+label: 'Course Instructors'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: views
+  handler_settings:
+    view:
+      view_name: profile_reference
+      display_name: profile_reference
+      arguments: {  }
+field_type: entity_reference

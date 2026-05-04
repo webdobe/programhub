@@ -1,0 +1,167 @@
+uuid: 2dc7f246-d18c-4aad-b596-b8a3aa9b345a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.portfolio_show.field_brand_images
+    - field.field.node.portfolio_show.field_brand_story
+    - field.field.node.portfolio_show.field_concept_story
+    - field.field.node.portfolio_show.field_current
+    - field.field.node.portfolio_show.field_description
+    - field.field.node.portfolio_show.field_event_gallery
+    - field.field.node.portfolio_show.field_graduates
+    - field.field.node.portfolio_show.field_hero_image
+    - field.field.node.portfolio_show.field_logo
+    - field.field.node.portfolio_show.field_path
+    - field.field.node.portfolio_show.field_pitched_by
+    - field.field.node.portfolio_show.field_portfolio_show_date
+    - field.field.node.portfolio_show.field_portfolio_show_url
+    - field.field.node.portfolio_show.field_summary
+    - field.field.node.portfolio_show.og_audience
+    - node.type.portfolio_show
+  module:
+    - datetime_range
+    - fieldable_path
+    - link
+    - text
+    - user
+id: node.portfolio_show.default
+targetEntityType: node
+bundle: portfolio_show
+mode: default
+content:
+  field_brand_images:
+    type: entity_reference_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 117
+    region: content
+  field_brand_story:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 113
+    region: content
+  field_concept_story:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 112
+    region: content
+  field_current:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 114
+    region: content
+  field_description:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_event_gallery:
+    type: entity_reference_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 118
+    region: content
+  field_graduates:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 110
+    region: content
+  field_hero_image:
+    type: entity_reference_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 116
+    region: content
+  field_logo:
+    type: entity_reference_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 109
+    region: content
+  field_path:
+    type: fieldable_path_formatter
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 106
+    region: content
+  field_pitched_by:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 115
+    region: content
+  field_portfolio_show_date:
+    type: daterange_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+      from_to: both
+      separator: '-'
+    third_party_settings: {  }
+    weight: 108
+    region: content
+  field_portfolio_show_url:
+    type: link
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 107
+    region: content
+  field_summary:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 111
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+  og_audience:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 119
+    region: content
+hidden: {  }

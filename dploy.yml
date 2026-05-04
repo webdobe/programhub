@@ -1,0 +1,89 @@
+app: programhub
+
+# `dploy local`              — bring up the local DDEV stack
+# `dploy production`         — push code & rebuild containers on the server
+# `dploy capture <env>`      — snapshot the database (and/or files)
+# `dploy restore <id> <env>` — restore a snapshot into the named env
+#
+# Production secrets live in .dploy/.env.production.dploy (gitignored).
+# See .dploy/.env.production.example for the template.
+
+environments:
+  local:
+    class: local
+    strategy: sequential
+
+    targets:
+      drupal:
+        type: local
+        path: ./drupal
+        roles: [cms]
+
+    deploy:
+      - run: ddev start
+        on: [drupal]
+      - run: ddev composer install
+        on: [drupal]
+      - run: ddev drush updb -y
+        on: [drupal]
+      - run: ddev drush cim -y
+        on: [drupal]
+      - run: ddev drush cr
+        on: [drupal]
+
+    notes:
+      - "Drupal:    https://programhub.ddev.site:8443  (login: cd drupal && ddev drush uli)"
+
+    capture:
+      database:
+        - mkdir -p .dploy/artifacts
+        - cd drupal && ddev export-db --file=../.dploy/artifacts/$DPLOY_SNAPSHOT_ID.sql.gz
+      files:
+        - mkdir -p .dploy/artifacts
+        - cd drupal && ddev exec tar -czf - -C /var/www/html/web/sites/default files > ../.dploy/artifacts/$DPLOY_SNAPSHOT_ID.files.tar.gz
+
+    restore:
+      database:
+        - cd drupal && ddev import-db --file=../.dploy/artifacts/$DPLOY_SNAPSHOT_ID.sql.gz
+        - cd drupal && ddev drush updb -y
+        - cd drupal && ddev drush cr
+      files:
+        - cd drupal && ddev exec rm -rf /var/www/html/web/sites/default/files
+        - cd drupal && ddev exec tar -xzf - -C /var/www/html/web/sites/default < ../.dploy/artifacts/$DPLOY_SNAPSHOT_ID.files.tar.gz
+
+    rollback:
+      - run: 'echo "Local rollback: dploy snapshots local, then dploy restore <id> local"'
+
+  production:
+    class: production
+    strategy: sequential
+
+    targets:
+      ops:
+        type: local
+        path: .
+        roles: [orchestrator]
+
+    # Mirrors .github/workflows/deploy.yml so the GitHub Actions path and the
+    # local `dploy production` path produce identical output.
+    deploy:
+      - run: ./.dploy/scripts/prod/deploy-drupal.sh
+
+    notes:
+      - "Drupal logs:  ssh \"$REMOTE_DRUPAL_USER@$REMOTE_DRUPAL_HOST\" sudo docker logs -f programhub-php-1"
+      - "GitHub Actions still deploys on push to main — the dploy path is for ad-hoc / hotfix use."
+
+    capture:
+      database:
+        - ./.dploy/scripts/prod/capture-database.sh
+      files:
+        - ./.dploy/scripts/prod/capture-files.sh
+
+    restore:
+      database:
+        - ./.dploy/scripts/prod/restore-database.sh
+      files:
+        - ./.dploy/scripts/prod/restore-files.sh
+
+    rollback:
+      - run: 'echo "No automated rollback. Use: dploy snapshots production, then dploy restore <snapshot-id> production"'

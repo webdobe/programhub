@@ -1,0 +1,29 @@
+uuid: f6b7c8d9-e0f1-4a2b-3c4d-5e6f7a8b9c0d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_course
+    - node.type.project
+  module:
+    - node
+id: node.project.field_course
+field_name: field_course
+entity_type: node
+bundle: project
+label: Course
+description: 'The course this project was created in.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      course: course
+    sort:
+      field: title
+      direction: asc
+    auto_create: false
+field_type: entity_reference

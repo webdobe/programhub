@@ -1,0 +1,18 @@
+uuid: 497970f2-4e2d-48ec-a8f4-ac8efaf035e7
+langcode: en
+status: true
+dependencies: {  }
+id: smtp
+label: SMTP
+plugin: smtp
+configuration:
+  user: nextlevel@welearndesign.com
+  pass: aTVD36msebPZQE2HJBXy5k
+  host: mail.server297.com
+  port: 587
+  query:
+    verify_peer: true
+    local_domain: ''
+    restart_threshold: null
+    restart_threshold_sleep: null
+    ping_threshold: null

@@ -1,0 +1,19 @@
+uuid: 46aa6234-71a2-4fd1-8d14-2129421f011c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_image_credit
+    - media.type.image
+id: media.image.field_image_credit
+field_name: field_image_credit
+entity_type: media
+bundle: image
+label: 'Image Credit'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

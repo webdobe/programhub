@@ -1,0 +1,13 @@
+uuid: 586a54b1-b367-4030-8466-5756e52cd8b3
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: T0xVUPLXklJ1liu4ukvaguMb-aMY1oMxO2PsCRB8-qg
+name: 'Newsletter Issue'
+type: simplenews_issue
+description: 'Use <em>Newsletter Issue</em> for newsletters. Leave the group reference empty to send system-wide, or pick a division/program to scope the issue.'
+help: null
+new_revision: false
+preview_mode: 1
+display_submitted: false

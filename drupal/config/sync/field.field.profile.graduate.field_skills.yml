@@ -1,0 +1,31 @@
+uuid: afc9514a-8142-4eeb-bbca-05d11c092e45
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_skills
+    - paragraphs.paragraphs_type.skill
+    - profile.type.graduate
+  module:
+    - entity_reference_revisions
+id: profile.graduate.field_skills
+field_name: field_skills
+entity_type: profile
+bundle: graduate
+label: Skills
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      skill: skill
+    negate: 0
+    target_bundles_drag_drop:
+      skill:
+        weight: 2
+        enabled: true
+field_type: entity_reference_revisions

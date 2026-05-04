@@ -1,0 +1,19 @@
+uuid: de42a43f-6dfe-4e61-91f9-9fe3526a0fdf
+langcode: en
+status: true
+dependencies:
+  module:
+    - name
+    - profile
+id: profile.field_name
+field_name: field_name
+entity_type: profile
+type: name
+settings: {  }
+module: name
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

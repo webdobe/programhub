@@ -1,0 +1,23 @@
+uuid: ec7ac9e9-21b4-49a6-b79f-67781e349423
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_score
+    - node.type.outcome
+id: node.outcome.field_score
+field_name: field_score
+entity_type: node
+bundle: outcome
+label: Score
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

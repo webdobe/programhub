@@ -1,0 +1,373 @@
+<?php
+
+/**
+ * @file
+ * Install and update functions for the GDES module.
+ */
+
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+
+/**
+ * Move field_media_image on sprite_resource to field_media_sprite,
+ * then assign field_media_image to the image media type.
+ */
+function gdes_update_10001(&$sandbox) {
+  $database = \Drupal::database();
+
+  // -------------------------------------------------------------------------
+  // Step 1: Create field_media_sprite storage (image field type).
+  // -------------------------------------------------------------------------
+  if (!FieldStorageConfig::loadByName('media', 'field_media_sprite')) {
+    FieldStorageConfig::create([
+      'field_name' => 'field_media_sprite',
+      'entity_type' => 'media',
+      'type' => 'image',
+      'settings' => [
+        'target_type' => 'file',
+        'display_field' => FALSE,
+        'display_default' => FALSE,
+        'uri_scheme' => 'public',
+      ],
+      'cardinality' => 1,
+      'translatable' => TRUE,
+    ])->save();
+
+    \Drupal::messenger()->addMessage('Created field storage: field_media_sprite');
+  }
+
+  // -------------------------------------------------------------------------
+  // Step 2: Attach field_media_sprite to sprite_resource bundle.
+  // -------------------------------------------------------------------------
+  $settings = [];
+  if (!FieldConfig::loadByName('media', 'sprite_resource', 'field_media_sprite')) {
+    $existing = FieldConfig::loadByName('media', 'sprite_resource', 'field_media_image');
+    $settings = $existing ? $existing->getSettings() : [];
+
+    FieldConfig::create([
+      'field_name' => 'field_media_sprite',
+      'entity_type' => 'media',
+      'bundle' => 'sprite_resource',
+      'label' => 'Sprite Image',
+      'required' => TRUE,
+      'translatable' => TRUE,
+      'settings' => $settings,
+    ])->save();
+
+    \Drupal::messenger()->addMessage('Attached field_media_sprite to sprite_resource');
+  }
+
+  // -------------------------------------------------------------------------
+  // Step 3: Copy data from field_media_image → field_media_sprite
+  //         for sprite_resource entities.
+  // -------------------------------------------------------------------------
+  $count = 0;
+  if ($database->schema()->tableExists('media__field_media_image')) {
+    $rows = $database->select('media__field_media_image', 'f')
+      ->fields('f')
+      ->condition('bundle', 'sprite_resource')
+      ->execute()
+      ->fetchAll();
+
+    foreach ($rows as $row) {
+      $database->merge('media__field_media_sprite')
+        ->keys([
+          'entity_id' => $row->entity_id,
+          'deleted' => $row->deleted,
+          'delta' => $row->delta,
+          'langcode' => $row->langcode,
+        ])
+        ->fields([
+          'bundle' => $row->bundle,
+          'revision_id' => $row->revision_id,
+          'field_media_sprite_target_id' => $row->field_media_image_target_id,
+          'field_media_sprite_alt' => $row->field_media_image_alt,
+          'field_media_sprite_title' => $row->field_media_image_title,
+          'field_media_sprite_width' => $row->field_media_image_width,
+          'field_media_sprite_height' => $row->field_media_image_height,
+        ])
+        ->execute();
+    }
+
+    // Copy revision table.
+    if ($database->schema()->tableExists('media_revision__field_media_image')) {
+      $rev_rows = $database->select('media_revision__field_media_image', 'f')
+        ->fields('f')
+        ->condition('bundle', 'sprite_resource')
+        ->execute()
+        ->fetchAll();
+
+      foreach ($rev_rows as $row) {
+        $database->merge('media_revision__field_media_sprite')
+          ->keys([
+            'entity_id' => $row->entity_id,
+            'revision_id' => $row->revision_id,
+            'deleted' => $row->deleted,
+            'delta' => $row->delta,
+            'langcode' => $row->langcode,
+          ])
+          ->fields([
+            'bundle' => $row->bundle,
+            'field_media_sprite_target_id' => $row->field_media_image_target_id,
+            'field_media_sprite_alt' => $row->field_media_image_alt,
+            'field_media_sprite_title' => $row->field_media_image_title,
+            'field_media_sprite_width' => $row->field_media_image_width,
+            'field_media_sprite_height' => $row->field_media_image_height,
+          ])
+          ->execute();
+      }
+    }
+
+    $count = count($rows);
+  }
+
+  \Drupal::messenger()->addMessage("Copied $count sprite_resource entries to field_media_sprite");
+
+  // -------------------------------------------------------------------------
+  // Step 4: Update sprite_resource source field.
+  // -------------------------------------------------------------------------
+  $config = \Drupal::configFactory()->getEditable('media.type.sprite_resource');
+  $config->set('source_configuration.source_field', 'field_media_sprite');
+  $config->save();
+
+  \Drupal::messenger()->addMessage('Updated sprite_resource source field to field_media_sprite');
+
+  // -------------------------------------------------------------------------
+  // Step 5: Remove field_media_image from sprite_resource.
+  //         FieldConfig::delete() will also purge the data table if this was
+  //         the last bundle using it, so no manual DELETE needed.
+  // -------------------------------------------------------------------------
+  $field_instance = FieldConfig::loadByName('media', 'sprite_resource', 'field_media_image');
+  if ($field_instance) {
+    $field_instance->delete();
+    \Drupal::messenger()->addMessage('Removed field_media_image from sprite_resource');
+  }
+
+  // Run field purge to fully clean up deleted field data.
+  field_purge_batch(100);
+
+  // -------------------------------------------------------------------------
+  // Step 6: Re-create field_media_image storage if it was purged,
+  //         then attach it to the image media type.
+  // -------------------------------------------------------------------------
+  if (!FieldStorageConfig::loadByName('media', 'field_media_image')) {
+    FieldStorageConfig::create([
+      'field_name' => 'field_media_image',
+      'entity_type' => 'media',
+      'type' => 'image',
+      'settings' => [
+        'target_type' => 'file',
+        'display_field' => FALSE,
+        'display_default' => FALSE,
+        'uri_scheme' => 'public',
+      ],
+      'cardinality' => 1,
+      'translatable' => TRUE,
+    ])->save();
+
+    \Drupal::messenger()->addMessage('Re-created field_media_image storage');
+  }
+
+  if (!FieldConfig::loadByName('media', 'image', 'field_media_image')) {
+    FieldConfig::create([
+      'field_name' => 'field_media_image',
+      'entity_type' => 'media',
+      'bundle' => 'image',
+      'label' => 'Image',
+      'required' => TRUE,
+      'translatable' => TRUE,
+      'settings' => $settings,
+    ])->save();
+
+    \Drupal::messenger()->addMessage('Attached field_media_image to image media type');
+  }
+
+  // -------------------------------------------------------------------------
+  // Step 7: Update image media type source field.
+  // -------------------------------------------------------------------------
+  $config = \Drupal::configFactory()->getEditable('media.type.image');
+  $config->set('source_configuration.source_field', 'field_media_image');
+  $config->save();
+
+  \Drupal::messenger()->addMessage('Updated image media type source field to field_media_image');
+
+  // -------------------------------------------------------------------------
+  // Step 8: Clean up field_media_image_1 from image if empty.
+  // -------------------------------------------------------------------------
+  $old_field = FieldConfig::loadByName('media', 'image', 'field_media_image_1');
+  if ($old_field) {
+    $has_data = 0;
+    if ($database->schema()->tableExists('media__field_media_image_1')) {
+      $has_data = $database->select('media__field_media_image_1', 'f')
+        ->condition('bundle', 'image')
+        ->countQuery()
+        ->execute()
+        ->fetchField();
+    }
+
+    if ($has_data == 0) {
+      $old_field->delete();
+      \Drupal::messenger()->addMessage('Removed empty field_media_image_1 from image media type');
+
+      $storage = FieldStorageConfig::loadByName('media', 'field_media_image_1');
+      if ($storage) {
+        $remaining = \Drupal::entityTypeManager()
+          ->getStorage('field_config')
+          ->loadByProperties(['field_name' => 'field_media_image_1']);
+        if (empty($remaining)) {
+          $storage->delete();
+          \Drupal::messenger()->addMessage('Deleted field_media_image_1 storage');
+        }
+      }
+    }
+    else {
+      \Drupal::messenger()->addWarning('field_media_image_1 on image has data — skipping removal.');
+    }
+  }
+
+  drupal_flush_all_caches();
+
+  return "Media field migration complete. sprite_resource uses field_media_sprite, image uses field_media_image.";
+}
+
+/**
+ * Create project category and project tag taxonomy terms.
+ */
+function gdes_update_10002(&$sandbox) {
+  $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+
+  // -------------------------------------------------------------------------
+  // Project Categories (primary filters, single-select).
+  // -------------------------------------------------------------------------
+  $categories = [
+    'Branding',
+    'Web / UX',
+    'Editorial',
+    'Packaging',
+    'Marketing',
+    'Motion & Video',
+    'Illustration',
+  ];
+
+  $cat_count = 0;
+  foreach ($categories as $weight => $name) {
+    $existing = $term_storage->loadByProperties([
+      'vid' => 'project_category',
+      'name' => $name,
+    ]);
+    if (empty($existing)) {
+      $term_storage->create([
+        'vid' => 'project_category',
+        'name' => $name,
+        'weight' => $weight,
+      ])->save();
+      $cat_count++;
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // Project Tags (subcategories, multi-select).
+  // -------------------------------------------------------------------------
+  $tags = [
+    // Branding tags
+    'Logo Design',
+    'Brand Identity',
+    'Brand System',
+    'Visual Identity',
+    'Rebrand',
+    // Web / UX tags
+    'Website Design',
+    'UI Design',
+    'UX Research',
+    'Wireframes',
+    'Responsive Design',
+    'App Design',
+    'Interaction Design',
+    // Editorial tags
+    'Magazine Layout',
+    'Book Design',
+    'Typography',
+    'Publication Design',
+    'Long-form Layout',
+    // Packaging tags
+    'Product Packaging',
+    'Label Design',
+    'Food Packaging',
+    'Beverage Packaging',
+    'Retail Packaging',
+    // Marketing tags
+    'Poster Design',
+    'Advertising',
+    'Campaign Design',
+    'Social Media Graphics',
+    'Event Promotion',
+    'Digital Campaign',
+    // Motion & Video tags
+    'Animation',
+    'Motion Graphics',
+    'Video Production',
+    'Title Design',
+    'Promotional Video',
+    'Storyboarding',
+    'Video Editing',
+    // Illustration tags
+    'Digital Illustration',
+    'Character Design',
+    'Vector Illustration',
+    'Hand Illustration',
+  ];
+
+  $tag_count = 0;
+  foreach ($tags as $weight => $name) {
+    $existing = $term_storage->loadByProperties([
+      'vid' => 'project_tag',
+      'name' => $name,
+    ]);
+    if (empty($existing)) {
+      $term_storage->create([
+        'vid' => 'project_tag',
+        'name' => $name,
+        'weight' => $weight,
+      ])->save();
+      $tag_count++;
+    }
+  }
+
+  return "Created $cat_count project categories and $tag_count project tags.";
+}
+
+/**
+ * Create process type taxonomy terms.
+ */
+function gdes_update_10003(&$sandbox) {
+  $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+
+  $process_types = [
+    'Research',
+    'Moodboard',
+    'Sketches',
+    'Wireframes',
+    'Prototyping',
+    'Development',
+    'Final Design',
+    'Application',
+  ];
+
+  $count = 0;
+  foreach ($process_types as $weight => $name) {
+    $existing = $term_storage->loadByProperties([
+      'vid' => 'process_type',
+      'name' => $name,
+    ]);
+    if (empty($existing)) {
+      $term_storage->create([
+        'vid' => 'process_type',
+        'name' => $name,
+        'weight' => $weight,
+      ])->save();
+      $count++;
+    }
+  }
+
+  return "Created $count process type terms.";
+}

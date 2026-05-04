@@ -1,0 +1,29 @@
+uuid: 12bee0d7-04da-4032-b324-9d526870d388
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_sprite_resources
+    - media.type.sprite_resource
+    - node.type.game
+id: node.game.field_sprite_resources
+field_name: field_sprite_resources
+entity_type: node
+bundle: game
+label: 'Sprite Resources'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      sprite_resource: sprite_resource
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

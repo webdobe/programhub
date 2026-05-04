@@ -1,0 +1,20 @@
+uuid: aec96d3e-0246-4719-a823-6f7a2cdeb900
+langcode: en
+status: true
+dependencies: {  }
+name: Alumni
+id: alumni
+description: ''
+format: html
+priority: 0
+receipt: true
+from_name: 'We Learn Design'
+subject: '[node:title]'
+from_address: gdes@nic.edu
+hyperlinks: true
+allowed_handlers:
+  simplenews_all: '0'
+new_account: none
+access: default
+reason: ''
+weight: 0

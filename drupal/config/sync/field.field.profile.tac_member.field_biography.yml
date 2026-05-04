@@ -1,0 +1,22 @@
+uuid: 1ef85676-d1b6-43f5-aa0e-b3c2c6ff78b7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_biography
+    - profile.type.tac_member
+  module:
+    - text
+id: profile.tac_member.field_biography
+field_name: field_biography
+entity_type: profile
+bundle: tac_member
+label: Biography
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

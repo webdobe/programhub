@@ -1,0 +1,29 @@
+uuid: 9e226216-686e-4a1e-a1be-db85e34dc400
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_game
+    - node.type.game
+    - profile.type.instructor
+id: profile.instructor.field_game
+field_name: field_game
+entity_type: profile
+bundle: instructor
+label: Game
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      game: game
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -1,0 +1,25 @@
+uuid: 5ea2a96b-f327-4e40-ad91-a29307fc3eff
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_pitched_by
+    - node.type.portfolio_show
+id: node.portfolio_show.field_pitched_by
+field_name: field_pitched_by
+entity_type: node
+bundle: portfolio_show
+label: 'Pitched By'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: views
+  handler_settings:
+    view:
+      view_name: profile_reference
+      display_name: profile_reference
+      arguments: {  }
+field_type: entity_reference

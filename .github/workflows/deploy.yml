@@ -1,0 +1,167 @@
+name: Deploy Drupal
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'drupal/**'
+      - 'docker-compose.production.yml'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Rsync to remote server
+        uses: burnett01/rsync-deployments@7.0.2
+        with:
+          switches: >-
+            --rsync-path="sudo rsync"
+            -rlvz
+            --no-perms
+            --chmod=ugo=rwX
+            --delete
+            --include="docker-compose.production.yml"
+            --include="drupal/"
+            --include="drupal/**"
+            --exclude="*"
+          path: ./
+          remote_path: ${{ vars.REMOTE_PATH }}
+          remote_host: ${{ vars.REMOTE_HOST }}
+          remote_user: ${{ vars.REMOTE_USER }}
+          remote_key: ${{ secrets.DEPLOY_SSH_KEY }}
+
+      - name: Deploy containers
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ vars.REMOTE_HOST }}
+          username: ${{ vars.REMOTE_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            cd ${{ vars.REMOTE_PATH }}
+
+            # Generate Varnish secret if not present
+            if [ ! -f .env ] || ! grep -q VARNISH_SECRET .env; then
+              echo "VARNISH_SECRET=$(openssl rand -hex 32)" | sudo tee .env > /dev/null
+            fi
+
+            # Create .env for docker compose
+            VARNISH_SECRET=$(grep VARNISH_SECRET .env | cut -d= -f2)
+            sudo tee .env > /dev/null <<EOF
+            VARNISH_SECRET=${VARNISH_SECRET}
+            DRUPAL_DOMAIN=${{ vars.DRUPAL_DOMAIN }}
+            NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }}
+            NEXT_PUBLIC_SITE_URL=${{ vars.NEXT_PUBLIC_SITE_URL }}
+            NEXTJS_DOMAIN=${{ vars.NEXTJS_DOMAIN }}
+            REVALIDATE_SECRET=${{ secrets.REVALIDATE_SECRET }}
+            NEXTJS_REVALIDATE_URL=https://${{ vars.NEXTJS_DOMAIN }}/api/revalidate
+            EOF
+
+            # Ensure files directories exist
+            sudo mkdir -p files/public files/private
+
+            # Fix ownership for wodby containers (uid 1000)
+            sudo chown -R 1000:1000 drupal/ files/
+
+            # Start containers
+            sudo docker compose -p programhub -f docker-compose.production.yml up -d --force-recreate
+
+            # Wait for containers to be healthy
+            sleep 10
+
+            # Run composer install as root so scaffold can write to all directories
+            sudo docker exec -u 0 -t programhub-php-1 composer install --no-dev --optimize-autoloader
+
+            # Fix file permissions from inside container (runs as root with -u 0)
+            sudo docker exec -u 0 -t programhub-php-1 find /var/www/html/web/sites -type d -exec chmod 755 {} \;
+            sudo docker exec -u 0 -t programhub-php-1 find /var/www/html/web/sites -type f -exec chmod 644 {} \;
+            sudo docker exec -u 0 -t programhub-php-1 chown -R wodby:wodby /var/www/html/web/sites
+            # Ensure files directory is writable for uploads
+            sudo docker exec -u 0 -t programhub-php-1 chmod -R 777 /var/www/html/web/sites/default/files || true
+
+      - name: Configure settings
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ vars.REMOTE_HOST }}
+          username: ${{ vars.REMOTE_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            cd ${{ vars.REMOTE_PATH }}
+
+            # Install yq on the remote server
+            wget -q https://github.com/mikefarah/yq/releases/download/v4.35.1/yq_linux_amd64 -O yq
+            chmod +x yq
+            sudo mv yq /usr/local/bin/yq
+
+            # Generate settings.php from default
+            sudo cp -rf drupal/web/sites/default/default.settings.php drupal/web/sites/default/settings.php
+
+            cat << 'EOF' | sudo tee -a drupal/web/sites/default/settings.php > /dev/null
+
+            $databases['default']['default'] = [
+              'database' => '${{ vars.DRUPAL_DATABASE }}',
+              'username' => '${{ vars.DRUPAL_USERNAME }}',
+              'password' => '${{ secrets.DRUPAL_PASSWORD }}',
+              'host' => '${{ vars.DRUPAL_HOST }}',
+              'port' => '${{ vars.DRUPAL_PORT_DB }}',
+              'driver' => 'mysql',
+              'prefix' => '',
+              'collation' => 'utf8mb4_general_ci',
+              'pdo' => [
+                \PDO::MYSQL_ATTR_SSL_CA => '',
+                \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => FALSE,
+              ],
+            ];
+
+            $settings['hash_salt'] = '${{ secrets.DRUPAL_HASH_SALT }}';
+            $settings['trusted_host_patterns'] = [
+              "${{ vars.DRUPAL_TRUSTED_HOST }}",
+            ];
+            $settings['config_sync_directory'] = '../config/sync';
+            $settings['file_private_path'] = '/var/www/private';
+
+            // Redis - uncomment once the module is enabled.
+            // $settings['redis.connection']['host'] = 'redis';
+            // $settings['redis.connection']['port'] = 6379;
+            // $settings['cache']['default'] = 'cache.backend.redis';
+
+            $settings['reverse_proxy'] = TRUE;
+            $settings['reverse_proxy_addresses'] = ['varnish'];
+            EOF
+
+            # Generate services.yml from default
+            sudo cp -rf drupal/web/sites/default/default.services.yml drupal/web/sites/default/services.yml
+
+            sudo yq -i '
+              .parameters.["cors.config"].enabled = true |
+              .parameters.["cors.config"].allowedHeaders = ["*"] |
+              .parameters.["cors.config"].allowedMethods = ["GET", "POST", "PATCH", "OPTIONS", "DELETE"] |
+              .parameters.["cors.config"].allowedOrigins = ["https://${{ vars.DRUPAL_DOMAIN }}", "https://${{ vars.NEXTJS_DOMAIN }}", "http://localhost:3000"] |
+              .parameters.["cors.config"].supportsCredentials = true |
+              .parameters.["session.storage.options"].cookie_domain = "${{ vars.DRUPAL_DOMAIN }}"
+            ' drupal/web/sites/default/services.yml
+
+            # Fix ownership
+            sudo chown 1000:1000 drupal/web/sites/default/settings.php drupal/web/sites/default/services.yml
+            sudo chmod 644 drupal/web/sites/default/settings.php drupal/web/sites/default/services.yml
+
+            # simple_oauth keys
+            sudo mkdir -p drupal/keys
+            printf '%s\n' "${{ secrets.OAUTH_PRIVATE_KEY }}" | sudo tee drupal/keys/private.key > /dev/null
+            printf '%s\n' "${{ secrets.OAUTH_PUBLIC_KEY }}"  | sudo tee drupal/keys/public.key  > /dev/null
+            sudo chown 1000:1000 drupal/keys/*.key
+            sudo chmod 600 drupal/keys/private.key
+            sudo chmod 644 drupal/keys/public.key
+
+            # Run Drupal deploy commands (|| true to not fail build if DB not ready)
+            sudo docker compose -p programhub -f docker-compose.production.yml exec -T php bash -c "
+              cd /var/www/html
+              vendor/bin/drush deploy -y || true
+            "

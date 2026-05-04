@@ -1,0 +1,30 @@
+_core:
+  default_config_hash: 6CZIzFifRq3qbdq3n3nDpEOO4hWIQtKOAQNPvGNGKeM
+langcode: en
+cancel_confirm:
+  subject: 'Account cancellation request for [user:display-name] at [site:name]'
+  body: "[user:display-name]\r\n\r\nA request to cancel your account has been made at [site:name].\r\n\r\nYou may now cancel your account on [site:url-brief] by clicking this link or copying and pasting it into your browser:\r\n\r\n[user:cancel-url]\r\n\r\nNOTE: The cancellation of your account is not reversible.\r\n\r\nThis link expires in one day and nothing will happen if it is not used.\r\n\r\n--  [site:name] team"
+password_reset:
+  subject: 'Replacement login information for [user:display-name] at [site:name]'
+  body: "[user:display-name],\r\n\r\nA request to reset the password for your account has been made at [site:name].\r\n\r\nYou may now log in by clicking this link or copying and pasting it into your browser:\r\n\r\n[user:one-time-login-url]\r\n\r\nThis link can only be used once to log in and will lead you to a page where you can set your password. It expires after one day and nothing will happen if it's not used.\r\n\r\n--  [site:name] team"
+register_admin_created:
+  subject: 'An administrator created an account for you at [site:name]'
+  body: "[user:display-name],\r\n\r\nA site administrator at [site:name] has created an account for you. You may now log in by clicking this link or copying and pasting it into your browser:\r\n\r\n[user:one-time-login-url]\r\n\r\nThis link can only be used once to log in and will lead you to a page where you can set your password.\r\n\r\nAfter setting your password, you will be able to log in at [site:login-url] in the future using:\r\n\r\nusername: [user:name]\r\npassword: Your password\r\n\r\n--  [site:name] team"
+register_no_approval_required:
+  subject: 'Account details for [user:display-name] at [site:name]'
+  body: "Hi [user:display-name],\r\n\r\nWelcome to [site:name]! Your account is now active—you can jump right in by clicking here:\r\nhttps://nextlevel.welearndesign.com\r\n\r\nNow for the really exciting part: we’re thrilled to invite you to the Graphic & Web Design (GDES) Portfolio Show! Our graduating class has poured their creativity and skills into a dazzling array of projects, and they can’t wait to share them with you.\r\n\r\nWhen:\r\nFriday, May 2, 2025\r\n5 PM – 8 PM\r\n\r\nWhere:\r\nMcClain Hall\r\nNorth Idaho College\r\n1000 Garden Avenue\r\nCoeur d’Alene, ID 83814\r\n\r\nWhat you’ll see:\r\n\r\nEnd-to-end website design & development\r\n\r\nProfessional video production & editing\r\n\r\nMastery of Adobe Creative Suite (InDesign, Photoshop, Illustrator) & wireframing tools\r\n\r\nUX/UI fundamentals & packaging design for commercial products\r\n\r\nLogo creation & corporate identities that stand out\r\n…and that’s just the beginning!\r\n\r\nThanks to a generous grant, next year our GDES program will expand into brand-new facilities featuring high-resolution printers, 3D printers, CNC cutters, and an 18-foot interactive flatscreen gallery.\r\n\r\nReady to be inspired? Stop by the portfolio show to meet our faculty, mingle with the students, and experience the future of design—right here on campus.\r\n\r\nWe look forward to seeing you there!\r\n\r\n— The NICGDES Graduates & Instructors"
+register_pending_approval:
+  subject: 'Account details for [user:display-name] at [site:name] (pending admin approval)'
+  body: "[user:display-name],\r\n\r\nThank you for registering at [site:name]. Your application for an account is currently pending approval. Once it has been approved, you will receive another email containing information about how to log in, set your password, and other details.\r\n\r\n--  [site:name] team"
+register_pending_approval_admin:
+  subject: 'Account details for [user:display-name] at [site:name] (pending admin approval)'
+  body: "[user:display-name] has applied for an account.\r\n\r\n[user:edit-url]"
+status_activated:
+  subject: 'Account details for [user:display-name] at [site:name] (approved)'
+  body: "[user:display-name],\r\n\r\nYour account at [site:name] has been activated.\r\n\r\nYou may now log in by clicking this link or copying and pasting it into your browser:\r\n\r\n[user:one-time-login-url]\r\n\r\nThis link can only be used once to log in and will lead you to a page where you can set your password.\r\n\r\nAfter setting your password, you will be able to log in at [site:login-url] in the future using:\r\n\r\nusername: [user:account-name]\r\npassword: Your password\r\n\r\n--  [site:name] team"
+status_blocked:
+  subject: 'Account details for [user:display-name] at [site:name] (blocked)'
+  body: "[user:display-name],\r\n\r\nYour account on [site:name] has been blocked.\r\n\r\n--  [site:name] team"
+status_canceled:
+  subject: 'Account details for [user:display-name] at [site:name] (canceled)'
+  body: "[user:display-name],\r\n\r\nYour account on [site:name] has been canceled.\r\n\r\n--  [site:name] team"

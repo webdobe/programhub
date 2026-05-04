@@ -1,0 +1,11 @@
+uuid: da24ff37-1d58-4497-98d7-3e0741e93d43
+langcode: en
+status: true
+dependencies: {  }
+name: Course
+type: course
+description: 'Use <em>Course</em> for individual classes offered within a program.'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: false

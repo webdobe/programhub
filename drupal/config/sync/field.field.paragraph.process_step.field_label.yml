@@ -1,0 +1,19 @@
+uuid: 4d5e6f7a-8b9c-4d0e-1f2a-3b4c5d6e7f8a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_label
+    - paragraphs.paragraphs_type.process_step
+id: paragraph.process_step.field_label
+field_name: field_label
+entity_type: paragraph
+bundle: process_step
+label: Label
+description: 'A custom label for this step (e.g. "Concept Exploration"). If left blank, the process type will be used.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

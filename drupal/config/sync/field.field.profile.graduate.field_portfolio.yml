@@ -1,0 +1,23 @@
+uuid: c2e8a465-2179-4cf9-8bb2-3dc7b66b3ec7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_portfolio
+    - profile.type.graduate
+  module:
+    - link
+id: profile.graduate.field_portfolio
+field_name: field_portfolio
+entity_type: profile
+bundle: graduate
+label: Portfolio
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 0
+  link_type: 17
+field_type: link

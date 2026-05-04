@@ -1,0 +1,5 @@
+services:
+  gdes.profile_label_subscriber:
+    class: Drupal\gdes\EventSubscriber\ProfileLabelSubscriber
+    tags:
+      - { name: event_subscriber }

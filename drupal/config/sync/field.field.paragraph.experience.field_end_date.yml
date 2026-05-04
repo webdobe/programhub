@@ -1,0 +1,21 @@
+uuid: d6f4b0c5-2e7a-4d4b-bf9c-5a8b1d6e0f2a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_end_date
+    - paragraphs.paragraphs_type.experience
+  module:
+    - datetime
+id: paragraph.experience.field_end_date
+field_name: field_end_date
+entity_type: paragraph
+bundle: experience
+label: 'End Date'
+description: 'Leave empty if this is a current position.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime

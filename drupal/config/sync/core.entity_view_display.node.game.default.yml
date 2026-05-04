@@ -1,0 +1,98 @@
+uuid: b9c5ed88-7db0-450e-9df7-c3c0a1990298
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.game.field_audio_resources
+    - field.field.node.game.field_config
+    - field.field.node.game.field_creator
+    - field.field.node.game.field_description
+    - field.field.node.game.field_game_type
+    - field.field.node.game.field_path
+    - field.field.node.game.field_preview
+    - field.field.node.game.field_sprite_resources
+    - node.type.game
+  module:
+    - fieldable_path
+    - image
+    - json_field
+    - text
+    - user
+id: node.game.default
+targetEntityType: node
+bundle: game
+mode: default
+content:
+  field_audio_resources:
+    type: entity_reference_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 103
+    region: content
+  field_config:
+    type: json
+    label: above
+    settings:
+      attach_library: true
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_creator:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 105
+    region: content
+  field_description:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_game_type:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  field_path:
+    type: fieldable_path_formatter
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 106
+    region: content
+  field_preview:
+    type: image
+    label: above
+    settings:
+      image_link: ''
+      image_style: ''
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 107
+    region: content
+  field_sprite_resources:
+    type: entity_reference_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 104
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden: {  }

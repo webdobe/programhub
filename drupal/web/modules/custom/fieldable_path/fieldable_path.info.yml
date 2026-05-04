@@ -1,0 +1,16 @@
+name: Fieldable Path
+description: Provides a fieldable mirror of "path" property for entities.
+
+type: module
+core_version_requirement: ^9.1 || ^10 || ^11
+
+dependencies:
+  - drupal:path
+
+test_dependencies:
+  - pathauto:pathauto
+
+# Information added by Drupal.org packaging script on 2023-04-03
+version: '8.x-1.0-rc6+1-dev'
+project: 'fieldable_path'
+datestamp: 1680538055

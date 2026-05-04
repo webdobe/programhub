@@ -1,0 +1,19 @@
+uuid: a8d37600-5de2-403e-9507-82fe41cc7171
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_email
+    - profile.type.instructor
+id: profile.instructor.field_email
+field_name: field_email
+entity_type: profile
+bundle: instructor
+label: Email
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: email

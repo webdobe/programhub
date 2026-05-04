@@ -1,0 +1,39 @@
+uuid: e068c3a8-ba4c-4ec2-ac51-772143453e87
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.media.media_library
+    - field.field.media.sprite_resource.field_media_sprite
+    - field.field.media.sprite_resource.field_sprite_type
+    - image.style.thumbnail
+    - media.type.sprite_resource
+  module:
+    - image
+id: media.sprite_resource.media_library
+targetEntityType: media
+bundle: sprite_resource
+mode: media_library
+content:
+  field_media_sprite:
+    type: image_image
+    weight: 5
+    region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  field_sprite_type: true
+  path: true
+  status: true
+  uid: true

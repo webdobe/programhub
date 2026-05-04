@@ -1,0 +1,31 @@
+uuid: 6743a12a-4de9-4279-a507-d2d7b813769c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_creator
+    - node.type.game
+    - profile.type.graduate
+    - profile.type.instructor
+id: node.game.field_creator
+field_name: field_creator
+entity_type: node
+bundle: game
+label: Creator
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:profile'
+  handler_settings:
+    target_bundles:
+      graduate: graduate
+      instructor: instructor
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: graduate
+field_type: entity_reference

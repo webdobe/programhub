@@ -1,0 +1,68 @@
+<?php
+
+/**
+ * @file
+ * Contains hook implementations for the module.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\path_alias\PathAliasInterface;
+
+/**
+ * Implements hook_ENTITY_TYPE_insert() for 'path_alias' entities.
+ */
+function fieldable_path_path_alias_insert(PathAliasInterface $path_alias) {
+  \Drupal::service('fieldable_path.controller')->syncEntityPath($path_alias);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update() for 'path_alias' entities.
+ */
+function fieldable_path_path_alias_update(PathAliasInterface $path_alias) {
+  \Drupal::service('fieldable_path.controller')->syncEntityPath($path_alias);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete() for 'path_alias' entities.
+ */
+function fieldable_path_path_alias_delete(PathAliasInterface $path_alias) {
+  \Drupal::service('fieldable_path.controller')
+    ->syncEntityPath($path_alias, TRUE);
+}
+
+/**
+ * Implements hook_module_implements_alter().
+ */
+function fieldable_path_module_implements_alter(array &$implementations, $hook) {
+  // Only care about entity insert/update hooks.
+  if (! in_array($hook, ['entity_insert', 'entity_update'], TRUE)) {
+    return;
+  }
+
+  // If the container isn’t up yet (cache-rebuild/compile phase), skip.
+  if (! \Drupal::hasContainer()) {
+    return;
+  }
+
+  // Now it's safe to call moduleExists().
+  if (\Drupal::service('module_handler')->moduleExists('pathauto')) {
+    unset($implementations['pathauto']);
+  }
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function fieldable_path_entity_insert(EntityInterface $entity) {
+  \Drupal::service('fieldable_path.controller')
+    ->pathautoGenerateAlias($entity, 'insert');
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function fieldable_path_entity_update(EntityInterface $entity) {
+  \Drupal::service('fieldable_path.controller')
+    ->pathautoGenerateAlias($entity, 'update');
+}
+

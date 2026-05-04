@@ -1,0 +1,21 @@
+uuid: da3011e3-f9fc-4fa9-85e7-30ad53706ef9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_path
+    - node.type.award
+  module:
+    - fieldable_path
+id: node.award.field_path
+field_name: field_path
+entity_type: node
+bundle: award
+label: Path
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: fieldable_path

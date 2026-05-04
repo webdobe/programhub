@@ -1,0 +1,29 @@
+uuid: 24b4cc03-7d63-4f25-b83e-39cb87ffe840
+langcode: en
+status: true
+dependencies:
+  config:
+    - filter.format.webform_default
+    - node.type.high_score
+    - node.type.outcome
+  module:
+    - filter
+    - media
+    - node
+    - profile
+    - simplenews
+    - system
+_core:
+  default_config_hash: dJ0L2DNSj5q6XVZAGsuVDpJTh5UeYkIPwKrUOOpr8YI
+id: authenticated
+label: 'Authenticated user'
+weight: -9
+is_admin: false
+permissions:
+  - 'access content'
+  - 'create high_score content'
+  - 'create outcome content'
+  - 'subscribe to newsletters'
+  - 'use text format webform_default'
+  - 'view any profile'
+  - 'view media'

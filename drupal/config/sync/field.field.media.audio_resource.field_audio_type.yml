@@ -1,0 +1,21 @@
+uuid: a7f24909-b577-413b-92d3-205460753d3a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_audio_type
+    - media.type.audio_resource
+  module:
+    - options
+id: media.audio_resource.field_audio_type
+field_name: field_audio_type
+entity_type: media
+bundle: audio_resource
+label: 'Audio type'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

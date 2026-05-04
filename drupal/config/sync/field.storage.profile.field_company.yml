@@ -1,0 +1,21 @@
+uuid: 210571ca-4c9c-473a-a1da-f3a4c4722ec0
+langcode: en
+status: true
+dependencies:
+  module:
+    - profile
+id: profile.field_company
+field_name: field_company
+entity_type: profile
+type: string
+settings:
+  max_length: 255
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

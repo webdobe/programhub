@@ -1,0 +1,53 @@
+uuid: 9c0d1e2f-3a4b-4c5d-6e7f-8a9b0c1d2e3f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.process_step.field_description
+    - field.field.paragraph.process_step.field_image
+    - field.field.paragraph.process_step.field_label
+    - field.field.paragraph.process_step.field_process_type
+    - paragraphs.paragraphs_type.process_step
+  module:
+    - image
+    - taxonomy
+id: paragraph.process_step.default
+targetEntityType: paragraph
+bundle: process_step
+mode: default
+content:
+  field_description:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_image:
+    type: image
+    label: above
+    settings:
+      image_link: ''
+      image_style: ''
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_label:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_process_type:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden: {  }

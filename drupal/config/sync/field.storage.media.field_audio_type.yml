@@ -1,0 +1,78 @@
+uuid: ab56fae4-4105-41b0-8734-488d22cba0f7
+langcode: en
+status: true
+dependencies:
+  module:
+    - media
+    - options
+id: media.field_audio_type
+field_name: field_audio_type
+entity_type: media
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: runner_button_press
+      label: 'Runner Button Press'
+    -
+      value: runner_hit
+      label: 'Runner Hit'
+    -
+      value: runner_score
+      label: 'Runner Score'
+    -
+      value: background_music
+      label: 'Background Music'
+    -
+      value: game_over
+      label: 'Game Over'
+    -
+      value: phase_1_enter
+      label: 'Phase 1 Enter'
+    -
+      value: phase_1_dying
+      label: 'Phase 1 Dying'
+    -
+      value: phase_1_attacking
+      label: 'Phase 1 Attacking'
+    -
+      value: phase_2_enter
+      label: 'Phase 2 Enter'
+    -
+      value: phase_2_dying
+      label: 'Phase 2 Dying'
+    -
+      value: phase_2_attacking
+      label: 'Phase 2 Attacking'
+    -
+      value: phase_3_enter
+      label: 'Phase 3 Enter'
+    -
+      value: phase_3_dying
+      label: 'Phase 3 Dying'
+    -
+      value: phase_3_attacking
+      label: 'Phase 3 Attacking'
+    -
+      value: winner
+      label: Winner
+    -
+      value: attacking
+      label: Attacking
+    -
+      value: dying
+      label: Dying
+    -
+      value: defending
+      label: Defending
+    -
+      value: casting
+      label: Casting
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

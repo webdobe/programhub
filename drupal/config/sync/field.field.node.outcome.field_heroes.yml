@@ -1,0 +1,29 @@
+uuid: e09efe2f-e1a9-4800-9389-ef45d5549319
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_heroes
+    - node.type.outcome
+    - profile.type.graduate
+id: node.outcome.field_heroes
+field_name: field_heroes
+entity_type: node
+bundle: outcome
+label: Heroes
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:profile'
+  handler_settings:
+    target_bundles:
+      graduate: graduate
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

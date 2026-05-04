@@ -1,0 +1,11 @@
+uuid: 3f1e8e79-712c-4fd4-a3c8-fe72ed43a20d
+langcode: en
+status: true
+dependencies: {  }
+name: Award
+type: award
+description: 'Use <em>Award</em> to highlight recognitions earned by students, programs, or the division.'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: false

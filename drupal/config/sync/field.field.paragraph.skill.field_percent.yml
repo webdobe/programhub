@@ -1,0 +1,23 @@
+uuid: 9fd32bb3-16b9-4eb6-9a6a-048d9cd9d68b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_percent
+    - paragraphs.paragraphs_type.skill
+id: paragraph.skill.field_percent
+field_name: field_percent
+entity_type: paragraph
+bundle: skill
+label: Percent
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: 100
+  prefix: ''
+  suffix: ''
+field_type: integer

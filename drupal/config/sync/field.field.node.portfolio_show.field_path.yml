@@ -1,0 +1,21 @@
+uuid: 23477280-27b8-418e-8c17-d9695030ecc8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_path
+    - node.type.portfolio_show
+  module:
+    - fieldable_path
+id: node.portfolio_show.field_path
+field_name: field_path
+entity_type: node
+bundle: portfolio_show
+label: Path
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: fieldable_path

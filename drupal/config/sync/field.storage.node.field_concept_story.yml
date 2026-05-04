@@ -1,0 +1,19 @@
+uuid: 8351cded-1f84-4907-9379-9ab03cef04a7
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - text
+id: node.field_concept_story
+field_name: field_concept_story
+entity_type: node
+type: text_long
+settings: {  }
+module: text
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

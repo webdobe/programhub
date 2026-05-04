@@ -1,0 +1,76 @@
+services:
+  redis:
+    image: redis:7-alpine
+    networks:
+      - backend
+    restart: unless-stopped
+
+  php:
+    image: wodby/drupal-php:8.3
+    environment:
+      PHP_FPM_USER: wodby
+      PHP_FPM_GROUP: wodby
+      PHP_MAX_EXECUTION_TIME: 300
+      PHP_MAX_INPUT_VARS: 3000
+      PHP_MEMORY_LIMIT: 512M
+      PHP_POST_MAX_SIZE: 64M
+      PHP_UPLOAD_MAX_FILESIZE: 64M
+      REVALIDATE_SECRET: ${REVALIDATE_SECRET}
+      NEXTJS_REVALIDATE_URL: ${NEXTJS_REVALIDATE_URL}
+    volumes:
+      - ./drupal:/var/www/html
+      - ./files/public:/var/www/html/web/sites/default/files
+      - ./files/private:/var/www/private
+    depends_on:
+      - redis
+    networks:
+      - backend
+    restart: unless-stopped
+
+  varnish:
+    image: wodby/varnish:6.0
+    environment:
+      VARNISH_SECRET: ${VARNISH_SECRET}
+      VARNISH_BACKEND_HOST: ph-nginx
+      VARNISH_BACKEND_PORT: 80
+      VARNISH_CONFIG_PRESET: drupal
+      VARNISH_PURGE_EXTERNAL_REQUEST_HEADER: X-Real-IP
+    depends_on:
+      - nginx
+    networks:
+      - backend
+      - traefik_net
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.programhub-drupal.rule=Host(`${DRUPAL_DOMAIN}`)
+      - traefik.http.routers.programhub-drupal.entrypoints=websecure
+      - traefik.http.routers.programhub-drupal.tls.certresolver=letsencrypt
+      - traefik.http.services.programhub-drupal.loadbalancer.server.port=6081
+      - traefik.docker.network=traefik_net
+    restart: unless-stopped
+
+  nginx:
+    image: wodby/nginx:1.28
+    environment:
+      NGINX_STATIC_OPEN_FILE_CACHE: "off"
+      NGINX_ERROR_LOG_LEVEL: debug
+      NGINX_BACKEND_HOST: php
+      NGINX_VHOST_PRESET: drupal10
+      NGINX_SERVER_ROOT: /var/www/html/web
+      NGINX_SERVER_NAME: ${DRUPAL_DOMAIN}
+    volumes:
+      - ./drupal:/var/www/html
+      - ./files/public:/var/www/html/web/sites/default/files
+    depends_on:
+      - php
+    networks:
+      backend:
+        aliases:
+          - ph-nginx
+    restart: unless-stopped
+
+networks:
+  backend:
+    driver: bridge
+  traefik_net:
+    external: true

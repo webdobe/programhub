@@ -1,0 +1,14 @@
+uuid: f17aea58-b81e-4b2b-b119-15bad77be4f3
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.graduate
+  module:
+    - user
+id: user_add_role_action.graduate
+label: 'Add the Graduate User role to the selected user(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: graduate

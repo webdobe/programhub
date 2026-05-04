@@ -1,0 +1,25 @@
+uuid: 6322b3b2-57e0-4846-9cdc-6764d30cd347
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_graduates
+    - node.type.portfolio_show
+id: node.portfolio_show.field_graduates
+field_name: field_graduates
+entity_type: node
+bundle: portfolio_show
+label: Graduates
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: views
+  handler_settings:
+    view:
+      view_name: profile_reference
+      display_name: profile_reference
+      arguments: {  }
+field_type: entity_reference

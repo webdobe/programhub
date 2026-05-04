@@ -1,0 +1,23 @@
+uuid: 31874dcc-741c-4759-b93a-6c0f57d2b8e2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_company_url
+    - profile.type.tac_member
+  module:
+    - link
+id: profile.tac_member.field_company_url
+field_name: field_company_url
+entity_type: profile
+bundle: tac_member
+label: 'Company URL'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 0
+  link_type: 16
+field_type: link

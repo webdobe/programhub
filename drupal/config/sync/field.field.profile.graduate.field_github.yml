@@ -1,0 +1,23 @@
+uuid: f4cb3f92-6f7c-4325-ae46-03a79e487c76
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_github
+    - profile.type.graduate
+  module:
+    - link
+id: profile.graduate.field_github
+field_name: field_github
+entity_type: profile
+bundle: graduate
+label: GitHub
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 0
+  link_type: 17
+field_type: link

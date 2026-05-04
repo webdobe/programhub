@@ -1,0 +1,20 @@
+uuid: c5c16412-4461-4abb-9938-02cb415b2943
+langcode: en
+status: true
+dependencies: {  }
+name: 'TAC Members'
+id: tac_members
+description: ''
+format: html
+priority: 0
+receipt: true
+from_name: 'We Learn Design'
+subject: '[node:title]'
+from_address: gdes@nic.edu
+hyperlinks: true
+allowed_handlers:
+  simplenews_all: '0'
+new_account: none
+access: default
+reason: ''
+weight: 0

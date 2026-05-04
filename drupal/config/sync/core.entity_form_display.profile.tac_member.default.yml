@@ -1,0 +1,105 @@
+uuid: 7677618f-79d7-4a6a-b0b2-0d8ce1972c6e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.profile.tac_member.field_biography
+    - field.field.profile.tac_member.field_company
+    - field.field.profile.tac_member.field_company_url
+    - field.field.profile.tac_member.field_image
+    - field.field.profile.tac_member.field_job_title
+    - field.field.profile.tac_member.field_name
+    - field.field.profile.tac_member.og_audience
+    - image.style.thumbnail
+    - profile.type.tac_member
+  module:
+    - image
+    - link
+    - name
+    - text
+id: profile.tac_member.default
+targetEntityType: profile
+bundle: tac_member
+mode: default
+content:
+  field_biography:
+    type: text_textarea
+    weight: 27
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_company:
+    type: string_textfield
+    weight: 42
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_company_url:
+    type: link_default
+    weight: 43
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+  field_image:
+    type: image_image
+    weight: 34
+    region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+  field_job_title:
+    type: string_textfield
+    weight: 41
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_name:
+    type: name_default
+    weight: 37
+    region: content
+    settings:
+      override_field_settings: false
+      labels:
+        title: Title
+        given: Given
+        middle: 'Middle name(s)'
+        family: Family
+        generational: Generational
+        credentials: Credentials
+      widget_layout: stacked
+      show_component_required_marker: false
+      flag_required_input: false
+      credentials_inline: false
+      size:
+        title: 6
+        given: 20
+        middle: 20
+        family: 20
+        generational: 5
+        credentials: 35
+      title_display:
+        title: description
+        given: description
+        middle: description
+        family: description
+        generational: description
+        credentials: description
+      field_title_display: before
+    third_party_settings: {  }
+  og_audience:
+    type: options_select
+    weight: 44
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  is_default: true

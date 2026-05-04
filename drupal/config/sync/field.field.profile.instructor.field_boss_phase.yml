@@ -1,0 +1,21 @@
+uuid: e884b6d5-8ee5-4faa-81bf-0c0866319ca6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_boss_phase
+    - profile.type.instructor
+  module:
+    - options
+id: profile.instructor.field_boss_phase
+field_name: field_boss_phase
+entity_type: profile
+bundle: instructor
+label: 'Boss Phase'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_integer

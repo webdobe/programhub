@@ -1,0 +1,40 @@
+uuid: 81d2ca79-1dee-4021-bfd4-3c37a3b927d4
+langcode: en
+status: true
+dependencies:
+  config:
+    - media.type.audio_resource
+    - media.type.sprite_resource
+    - node.type.game
+    - node.type.high_score
+    - node.type.outcome
+    - node.type.project
+  module:
+    - media
+    - node
+    - profile
+    - toolbar
+id: graduate
+label: 'Graduate user'
+weight: -8
+is_admin: false
+permissions:
+  - 'access content overview'
+  - 'access toolbar'
+  - 'administer nodes'
+  - 'create audio_resource media'
+  - 'create game content'
+  - 'create graduate profile'
+  - 'create high_score content'
+  - 'create media'
+  - 'create outcome content'
+  - 'create project content'
+  - 'create sprite_resource media'
+  - 'delete media'
+  - 'edit own audio_resource media'
+  - 'edit own game content'
+  - 'edit own project content'
+  - 'edit own sprite_resource media'
+  - 'update media'
+  - 'update own graduate profile'
+  - 'view own profile'

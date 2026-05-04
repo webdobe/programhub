@@ -1,0 +1,65 @@
+<?php
+
+/**
+ * @file
+ * Custom functionality for the GDES program site.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * Implements hook_entity_insert().
+ */
+function gdes_entity_insert(EntityInterface $entity) {
+  _gdes_revalidate_nextjs($entity);
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function gdes_entity_update(EntityInterface $entity) {
+  _gdes_revalidate_nextjs($entity);
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function gdes_entity_delete(EntityInterface $entity) {
+  _gdes_revalidate_nextjs($entity);
+}
+
+/**
+ * Notify Next.js to revalidate cached Drupal data.
+ */
+function _gdes_revalidate_nextjs(EntityInterface $entity) {
+  $types = ['node', 'profile'];
+  if (!in_array($entity->getEntityTypeId(), $types)) {
+    return;
+  }
+
+  $nextjs_url = getenv('NEXTJS_REVALIDATE_URL');
+  $secret = getenv('REVALIDATE_SECRET');
+
+  if (!$nextjs_url || !$secret) {
+    return;
+  }
+
+  try {
+    \Drupal::httpClient()->post($nextjs_url, [
+      'headers' => [
+        'x-revalidate-secret' => $secret,
+        'Content-Type' => 'application/json',
+      ],
+      'json' => [
+        'entity_type' => $entity->getEntityTypeId(),
+        'bundle' => $entity->bundle(),
+      ],
+      'timeout' => 5,
+    ]);
+  }
+  catch (\Exception $e) {
+    \Drupal::logger('gdes')->warning('Next.js revalidation failed: @message', [
+      '@message' => $e->getMessage(),
+    ]);
+  }
+}

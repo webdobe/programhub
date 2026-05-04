@@ -1,0 +1,12 @@
+uuid: 6713b116-740b-4743-98f6-63393ecb04f0
+langcode: en
+status: true
+dependencies: {  }
+id: instructor
+label: Instructor
+display_label: ''
+multiple: false
+registration: false
+roles: {  }
+allow_revisions: false
+new_revision: false

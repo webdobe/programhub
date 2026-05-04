@@ -1,0 +1,12 @@
+uuid: 793c066f-029f-4e89-ae13-da971c59607d
+langcode: en
+status: true
+dependencies: {  }
+id: graduate
+label: Graduate
+display_label: ''
+multiple: false
+registration: false
+roles: {  }
+allow_revisions: false
+new_revision: false

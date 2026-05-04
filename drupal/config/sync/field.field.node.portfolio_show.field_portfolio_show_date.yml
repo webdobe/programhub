@@ -1,0 +1,21 @@
+uuid: 5658b8c5-b340-40c8-8d7f-eed5e97ddabe
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_portfolio_show_date
+    - node.type.portfolio_show
+  module:
+    - datetime_range
+id: node.portfolio_show.field_portfolio_show_date
+field_name: field_portfolio_show_date
+entity_type: node
+bundle: portfolio_show
+label: 'Portfolio Show Date'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: daterange

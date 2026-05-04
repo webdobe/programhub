@@ -1,0 +1,25 @@
+uuid: 44ab3596-2c1b-4456-96f1-e80c836f49fc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_profiles
+    - node.type.award
+id: node.award.field_profiles
+field_name: field_profiles
+entity_type: node
+bundle: award
+label: Profiles
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: views
+  handler_settings:
+    view:
+      view_name: profile_reference
+      display_name: profile_reference
+      arguments: {  }
+field_type: entity_reference

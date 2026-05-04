@@ -1,0 +1,13 @@
+uuid: 40ce8953-79bb-4c80-baf7-6792873e3fad
+langcode: en
+status: true
+dependencies: {  }
+id: tac_member
+label: 'TAC Member'
+display_label: 'TAC Member'
+multiple: false
+registration: false
+roles:
+  tac_member: tac_member
+allow_revisions: false
+new_revision: false

@@ -1,0 +1,74 @@
+uuid: 7e2d5d6b-1c76-4f70-b58f-19d11677e5dc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.course.field_course_credits
+    - field.field.node.course.field_course_instructors
+    - field.field.node.course.field_course_number
+    - field.field.node.course.field_course_semester
+    - field.field.node.course.field_description
+    - field.field.node.course.og_audience
+    - node.type.course
+  module:
+    - options
+    - text
+    - user
+id: node.course.default
+targetEntityType: node
+bundle: course
+mode: default
+content:
+  field_course_credits:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 103
+    region: content
+  field_course_instructors:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 105
+    region: content
+  field_course_number:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  field_course_semester:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 104
+    region: content
+  field_description:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+  og_audience:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 106
+    region: content
+hidden: {  }

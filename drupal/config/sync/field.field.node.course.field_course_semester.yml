@@ -1,0 +1,21 @@
+uuid: b2da0a51-aaa1-4d3b-8c27-e963da47624f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_course_semester
+    - node.type.course
+  module:
+    - options
+id: node.course.field_course_semester
+field_name: field_course_semester
+entity_type: node
+bundle: course
+label: 'Course Semester'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_integer

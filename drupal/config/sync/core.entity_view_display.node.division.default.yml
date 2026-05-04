@@ -1,0 +1,36 @@
+uuid: 8d40d501-de86-4b6b-9d58-a029873fffb8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.division.field_abbreviation
+    - node.type.division
+  module:
+    - og
+    - user
+id: node.division.default
+targetEntityType: node
+bundle: division
+mode: default
+content:
+  field_abbreviation:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+  og_group:
+    type: og_group_subscribe
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden: {  }

@@ -1,0 +1,19 @@
+uuid: c9fb978d-1179-4840-9c2e-a93eff3fb943
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_abbreviation
+    - node.type.program
+id: node.program.field_abbreviation
+field_name: field_abbreviation
+entity_type: node
+bundle: program
+label: Abbreviation
+description: 'Short code for this program (e.g. CTE, GDES).'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

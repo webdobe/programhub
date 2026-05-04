@@ -1,0 +1,7 @@
+name: GDES
+type: module
+description: 'Custom functionality for the GDES program site.'
+core_version_requirement: ^10 || ^11
+package: Custom
+dependencies:
+  - drupal:media

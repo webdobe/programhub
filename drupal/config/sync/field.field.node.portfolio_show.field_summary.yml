@@ -1,0 +1,19 @@
+uuid: bce2fabb-0e01-47fb-aaac-c33eb14a634e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_summary
+    - node.type.portfolio_show
+id: node.portfolio_show.field_summary
+field_name: field_summary
+entity_type: node
+bundle: portfolio_show
+label: Summary
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

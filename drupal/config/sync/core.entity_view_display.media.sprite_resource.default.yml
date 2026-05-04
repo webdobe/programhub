@@ -1,0 +1,28 @@
+uuid: 3b0c4c2a-c2e4-43b5-9175-be2434733275
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.media.sprite_resource.field_media_sprite
+    - field.field.media.sprite_resource.field_sprite_type
+    - media.type.sprite_resource
+  module:
+    - options
+id: media.sprite_resource.default
+targetEntityType: media
+bundle: sprite_resource
+mode: default
+content:
+  field_sprite_type:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden:
+  created: true
+  field_media_sprite: true
+  name: true
+  thumbnail: true
+  uid: true

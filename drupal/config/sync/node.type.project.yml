@@ -1,0 +1,11 @@
+uuid: fd2b40da-1c3a-446c-b0b0-ab01bf160cec
+langcode: en
+status: true
+dependencies: {  }
+name: Project
+type: project
+description: 'Use <em>Project</em> for student work — capstone projects, portfolio pieces, and assignments worth featuring.'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: true

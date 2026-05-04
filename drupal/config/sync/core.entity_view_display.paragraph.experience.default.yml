@@ -1,0 +1,83 @@
+uuid: ef4ae44d-27b7-45e3-8f24-cbeae6299077
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.experience.field_description
+    - field.field.paragraph.experience.field_end_date
+    - field.field.paragraph.experience.field_experience_type
+    - field.field.paragraph.experience.field_location
+    - field.field.paragraph.experience.field_start_date
+    - field.field.paragraph.experience.field_title
+    - field.field.paragraph.experience.field_website_url
+    - paragraphs.paragraphs_type.experience
+  module:
+    - address
+    - datetime
+    - link
+    - options
+id: paragraph.experience.default
+targetEntityType: paragraph
+bundle: experience
+mode: default
+content:
+  field_description:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_end_date:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_experience_type:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_location:
+    type: address_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_start_date:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_title:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_website_url:
+    type: link
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 6
+    region: content
+hidden: {  }

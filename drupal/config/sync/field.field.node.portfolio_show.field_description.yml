@@ -1,0 +1,24 @@
+uuid: 80757a64-a09e-4177-8197-fdb4b04ff50c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_description
+    - filter.format.plain_text
+    - node.type.portfolio_show
+  module:
+    - text
+id: node.portfolio_show.field_description
+field_name: field_description
+entity_type: node
+bundle: portfolio_show
+label: Description
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats:
+    - plain_text
+field_type: text_long

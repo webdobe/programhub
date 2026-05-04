@@ -1,0 +1,29 @@
+uuid: 4f0a0cab-2d3b-4df4-9888-45bfce30968d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_brand_images
+    - media.type.image
+    - node.type.portfolio_show
+id: node.portfolio_show.field_brand_images
+field_name: field_brand_images
+entity_type: node
+bundle: portfolio_show
+label: 'Brand Images'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      image: image
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

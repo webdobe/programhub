@@ -1,0 +1,11 @@
+uuid: 28b94e00-62d8-4f9e-8890-e6beec39ab5f
+langcode: en
+status: true
+dependencies: {  }
+name: Event
+type: event
+description: 'Use <em>Event</em> for upcoming or past events tied to a division or program (open houses, showcases, info sessions).'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: false

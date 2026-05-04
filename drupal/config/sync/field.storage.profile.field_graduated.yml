@@ -1,0 +1,20 @@
+uuid: 984aa6e0-c1cc-4ae0-9d4c-119cb62a6126
+langcode: en
+status: true
+dependencies:
+  module:
+    - datetime
+    - profile
+id: profile.field_graduated
+field_name: field_graduated
+entity_type: profile
+type: datetime
+settings:
+  datetime_type: date
+module: datetime
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,0 +1,17 @@
+uuid: 3dd45a59-28cd-4336-a7b0-84c5357e4574
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - profile
+    - toolbar
+id: instructor
+label: 'Instructor user'
+weight: -5
+is_admin: false
+permissions:
+  - 'access content overview'
+  - 'access toolbar'
+  - 'administer nodes'
+  - 'view own profile'

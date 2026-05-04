@@ -1,0 +1,13 @@
+uuid: 75a67033-ba27-4eaa-bca9-c0219808654e
+langcode: en
+status: true
+dependencies: {  }
+id: sprite_resource
+label: 'Sprite Resource'
+description: ''
+source: image
+queue_thumbnail_downloads: false
+new_revision: false
+source_configuration:
+  source_field: field_media_sprite
+field_map: {  }

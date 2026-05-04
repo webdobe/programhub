@@ -1,0 +1,11 @@
+uuid: ccd39629-3df8-4089-8838-081f4c54ff0a
+langcode: en
+status: true
+dependencies: {  }
+name: Division
+type: division
+description: 'Use <em>Division</em> for a top-level program network (e.g. CTE). Each division acts as a group that contains programs and content.'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: true

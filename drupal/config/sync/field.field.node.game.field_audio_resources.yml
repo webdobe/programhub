@@ -1,0 +1,29 @@
+uuid: 809f55cb-e7da-491c-b072-bd9acf464521
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_audio_resources
+    - media.type.audio_resource
+    - node.type.game
+id: node.game.field_audio_resources
+field_name: field_audio_resources
+entity_type: node
+bundle: game
+label: 'Audio Resources'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      audio_resource: audio_resource
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

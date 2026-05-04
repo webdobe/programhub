@@ -1,0 +1,230 @@
+uuid: f905e7b8-4d7c-44e4-b381-ef192a363100
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.profile.graduate.field_biography
+    - field.field.profile.graduate.field_email
+    - field.field.profile.graduate.field_experience
+    - field.field.profile.graduate.field_game
+    - field.field.profile.graduate.field_github
+    - field.field.profile.graduate.field_graduated
+    - field.field.profile.graduate.field_image
+    - field.field.profile.graduate.field_instagram
+    - field.field.profile.graduate.field_linkedin
+    - field.field.profile.graduate.field_name
+    - field.field.profile.graduate.field_path
+    - field.field.profile.graduate.field_pixelated_image
+    - field.field.profile.graduate.field_portfolio
+    - field.field.profile.graduate.field_projects
+    - field.field.profile.graduate.field_skills
+    - field.field.profile.graduate.field_story
+    - field.field.profile.graduate.og_audience
+    - image.style.thumbnail
+    - profile.type.graduate
+  module:
+    - datetime
+    - file
+    - image
+    - inline_entity_form
+    - link
+    - name
+    - paragraphs
+    - text
+id: profile.graduate.default
+targetEntityType: profile
+bundle: graduate
+mode: default
+content:
+  field_biography:
+    type: text_textarea
+    weight: 27
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_email:
+    type: email_default
+    weight: 26
+    region: content
+    settings:
+      placeholder: ''
+      size: 60
+    third_party_settings: {  }
+  field_experience:
+    type: paragraphs
+    weight: 40
+    region: content
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      closed_mode: summary
+      autocollapse: none
+      closed_mode_threshold: 0
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: ''
+      features:
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
+    third_party_settings: {  }
+  field_game:
+    type: entity_reference_autocomplete
+    weight: 28
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_github:
+    type: link_default
+    weight: 30
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+  field_graduated:
+    type: datetime_default
+    weight: 41
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_image:
+    type: image_image
+    weight: 34
+    region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+  field_instagram:
+    type: link_default
+    weight: 32
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+  field_linkedin:
+    type: link_default
+    weight: 29
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+  field_name:
+    type: name_default
+    weight: 37
+    region: content
+    settings:
+      override_field_settings: false
+      labels:
+        title: Title
+        given: Given
+        middle: 'Middle name(s)'
+        family: Family
+        generational: Generational
+        credentials: Credentials
+      widget_layout: stacked
+      show_component_required_marker: false
+      flag_required_input: false
+      credentials_inline: false
+      size:
+        title: 6
+        given: 20
+        middle: 20
+        family: 20
+        generational: 5
+        credentials: 35
+      title_display:
+        title: description
+        given: description
+        middle: description
+        family: description
+        generational: description
+        credentials: description
+      field_title_display: before
+    third_party_settings: {  }
+  field_path:
+    type: string_textfield
+    weight: 39
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_pixelated_image:
+    type: image_image
+    weight: 33
+    region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+  field_portfolio:
+    type: link_default
+    weight: 31
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+  field_projects:
+    type: inline_entity_form_complex
+    weight: 35
+    region: content
+    settings:
+      form_mode: default
+      override_labels: false
+      label_singular: ''
+      label_plural: ''
+      allow_new: true
+      allow_existing: true
+      match_operator: CONTAINS
+      allow_duplicate: false
+      collapsible: false
+      collapsed: false
+      revision: false
+      removed_reference: optional
+    third_party_settings: {  }
+  field_skills:
+    type: paragraphs
+    weight: 36
+    region: content
+    settings:
+      title: Skill
+      title_plural: Skills
+      edit_mode: open
+      closed_mode: summary
+      autocollapse: none
+      closed_mode_threshold: 0
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: skill
+      features:
+        add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        convert: '0'
+        duplicate: duplicate
+    third_party_settings: {  }
+  field_story:
+    type: file_generic
+    weight: 38
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  og_audience:
+    type: options_select
+    weight: 42
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  is_default: true
