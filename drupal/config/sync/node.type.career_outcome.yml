@@ -1,0 +1,11 @@
+uuid: 6a068b25-9e9d-4a5f-8d66-75b3b46b58b0
+langcode: en
+status: true
+dependencies: {  }
+name: 'Career Outcome'
+type: career_outcome
+description: 'A career path graduates of a program land in — role, pay range, track.'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: false

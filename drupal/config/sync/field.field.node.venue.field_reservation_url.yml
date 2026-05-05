@@ -1,0 +1,23 @@
+uuid: 0374964c-1bb2-460d-955d-4bbcba4e3f3b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_reservation_url
+    - node.type.venue
+  module:
+    - link
+id: node.venue.field_reservation_url
+field_name: field_reservation_url
+entity_type: node
+bundle: venue
+label: 'Reservation URL'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 0
+  link_type: 17
+field_type: link

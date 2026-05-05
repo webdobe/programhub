@@ -1,0 +1,21 @@
+uuid: 356cb7a2-f6a3-4327-81cd-2a335db5d365
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_path
+    - node.type.high_score
+  module:
+    - fieldable_path
+id: node.high_score.field_path
+field_name: field_path
+entity_type: node
+bundle: high_score
+label: Path
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: fieldable_path

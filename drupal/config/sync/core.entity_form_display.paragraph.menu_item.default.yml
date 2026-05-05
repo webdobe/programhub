@@ -1,0 +1,51 @@
+uuid: 022917c2-7ff9-445b-bcb7-16e8c01abbfd
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.menu_item.field_description
+    - field.field.paragraph.menu_item.field_image
+    - field.field.paragraph.menu_item.field_label
+    - field.field.paragraph.menu_item.field_price
+    - paragraphs.paragraphs_type.menu_item
+  module:
+    - commerce_price
+    - image
+id: paragraph.menu_item.default
+targetEntityType: paragraph
+bundle: menu_item
+mode: default
+content:
+  field_description:
+    type: string_textarea
+    weight: 1
+    region: content
+    settings:
+      rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+  field_image:
+    type: image_image
+    weight: 3
+    region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+  field_label:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_price:
+    type: commerce_price_default
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

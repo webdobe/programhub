@@ -1,0 +1,42 @@
+uuid: 2d49f079-645b-4b12-b56e-b672c7178067
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.hours.field_day
+    - field.field.paragraph.hours.field_end_time
+    - field.field.paragraph.hours.field_start_time
+    - paragraphs.paragraphs_type.hours
+  module:
+    - options
+    - time_field
+id: paragraph.hours.default
+targetEntityType: paragraph
+bundle: hours
+mode: default
+content:
+  field_day:
+    type: options_buttons
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_end_time:
+    type: time_widget
+    weight: 2
+    region: content
+    settings:
+      enabled: false
+      step: 1
+    third_party_settings: {  }
+  field_start_time:
+    type: time_widget
+    weight: 1
+    region: content
+    settings:
+      enabled: false
+      step: 1
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

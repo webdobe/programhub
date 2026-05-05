@@ -1,0 +1,28 @@
+uuid: 13eb205a-1897-4811-b1d4-b336ac0c5743
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.og_audience
+    - node.type.career_outcome
+    - node.type.division
+    - node.type.program
+  module:
+    - og
+id: node.career_outcome.og_audience
+field_name: og_audience
+entity_type: node
+bundle: career_outcome
+label: 'Groups audience'
+description: 'OG group audience reference field.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'og:default'
+  handler_settings:
+    target_bundles:
+      division: division
+      program: program
+field_type: og_standard_reference

@@ -1,0 +1,29 @@
+uuid: 5fe995bf-f371-4080-b801-789d6bdb421a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_career_track
+    - node.type.career_outcome
+    - taxonomy.vocabulary.career_tracks
+id: node.career_outcome.field_career_track
+field_name: field_career_track
+entity_type: node
+bundle: career_outcome
+label: 'Career Track'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      career_tracks: career_tracks
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

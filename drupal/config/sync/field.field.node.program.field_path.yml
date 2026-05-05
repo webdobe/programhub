@@ -1,0 +1,21 @@
+uuid: 6f1113af-4494-45e0-9cc3-407ff345d620
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_path
+    - node.type.program
+  module:
+    - fieldable_path
+id: node.program.field_path
+field_name: field_path
+entity_type: node
+bundle: program
+label: Path
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: fieldable_path

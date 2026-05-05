@@ -1,0 +1,19 @@
+uuid: d3d8343e-7b64-4f66-a2ae-e94bc193e994
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_pay_range
+    - node.type.career_outcome
+id: node.career_outcome.field_pay_range
+field_name: field_pay_range
+entity_type: node
+bundle: career_outcome
+label: 'Pay Range'
+description: 'Free-form pay range — e.g. "$17–22 / hr", "$48–65k", "Owner / op".'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

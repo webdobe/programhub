@@ -1,0 +1,11 @@
+uuid: d325abc1-4e0d-4261-aa47-82f9701ee31f
+langcode: en
+status: true
+dependencies: {  }
+name: Venue
+type: venue
+description: 'A culinary service venue — restaurant, food truck, café, deli, or bakery — where students train.'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: false

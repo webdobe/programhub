@@ -1,0 +1,24 @@
+uuid: 85b676f4-dadc-4029-a204-7ebdc41587eb
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_price
+    - paragraphs.paragraphs_type.menu_item
+  module:
+    - commerce_price
+id: paragraph.menu_item.field_price
+field_name: field_price
+entity_type: paragraph
+bundle: menu_item
+label: Price
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  available_currencies:
+    - USD
+  allow_negative: false
+field_type: commerce_price

@@ -1,0 +1,10 @@
+uuid: 9cc6c8b1-952a-4bd4-942d-eb500364918b
+langcode: en
+status: true
+dependencies: {  }
+id: hours
+label: Hours
+icon_uuid: null
+icon_default: null
+description: 'A line of operating hours — day(s) plus start/end times.'
+behavior_plugins: {  }

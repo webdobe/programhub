@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.program.field_abbreviation
+    - field.field.node.program.field_path
     - field.field.node.program.og_audience
     - node.type.program
   module:
@@ -25,6 +26,14 @@ content:
     region: content
     settings:
       size: 20
+      placeholder: ''
+    third_party_settings: {  }
+  field_path:
+    type: string_textfield
+    weight: 30
+    region: content
+    settings:
+      size: 60
       placeholder: ''
     third_party_settings: {  }
   og_audience:

@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.outcome.field_game
     - field.field.node.outcome.field_heroes
+    - field.field.node.outcome.field_path
     - field.field.node.outcome.field_score
     - field.field.node.outcome.field_win
     - node.type.outcome
@@ -55,4 +56,5 @@ content:
     third_party_settings: {  }
     weight: 100
     region: content
-hidden: {  }
+hidden:
+  field_path: true

@@ -1,0 +1,155 @@
+uuid: 19398f34-8516-4065-a0cd-be869170dc88
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.venue.field_description
+    - field.field.node.venue.field_hero_image
+    - field.field.node.venue.field_hours
+    - field.field.node.venue.field_location
+    - field.field.node.venue.field_path
+    - field.field.node.venue.field_phone
+    - field.field.node.venue.field_reservation_url
+    - field.field.node.venue.field_venue_type
+    - field.field.node.venue.og_audience
+    - node.type.venue
+  module:
+    - address
+    - entity_reference_revisions
+    - fieldable_path
+    - link
+    - media_library
+    - paragraphs
+    - path
+    - telephone
+    - text
+id: node.venue.default
+targetEntityType: node
+bundle: venue
+mode: default
+content:
+  created:
+    type: datetime_timestamp
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_description:
+    type: text_textarea
+    weight: 0
+    region: content
+    settings:
+      rows: 4
+      placeholder: ''
+    third_party_settings: {  }
+  field_hero_image:
+    type: media_library_widget
+    weight: 2
+    region: content
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
+  field_hours:
+    type: paragraphs
+    weight: 6
+    region: content
+    settings:
+      title: Hours
+      title_plural: Hours
+      edit_mode: open
+      closed_mode: summary
+      autocollapse: none
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: hours
+      features:
+        add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
+    third_party_settings: {  }
+  field_location:
+    type: address_default
+    weight: 3
+    region: content
+    settings:
+      wrapper_type: fieldset
+    third_party_settings: {  }
+  field_path:
+    type: fieldable_path_widget
+    weight: 7
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_phone:
+    type: telephone_default
+    weight: 4
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_reservation_url:
+    type: link_default
+    weight: 5
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+  field_venue_type:
+    type: options_select
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  og_audience:
+    type: options_select
+    weight: 8
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    weight: 15
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 120
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    weight: 16
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 5
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden: {  }

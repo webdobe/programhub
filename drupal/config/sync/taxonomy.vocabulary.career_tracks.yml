@@ -1,0 +1,9 @@
+uuid: 8b43f2bd-d48b-4425-8f62-212dc252c599
+langcode: en
+status: true
+dependencies: {  }
+name: 'Career Tracks'
+vid: career_tracks
+description: 'High-level grouping for career outcomes (kitchen, management, ownership, etc.).'
+weight: 0
+new_revision: false

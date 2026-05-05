@@ -1,0 +1,11 @@
+uuid: f3c2ace2-da58-4b97-9f3d-272ee1f9c938
+langcode: en
+status: true
+dependencies: {  }
+name: Menu
+type: menu
+description: "A dated menu for a venue — a tasting menu at Emery's, a daily food truck offering, etc."
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: false

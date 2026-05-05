@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.division.field_abbreviation
+    - field.field.node.division.field_path
     - node.type.division
   module:
     - og
@@ -33,4 +34,5 @@ content:
     third_party_settings: {  }
     weight: 0
     region: content
-hidden: {  }
+hidden:
+  field_path: true

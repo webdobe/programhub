@@ -1,0 +1,21 @@
+uuid: fe3cc1a0-8d53-4e3d-86a5-83ba8abad2a3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_path
+    - node.type.career_outcome
+  module:
+    - fieldable_path
+id: node.career_outcome.field_path
+field_name: field_path
+entity_type: node
+bundle: career_outcome
+label: Path
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: fieldable_path

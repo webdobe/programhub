@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.high_score.field_game
+    - field.field.node.high_score.field_path
     - field.field.node.high_score.field_score
     - node.type.high_score
   module:
@@ -35,4 +36,5 @@ content:
     third_party_settings: {  }
     weight: 100
     region: content
-hidden: {  }
+hidden:
+  field_path: true

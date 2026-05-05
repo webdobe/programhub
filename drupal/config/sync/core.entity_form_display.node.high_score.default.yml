@@ -4,8 +4,11 @@ status: true
 dependencies:
   config:
     - field.field.node.high_score.field_game
+    - field.field.node.high_score.field_path
     - field.field.node.high_score.field_score
     - node.type.high_score
+  module:
+    - path
 id: node.high_score.default
 targetEntityType: node
 bundle: high_score
@@ -27,12 +30,26 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_path:
+    type: string_textfield
+    weight: 30
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_score:
     type: number
     weight: 122
     region: content
     settings:
       placeholder: ''
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    region: content
+    settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox

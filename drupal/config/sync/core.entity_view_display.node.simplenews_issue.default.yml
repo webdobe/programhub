@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.simplenews_issue.body
+    - field.field.node.simplenews_issue.field_path
     - field.field.node.simplenews_issue.og_audience
     - field.field.node.simplenews_issue.simplenews_issue
     - node.type.simplenews_issue
@@ -38,4 +39,5 @@ content:
     weight: 2
     region: content
 hidden:
+  field_path: true
   simplenews_issue: true

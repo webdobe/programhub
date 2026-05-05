@@ -1,0 +1,19 @@
+uuid: 33e4798b-e7f0-454f-8d99-ad7527987913
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_start_time
+    - paragraphs.paragraphs_type.hours
+id: paragraph.hours.field_start_time
+field_name: field_start_time
+entity_type: paragraph
+bundle: hours
+label: 'Start Time'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: time

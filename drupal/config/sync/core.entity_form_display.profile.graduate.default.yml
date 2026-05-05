@@ -18,6 +18,7 @@ dependencies:
     - field.field.profile.graduate.field_portfolio
     - field.field.profile.graduate.field_projects
     - field.field.profile.graduate.field_skills
+    - field.field.profile.graduate.field_sticker
     - field.field.profile.graduate.field_story
     - field.field.profile.graduate.og_audience
     - image.style.thumbnail
@@ -212,6 +213,14 @@ content:
         collapse_edit_all: collapse_edit_all
         convert: '0'
         duplicate: duplicate
+    third_party_settings: {  }
+  field_sticker:
+    type: image_image
+    weight: 20
+    region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
     third_party_settings: {  }
   field_story:
     type: file_generic

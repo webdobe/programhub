@@ -1,0 +1,54 @@
+uuid: a8455e2b-55d7-4558-a24a-ba790ccfd00a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.menu_item.field_description
+    - field.field.paragraph.menu_item.field_image
+    - field.field.paragraph.menu_item.field_label
+    - field.field.paragraph.menu_item.field_price
+    - paragraphs.paragraphs_type.menu_item
+  module:
+    - commerce_price
+    - image
+id: paragraph.menu_item.default
+targetEntityType: paragraph
+bundle: menu_item
+mode: default
+content:
+  field_description:
+    type: basic_string
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_image:
+    type: image
+    label: hidden
+    settings:
+      image_link: ''
+      image_style: ''
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_label:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_price:
+    type: commerce_price_default
+    label: hidden
+    settings:
+      strip_trailing_zeroes: false
+      currency_display: symbol
+    third_party_settings: {  }
+    weight: 2
+    region: content
+hidden: {  }

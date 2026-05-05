@@ -1,0 +1,19 @@
+uuid: cf10941a-1cf5-4786-a02e-20b6d354ece3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_description
+    - paragraphs.paragraphs_type.menu_item
+id: paragraph.menu_item.field_description
+field_name: field_description
+entity_type: paragraph
+bundle: menu_item
+label: Description
+description: 'Short dish description — ingredients, technique, garnish.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

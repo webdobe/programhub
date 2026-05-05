@@ -1,0 +1,57 @@
+uuid: 7bdb59fd-39ba-4a55-8620-4dd13324751f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.career_outcome.field_career_track
+    - field.field.node.career_outcome.field_description
+    - field.field.node.career_outcome.field_path
+    - field.field.node.career_outcome.field_pay_range
+    - field.field.node.career_outcome.og_audience
+    - node.type.career_outcome
+  module:
+    - text
+    - user
+id: node.career_outcome.default
+targetEntityType: node
+bundle: career_outcome
+mode: default
+content:
+  field_career_track:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_description:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_pay_range:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+  og_audience:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 3
+    region: content
+hidden:
+  field_path: true

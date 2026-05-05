@@ -1,0 +1,9 @@
+uuid: bc377c09-2b2b-46b6-88bc-342c0d40cb5a
+langcode: en
+status: true
+dependencies: {  }
+name: 'Venue Types'
+vid: venue_types
+description: 'Type of culinary service venue (restaurant, food truck, cafe, deli, bakery).'
+weight: 0
+new_revision: false

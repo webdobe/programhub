@@ -1,0 +1,24 @@
+uuid: f6e6fab7-76fe-461d-bbb7-9c46eed6226b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_set_price
+    - node.type.menu
+  module:
+    - commerce_price
+id: node.menu.field_set_price
+field_name: field_set_price
+entity_type: node
+bundle: menu
+label: 'Set Price'
+description: 'Optional set price (e.g. for a tasting menu sold as a single course).'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  available_currencies:
+    - USD
+  allow_negative: false
+field_type: commerce_price

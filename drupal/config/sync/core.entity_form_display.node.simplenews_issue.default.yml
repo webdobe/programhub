@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.simplenews_issue.body
+    - field.field.node.simplenews_issue.field_path
     - field.field.node.simplenews_issue.og_audience
     - field.field.node.simplenews_issue.simplenews_issue
     - node.type.simplenews_issue
@@ -32,6 +33,14 @@ content:
     weight: 10
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_path:
+    type: string_textfield
+    weight: 30
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   og_audience:
     type: options_select

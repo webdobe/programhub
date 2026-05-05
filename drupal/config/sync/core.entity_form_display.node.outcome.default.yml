@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.outcome.field_game
     - field.field.node.outcome.field_heroes
+    - field.field.node.outcome.field_path
     - field.field.node.outcome.field_score
     - field.field.node.outcome.field_win
     - node.type.outcome
@@ -38,6 +39,14 @@ content:
     settings:
       match_operator: CONTAINS
       match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_path:
+    type: string_textfield
+    weight: 30
+    region: content
+    settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }

@@ -1,0 +1,24 @@
+uuid: af1579ec-3707-4a7c-bfcf-f8a1afe60f94
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_description
+    - filter.format.plain_text
+    - node.type.career_outcome
+  module:
+    - text
+id: node.career_outcome.field_description
+field_name: field_description
+entity_type: node
+bundle: career_outcome
+label: Description
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats:
+    - plain_text
+field_type: text_long

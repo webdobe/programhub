@@ -1,0 +1,24 @@
+uuid: 88cc0471-b48d-4fe1-851b-2b527dec6265
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_description
+    - filter.format.plain_text
+    - node.type.menu
+  module:
+    - text
+id: node.menu.field_description
+field_name: field_description
+entity_type: node
+bundle: menu
+label: Description
+description: 'Optional short blurb about this menu (e.g. "Spring tasting · 6 courses").'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats:
+    - plain_text
+field_type: text_long

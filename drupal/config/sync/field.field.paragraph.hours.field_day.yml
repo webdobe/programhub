@@ -1,0 +1,21 @@
+uuid: c491e6cb-4658-4378-b31d-18b88b181b7b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_day
+    - paragraphs.paragraphs_type.hours
+  module:
+    - options
+id: paragraph.hours.field_day
+field_name: field_day
+entity_type: paragraph
+bundle: hours
+label: Day
+description: 'One or more days this row applies to (e.g. Mon, Tue, Wed for a Mon–Wed block).'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

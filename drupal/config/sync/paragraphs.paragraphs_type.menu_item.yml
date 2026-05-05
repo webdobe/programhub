@@ -1,0 +1,10 @@
+uuid: 16eff02f-81d5-4813-a5f1-9fd0bb17d7c6
+langcode: en
+status: true
+dependencies: {  }
+id: menu_item
+label: 'Menu Item'
+icon_uuid: null
+icon_default: null
+description: 'A single dish on a menu — image, title, description, price.'
+behavior_plugins: {  }

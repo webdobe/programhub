@@ -1,0 +1,107 @@
+uuid: 8e26e957-5ca9-4868-bc6c-41be93b08e75
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.career_outcome.field_career_track
+    - field.field.node.career_outcome.field_description
+    - field.field.node.career_outcome.field_path
+    - field.field.node.career_outcome.field_pay_range
+    - field.field.node.career_outcome.og_audience
+    - node.type.career_outcome
+  module:
+    - path
+    - text
+id: node.career_outcome.default
+targetEntityType: node
+bundle: career_outcome
+mode: default
+content:
+  created:
+    type: datetime_timestamp
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_career_track:
+    type: options_select
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_description:
+    type: text_textarea
+    weight: 2
+    region: content
+    settings:
+      rows: 4
+      placeholder: ''
+    third_party_settings: {  }
+  field_path:
+    type: string_textfield
+    weight: 30
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_pay_range:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 32
+      placeholder: 'e.g. $17–22 / hr'
+    third_party_settings: {  }
+  og_audience:
+    type: options_select
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    weight: 15
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 120
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    weight: 16
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 5
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden: {  }

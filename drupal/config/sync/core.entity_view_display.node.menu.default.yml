@@ -1,0 +1,83 @@
+uuid: 89c86b98-6d19-4343-8466-e8162bab0795
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.menu.field_description
+    - field.field.node.menu.field_menu_dates
+    - field.field.node.menu.field_menu_items
+    - field.field.node.menu.field_path
+    - field.field.node.menu.field_set_price
+    - field.field.node.menu.field_venue
+    - field.field.node.menu.og_audience
+    - node.type.menu
+  module:
+    - commerce_price
+    - datetime_range
+    - entity_reference_revisions
+    - text
+    - user
+id: node.menu.default
+targetEntityType: node
+bundle: menu
+mode: default
+content:
+  field_description:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_menu_dates:
+    type: daterange_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+      from_to: both
+      separator: '-'
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_menu_items:
+    type: entity_reference_revisions_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_set_price:
+    type: commerce_price_default
+    label: above
+    settings:
+      strip_trailing_zeroes: false
+      currency_display: symbol
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_venue:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+  og_audience:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 5
+    region: content
+hidden:
+  field_path: true

@@ -1,0 +1,31 @@
+uuid: f051b65a-cf08-4695-a874-b1c07b64329e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_hours
+    - node.type.venue
+    - paragraphs.paragraphs_type.hours
+  module:
+    - entity_reference_revisions
+id: node.venue.field_hours
+field_name: field_hours
+entity_type: node
+bundle: venue
+label: Hours
+description: 'Operating hours — add a row per service window.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      hours: hours
+    negate: 0
+    target_bundles_drag_drop:
+      hours:
+        weight: 0
+        enabled: true
+field_type: entity_reference_revisions

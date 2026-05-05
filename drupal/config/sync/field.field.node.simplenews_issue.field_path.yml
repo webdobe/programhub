@@ -1,0 +1,21 @@
+uuid: 18224f00-2f88-4d54-987b-1d82d08cdcd2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_path
+    - node.type.simplenews_issue
+  module:
+    - fieldable_path
+id: node.simplenews_issue.field_path
+field_name: field_path
+entity_type: node
+bundle: simplenews_issue
+label: Path
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: fieldable_path

@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.division.field_abbreviation
+    - field.field.node.division.field_path
     - node.type.division
   module:
     - path
@@ -24,6 +25,14 @@ content:
     region: content
     settings:
       size: 20
+      placeholder: ''
+    third_party_settings: {  }
+  field_path:
+    type: string_textfield
+    weight: 30
+    region: content
+    settings:
+      size: 60
       placeholder: ''
     third_party_settings: {  }
   path:

@@ -8,6 +8,7 @@ dependencies:
     - field.field.node.course.field_course_number
     - field.field.node.course.field_course_semester
     - field.field.node.course.field_description
+    - field.field.node.course.field_path
     - field.field.node.course.og_audience
     - node.type.course
   module:
@@ -71,4 +72,5 @@ content:
     third_party_settings: {  }
     weight: 106
     region: content
-hidden: {  }
+hidden:
+  field_path: true
