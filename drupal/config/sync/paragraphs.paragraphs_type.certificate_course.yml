@@ -1,0 +1,10 @@
+uuid: 79ee1a64-1f22-4eb9-a3ef-2160c879c075
+langcode: en
+status: true
+dependencies: {  }
+id: certificate_course
+label: 'Certificate Course'
+icon_uuid: null
+icon_default: null
+description: 'A course assignment within a certificate — references one course node and pins which curriculum semester it belongs to. Lives only on certificate nodes.'
+behavior_plugins: {  }

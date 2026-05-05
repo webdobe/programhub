@@ -1,0 +1,21 @@
+uuid: 9be45292-ff2e-4fa6-bc98-d7d28697c994
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_outcomes
+    - node.type.certificate
+  module:
+    - text
+id: node.certificate.field_outcomes
+field_name: field_outcomes
+entity_type: node
+bundle: certificate
+label: 'Program Learning Outcomes'
+description: 'What students will be able to do upon completing the certificate. Imported from the catalog.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long

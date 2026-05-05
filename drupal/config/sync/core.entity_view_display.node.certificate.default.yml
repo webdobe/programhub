@@ -1,0 +1,90 @@
+uuid: 94432c79-3aa5-40fb-8ae7-a238837a6f4b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.certificate.field_certificate_url
+    - field.field.node.certificate.field_courses
+    - field.field.node.certificate.field_outcomes
+    - field.field.node.certificate.field_overview
+    - field.field.node.certificate.field_path
+    - field.field.node.certificate.field_requirements_text
+    - field.field.node.certificate.field_total_credits
+    - field.field.node.certificate.og_audience
+    - node.type.certificate
+  module:
+    - entity_reference_revisions
+    - link
+    - text
+    - user
+id: node.certificate.default
+targetEntityType: node
+bundle: certificate
+mode: default
+content:
+  field_certificate_url:
+    type: link
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: '0'
+      target: _blank
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_courses:
+    type: entity_reference_revisions_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 110
+    region: content
+  field_outcomes:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 105
+    region: content
+  field_overview:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 103
+    region: content
+  field_requirements_text:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 104
+    region: content
+  field_total_credits:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 106
+    region: content
+  og_audience:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 120
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_path: true

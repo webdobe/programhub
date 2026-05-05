@@ -1,0 +1,23 @@
+uuid: cf6c8c4a-68d1-439a-ab3b-b7f2e6c88df7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_total_credits
+    - node.type.certificate
+id: node.certificate.field_total_credits
+field_name: field_total_credits
+entity_type: node
+bundle: certificate
+label: 'Total Credits'
+description: 'Total credit hours required to complete the certificate.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

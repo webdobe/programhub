@@ -1,0 +1,29 @@
+uuid: 26bc0ec5-41bb-435a-a391-005b227d9da9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_course
+    - node.type.course
+    - paragraphs.paragraphs_type.certificate_course
+id: paragraph.certificate_course.field_course
+field_name: field_course
+entity_type: paragraph
+bundle: certificate_course
+label: Course
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      course: course
+    sort:
+      field: field_course_number
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

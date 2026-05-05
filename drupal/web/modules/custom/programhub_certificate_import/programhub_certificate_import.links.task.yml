@@ -1,0 +1,5 @@
+programhub_certificate_import.certificates_tab:
+  route_name: programhub_certificate_import.certificates_tab
+  base_route: entity.node.canonical
+  title: 'Certificates'
+  weight: 11

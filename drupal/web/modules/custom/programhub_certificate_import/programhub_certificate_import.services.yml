@@ -1,0 +1,15 @@
+services:
+  programhub_certificate_import.scraper:
+    class: Drupal\programhub_certificate_import\Service\CertificateScraper
+    arguments:
+      - '@http_client'
+      - '@logger.factory'
+
+  programhub_certificate_import.importer:
+    class: Drupal\programhub_certificate_import\Service\CertificateImporter
+    arguments:
+      - '@entity_type.manager'
+      - '@programhub_certificate_import.scraper'
+      - '@programhub_course_import.importer'
+      - '@logger.factory'
+      - '@current_user'

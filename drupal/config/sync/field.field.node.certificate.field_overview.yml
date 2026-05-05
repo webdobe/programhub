@@ -1,0 +1,21 @@
+uuid: e7ba17b5-be51-4ee2-8bac-de0df0562e33
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_overview
+    - node.type.certificate
+  module:
+    - text
+id: node.certificate.field_overview
+field_name: field_overview
+entity_type: node
+bundle: certificate
+label: Overview
+description: 'Top-level description of the certificate. Imported from the catalog.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long

@@ -1,0 +1,23 @@
+uuid: 695fce1b-79b2-4259-b831-6b7c17742a18
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_certificate_url
+    - node.type.certificate
+  module:
+    - link
+id: node.certificate.field_certificate_url
+field_name: field_certificate_url
+entity_type: node
+bundle: certificate
+label: 'Catalog URL'
+description: 'Source program-guidelines page in the NIC catalog (used to scrape overview, outcomes, and requirements).'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  link_type: 17
+  title: 0
+field_type: link

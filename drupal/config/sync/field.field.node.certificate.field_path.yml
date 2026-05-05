@@ -1,0 +1,21 @@
+uuid: ead55bdd-f3d7-474e-921d-152a023bbb63
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_path
+    - node.type.certificate
+  module:
+    - fieldable_path
+id: node.certificate.field_path
+field_name: field_path
+entity_type: node
+bundle: certificate
+label: Path
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: fieldable_path

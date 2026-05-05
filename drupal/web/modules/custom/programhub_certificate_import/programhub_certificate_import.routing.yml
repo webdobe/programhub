@@ -1,0 +1,26 @@
+programhub_certificate_import.import_one:
+  path: '/admin/programhub/import-certificate/{node}'
+  defaults:
+    _controller: 'Drupal\programhub_certificate_import\Controller\CertificateController::importOne'
+    _title: 'Import certificate'
+  requirements:
+    _permission: 'import programhub certificates'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: entity:node
+
+programhub_certificate_import.certificates_tab:
+  path: '/node/{node}/certificates'
+  defaults:
+    _controller: 'Drupal\programhub_certificate_import\Controller\CertificateController::certificatesTab'
+    _title: 'Certificates'
+  requirements:
+    _entity_access: 'node.view'
+    _entity_bundles: 'node:program'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: entity:node

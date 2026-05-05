@@ -1,0 +1,11 @@
+name: 'ProgramHub Certificate Import'
+type: module
+description: 'Imports certificate (degree/credential) overview, learning outcomes, and required-course list from NIC catalog program-guidelines pages. Adds a Certificates tab on program nodes for managing them and triggering imports.'
+package: 'ProgramHub'
+core_version_requirement: ^10 || ^11
+dependencies:
+  - drupal:node
+  - drupal:taxonomy
+  - drupal:paragraphs
+  - og:og
+  - programhub_course_import:programhub_course_import

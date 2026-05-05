@@ -1,0 +1,26 @@
+uuid: 85f13f84-c342-41a7-948c-a263bac08858
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.og_audience
+    - node.type.certificate
+    - node.type.program
+  module:
+    - og
+id: node.certificate.og_audience
+field_name: og_audience
+entity_type: node
+bundle: certificate
+label: 'Groups audience'
+description: 'OG group audience reference field — scopes a certificate to its parent program.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'og:default'
+  handler_settings:
+    target_bundles:
+      program: program
+field_type: og_standard_reference

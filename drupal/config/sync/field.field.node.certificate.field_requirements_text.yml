@@ -1,0 +1,21 @@
+uuid: 425ba448-6bbe-441d-81a6-c34d7cd49782
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_requirements_text
+    - node.type.certificate
+  module:
+    - text
+id: node.certificate.field_requirements_text
+field_name: field_requirements_text
+entity_type: node
+bundle: certificate
+label: 'Requirements Narrative'
+description: 'Narrative copy that accompanies the requirements section in the catalog (notes, prereq policies, residency rules, etc.). The structured course list lives in the Courses field.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long

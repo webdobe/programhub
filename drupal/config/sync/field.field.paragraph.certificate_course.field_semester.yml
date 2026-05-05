@@ -1,0 +1,21 @@
+uuid: cc3857f5-cdc5-460f-b8a1-7e6afe4d32dd
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_semester
+    - paragraphs.paragraphs_type.certificate_course
+  module:
+    - options
+id: paragraph.certificate_course.field_semester
+field_name: field_semester
+entity_type: paragraph
+bundle: certificate_course
+label: Semester
+description: 'Curriculum semester for this course within the certificate (1 = first semester of study).'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_integer

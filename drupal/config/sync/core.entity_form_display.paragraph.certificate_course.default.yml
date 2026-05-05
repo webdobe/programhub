@@ -1,0 +1,32 @@
+uuid: a8ac696a-9982-4fc6-bb8d-6e004c58c1a8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.certificate_course.field_course
+    - field.field.paragraph.certificate_course.field_semester
+    - paragraphs.paragraphs_type.certificate_course
+  module:
+    - options
+id: paragraph.certificate_course.default
+targetEntityType: paragraph
+bundle: certificate_course
+mode: default
+content:
+  field_course:
+    type: entity_reference_autocomplete
+    weight: 0
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: 'Search by course title or number'
+    third_party_settings: {  }
+  field_semester:
+    type: options_select
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }

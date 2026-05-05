@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * @file
+ * Hooks for ProgramHub Certificate Import.
+ *
+ * Adds an "Import from catalog" operation link on each `certificate` node row
+ * (in admin lists) when the certificate has a configured catalog URL.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_entity_operation().
+ */
+function programhub_certificate_import_entity_operation(EntityInterface $entity): array {
+  $operations = [];
+
+  if (
+    $entity->getEntityTypeId() === 'node'
+    && $entity->bundle() === 'certificate'
+    && $entity->hasField('field_certificate_url')
+    && !$entity->get('field_certificate_url')->isEmpty()
+    && \Drupal::currentUser()->hasPermission('import programhub certificates')
+  ) {
+    $operations['import_certificate'] = [
+      'title' => t('Import from catalog'),
+      'url' => Url::fromRoute(
+        'programhub_certificate_import.import_one',
+        ['node' => $entity->id()],
+      ),
+      'weight' => 100,
+    ];
+  }
+
+  return $operations;
+}

@@ -1,0 +1,31 @@
+uuid: 3599f191-bdb3-4785-8cdb-c2f7b8fcc6fc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.certificate_course.field_course
+    - field.field.paragraph.certificate_course.field_semester
+    - paragraphs.paragraphs_type.certificate_course
+  module:
+    - options
+id: paragraph.certificate_course.default
+targetEntityType: paragraph
+bundle: certificate_course
+mode: default
+content:
+  field_course:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_semester:
+    type: list_default
+    label: inline
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden: {  }

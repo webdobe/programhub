@@ -1,0 +1,31 @@
+uuid: 6f904fd8-6a3e-450a-9498-08c31bf83fb5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_courses
+    - node.type.certificate
+    - paragraphs.paragraphs_type.certificate_course
+  module:
+    - entity_reference_revisions
+id: node.certificate.field_courses
+field_name: field_courses
+entity_type: node
+bundle: certificate
+label: Courses
+description: 'Required courses for this certificate, ordered by curriculum semester.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      certificate_course: certificate_course
+    negate: 0
+    target_bundles_drag_drop:
+      certificate_course:
+        weight: 0
+        enabled: true
+field_type: entity_reference_revisions

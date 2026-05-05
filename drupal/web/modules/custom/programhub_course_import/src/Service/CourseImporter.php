@@ -44,6 +44,69 @@ final class CourseImporter {
    *
    * @return array{created:int,updated:int,unchanged:int,flagged:int,spidered:int,errors:array<int,string>,prefix:string,url:string}
    */
+  /**
+   * Public spider entry point — make sure each given course number exists in
+   * Drupal (creating + recursively resolving prereqs as needed). Used by other
+   * modules (e.g. the certificate importer) that have a list of course numbers
+   * and need real course nodes back.
+   *
+   * @param array<int, string> $numbers
+   * @return array{nodes: array<string, NodeInterface>, missing: array<int, string>, spidered: int}
+   *   - nodes: map of number → resolved course node (only successfully-resolved entries)
+   *   - missing: numbers we couldn't find or scrape
+   *   - spidered: count of courses created during this call
+   */
+  public function ensureCoursesByNumbers(array $numbers): array {
+    $logger = $this->loggerFactory->get('programhub_course_import');
+    $courseCache = [];
+    $rowCache = [];
+    $counters = [
+      'created' => 0,
+      'updated' => 0,
+      'unchanged' => 0,
+      'flagged' => 0,
+      'spidered' => 0,
+      'errors' => [],
+      'prefix' => '',
+      'url' => '',
+    ];
+    $missing = [];
+
+    // ensureCourseByNumber needs a "primary program" for context; we don't
+    // have one in this entry point, so synthesize a sentinel that isn't used
+    // beyond identity.
+    $sentinel = $this->entityTypeManager->getStorage('node')->create([
+      'type' => 'program',
+      'title' => '__spider_sentinel__',
+    ]);
+
+    $resolved = [];
+    foreach (array_unique($numbers) as $number) {
+      $node = $this->ensureCourseByNumber(
+        $number,
+        $sentinel,
+        $courseCache,
+        $rowCache,
+        $counters,
+        FALSE,
+        $logger,
+        0,
+      );
+      if ($node !== NULL) {
+        $resolved[$number] = $node;
+      }
+      else {
+        $missing[] = $number;
+      }
+    }
+
+    return [
+      'nodes' => $resolved,
+      'missing' => $missing,
+      'spidered' => $counters['spidered'],
+    ];
+  }
+
   public function importForProgram(NodeInterface $program, bool $dryRun = FALSE): array {
     $logger = $this->loggerFactory->get('programhub_course_import');
     $result = [

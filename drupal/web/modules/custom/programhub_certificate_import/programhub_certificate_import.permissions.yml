@@ -1,0 +1,4 @@
+import programhub certificates:
+  title: 'Import certificates from the NIC catalog'
+  description: 'Allows running the program-guidelines scraper that populates a certificate node from its catalog URL.'
+  restrict access: true

@@ -1,0 +1,11 @@
+uuid: 9c7e173a-4dee-4cec-b2c3-bba11db21b6b
+langcode: en
+status: true
+dependencies: {  }
+name: Certificate
+type: certificate
+description: 'Use <em>Certificate</em> for a credential offered within a program (e.g. AAS, ATC). Holds the catalog overview, learning outcomes, and the ordered list of required courses.'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: false
