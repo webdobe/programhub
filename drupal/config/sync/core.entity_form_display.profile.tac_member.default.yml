@@ -9,6 +9,7 @@ dependencies:
     - field.field.profile.tac_member.field_image
     - field.field.profile.tac_member.field_job_title
     - field.field.profile.tac_member.field_name
+    - field.field.profile.tac_member.field_path
     - field.field.profile.tac_member.og_audience
     - image.style.thumbnail
     - profile.type.tac_member
@@ -102,4 +103,5 @@ content:
     settings: {  }
     third_party_settings: {  }
 hidden:
+  field_path: true
   is_default: true

@@ -1,0 +1,7 @@
+name: 'ProgramHub Profile Paths'
+type: module
+description: 'Auto-generates field_path on profile entities (graduate, instructor, tac_member) using the pattern /<bundle>/<first>-<last>.'
+package: 'ProgramHub'
+core_version_requirement: ^10 || ^11
+dependencies:
+  - profile:profile

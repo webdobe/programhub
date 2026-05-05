@@ -1,0 +1,19 @@
+uuid: fd951397-28d5-4f83-b4d9-44041b98a22d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_path
+    - profile.type.instructor
+id: profile.instructor.field_path
+field_name: field_path
+entity_type: profile
+bundle: instructor
+label: Path
+description: 'Auto-generated. /<bundle>/<first>-<last>'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

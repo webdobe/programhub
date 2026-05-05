@@ -1,0 +1,19 @@
+uuid: a8c332ce-8fd5-4681-83d0-d586ea3f1694
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_path
+    - profile.type.tac_member
+id: profile.tac_member.field_path
+field_name: field_path
+entity_type: profile
+bundle: tac_member
+label: Path
+description: 'Auto-generated. /<bundle>/<first>-<last>'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

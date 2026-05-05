@@ -9,6 +9,7 @@ dependencies:
     - field.field.profile.tac_member.field_image
     - field.field.profile.tac_member.field_job_title
     - field.field.profile.tac_member.field_name
+    - field.field.profile.tac_member.field_path
     - field.field.profile.tac_member.og_audience
     - profile.type.tac_member
   module:
@@ -90,4 +91,5 @@ content:
     third_party_settings: {  }
     weight: 18
     region: content
-hidden: {  }
+hidden:
+  field_path: true

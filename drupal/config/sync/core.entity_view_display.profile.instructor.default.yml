@@ -12,6 +12,7 @@ dependencies:
     - field.field.profile.instructor.field_instagram
     - field.field.profile.instructor.field_linkedin
     - field.field.profile.instructor.field_name
+    - field.field.profile.instructor.field_path
     - field.field.profile.instructor.field_pixelated_image
     - field.field.profile.instructor.field_portfolio
     - field.field.profile.instructor.og_audience
@@ -149,4 +150,5 @@ content:
     third_party_settings: {  }
     weight: 13
     region: content
-hidden: {  }
+hidden:
+  field_path: true

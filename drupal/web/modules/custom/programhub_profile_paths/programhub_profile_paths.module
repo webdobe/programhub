@@ -1,0 +1,129 @@
+<?php
+
+/**
+ * @file
+ * Auto-generates field_path on profile entities.
+ *
+ * Pathauto can't drive aliases on profile entities directly because they don't
+ * carry a core path field. Instead we own a `field_path` (string) on each
+ * supported profile bundle and fill it in here.
+ *
+ * Pattern: /<bundle-prefix>/<first>-<last>
+ *   graduate    → /graduates/<first>-<last>
+ *   instructor  → /instructors/<first>-<last>
+ *   tac_member  → /tac-members/<first>-<last>
+ */
+
+use Drupal\profile\Entity\ProfileInterface;
+
+/**
+ * Map a profile bundle id to the URL prefix used in field_path.
+ */
+function programhub_profile_paths_prefix_for_bundle(string $bundle): ?string {
+  return [
+    'graduate' => 'graduates',
+    'instructor' => 'instructors',
+    'tac_member' => 'tac-members',
+  ][$bundle] ?? NULL;
+}
+
+/**
+ * Slugify "First", "Last" into "first-last".
+ */
+function programhub_profile_paths_slug_from_name(?string $given, ?string $family): ?string {
+  $given = trim((string) $given);
+  $family = trim((string) $family);
+  if ($given === '' && $family === '') {
+    return NULL;
+  }
+  $combined = trim($given . ' ' . $family);
+  // Lowercase, ASCII-fold, replace non-alphanumeric with dashes.
+  $combined = mb_strtolower($combined);
+  $combined = preg_replace('/[^\p{L}\p{N}]+/u', '-', $combined);
+  $combined = trim($combined, '-');
+  return $combined !== '' ? $combined : NULL;
+}
+
+/**
+ * Compute the canonical /prefix/slug for a profile, or NULL if not derivable.
+ */
+function programhub_profile_paths_compute(ProfileInterface $profile): ?string {
+  $prefix = programhub_profile_paths_prefix_for_bundle($profile->bundle());
+  if ($prefix === NULL) {
+    return NULL;
+  }
+  if (!$profile->hasField('field_name') || !$profile->hasField('field_path')) {
+    return NULL;
+  }
+  $name = $profile->get('field_name')->getValue();
+  if (empty($name)) {
+    return NULL;
+  }
+  $slug = programhub_profile_paths_slug_from_name(
+    $name[0]['given'] ?? NULL,
+    $name[0]['family'] ?? NULL,
+  );
+  if ($slug === NULL) {
+    return NULL;
+  }
+
+  $base = "/$prefix/$slug";
+
+  // Disambiguate against other profiles using the same path.
+  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+  $candidate = $base;
+  $i = 1;
+  while (TRUE) {
+    $query = $storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('field_path', $candidate);
+    if (!$profile->isNew()) {
+      $query->condition('profile_id', $profile->id(), '<>');
+    }
+    $hit = $query->range(0, 1)->execute();
+    if (!$hit) {
+      return $candidate;
+    }
+    $i++;
+    $candidate = "$base-$i";
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave() for profile entities.
+ *
+ * Sets field_path automatically. Respects an explicit override only if the
+ * existing value still matches the bundle prefix — otherwise it gets recomputed
+ * so renamed profiles update their path.
+ */
+function programhub_profile_paths_profile_presave(ProfileInterface $profile): void {
+  if (!$profile->hasField('field_path')) {
+    return;
+  }
+  $computed = programhub_profile_paths_compute($profile);
+  if ($computed === NULL) {
+    return;
+  }
+
+  $current = $profile->get('field_path')->value;
+  if ($current === $computed) {
+    return;
+  }
+
+  // If the user manually edited field_path to something with the right prefix
+  // (and it isn't auto-computable from name), leave it alone.
+  $prefix = programhub_profile_paths_prefix_for_bundle($profile->bundle());
+  if (
+    $current
+    && $prefix
+    && str_starts_with((string) $current, "/$prefix/")
+    && $current !== $computed
+    && !$profile->isNew()
+    // Only respect manual override when the name didn't change.
+    && !$profile->get('field_name')->getValue()
+  ) {
+    return;
+  }
+
+  $profile->set('field_path', $computed);
+}
