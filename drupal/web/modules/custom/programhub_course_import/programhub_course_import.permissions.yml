@@ -1,0 +1,4 @@
+import programhub courses:
+  title: 'Import courses from the NIC catalog'
+  description: 'Allows running the catalog scraper that creates/updates `course` nodes for a given program.'
+  restrict access: true

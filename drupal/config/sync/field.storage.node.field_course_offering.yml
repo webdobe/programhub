@@ -1,0 +1,20 @@
+uuid: 9f5649f0-9084-444c-aef7-756b33675bd7
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - taxonomy
+id: node.field_course_offering
+field_name: field_course_offering
+entity_type: node
+type: entity_reference
+settings:
+  target_type: taxonomy_term
+module: core
+locked: false
+cardinality: -1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

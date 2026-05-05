@@ -41,6 +41,7 @@ module:
   path: 0
   path_alias: 0
   profile: 0
+  programhub_course_import: 0
   programhub_profile_paths: 0
   rest: 0
   restui: 0

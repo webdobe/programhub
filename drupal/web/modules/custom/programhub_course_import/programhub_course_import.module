@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * @file
+ * Hooks for ProgramHub Course Import.
+ *
+ * - Adds an "Import Courses" operation link on each `program` node row
+ *   in admin lists. Clicking it triggers a single-program scrape+import.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_entity_operation().
+ */
+function programhub_course_import_entity_operation(EntityInterface $entity): array {
+  $operations = [];
+
+  if (
+    $entity->getEntityTypeId() === 'node'
+    && $entity->bundle() === 'program'
+    && \Drupal::currentUser()->hasPermission('import programhub courses')
+  ) {
+    $operations['import_courses'] = [
+      'title' => t('Import Courses'),
+      'url' => Url::fromRoute(
+        'programhub_course_import.import_program',
+        ['node' => $entity->id()],
+      ),
+      'weight' => 100,
+    ];
+  }
+
+  return $operations;
+}

@@ -1,0 +1,21 @@
+uuid: 361e563a-dbeb-456a-9176-9d2e6e7b677e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_course_year_cycle
+    - node.type.course
+  module:
+    - options
+id: node.course.field_course_year_cycle
+field_name: field_course_year_cycle
+entity_type: node
+bundle: course
+label: 'Year Cycle'
+description: 'Distinguishes courses offered every year ("All Years") from those offered only in even or odd academic years.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

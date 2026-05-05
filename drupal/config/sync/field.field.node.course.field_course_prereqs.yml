@@ -1,0 +1,28 @@
+uuid: 0cc05539-4fed-496d-936b-f52335c55359
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_course_prereqs
+    - node.type.course
+id: node.course.field_course_prereqs
+field_name: field_course_prereqs
+entity_type: node
+bundle: course
+label: 'Prerequisites'
+description: 'Required prerequisite and corequisite courses, as listed in the catalog.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      course: course
+    sort:
+      field: field_course_number
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

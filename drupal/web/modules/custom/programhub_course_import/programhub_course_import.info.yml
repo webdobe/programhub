@@ -1,0 +1,9 @@
+name: 'ProgramHub Course Import'
+type: module
+description: 'Imports current course descriptions from the NIC catalog (catalog.nic.edu) into Drupal as `course` nodes scoped to the matching program. Provides a single-program operation link, a VBO bulk action, and a drush command. Existing courses get a new revision; courses no longer in the catalog get unpublished and flagged for review.'
+package: 'ProgramHub'
+core_version_requirement: ^10 || ^11
+dependencies:
+  - drupal:node
+  - drupal:taxonomy
+  - og:og

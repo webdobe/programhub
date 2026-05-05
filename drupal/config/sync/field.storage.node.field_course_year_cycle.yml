@@ -1,0 +1,30 @@
+uuid: f0505df6-2394-40b5-a434-d5f3e370d256
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.field_course_year_cycle
+field_name: field_course_year_cycle
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: all
+      label: 'All Years'
+    -
+      value: even
+      label: 'Even Years Only'
+    -
+      value: odd
+      label: 'Odd Years Only'
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

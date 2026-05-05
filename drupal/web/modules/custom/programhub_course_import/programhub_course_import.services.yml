@@ -1,0 +1,14 @@
+services:
+  programhub_course_import.scraper:
+    class: Drupal\programhub_course_import\Service\CatalogScraper
+    arguments:
+      - '@http_client'
+      - '@logger.factory'
+
+  programhub_course_import.importer:
+    class: Drupal\programhub_course_import\Service\CourseImporter
+    arguments:
+      - '@entity_type.manager'
+      - '@programhub_course_import.scraper'
+      - '@logger.factory'
+      - '@current_user'

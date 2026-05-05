@@ -6,13 +6,19 @@ dependencies:
     - field.field.node.course.field_course_credits
     - field.field.node.course.field_course_instructors
     - field.field.node.course.field_course_number
+    - field.field.node.course.field_course_offering
+    - field.field.node.course.field_course_prereqs
+    - field.field.node.course.field_course_rec_prereqs
     - field.field.node.course.field_course_semester
+    - field.field.node.course.field_course_year_cycle
     - field.field.node.course.field_description
     - field.field.node.course.field_path
     - field.field.node.course.og_audience
     - node.type.course
+    - taxonomy.vocabulary.course_offering
   module:
     - path
+    - taxonomy
     - text
 id: node.course.default
 targetEntityType: node
@@ -50,9 +56,41 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_course_offering:
+    type: options_select
+    weight: 127
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_course_prereqs:
+    type: entity_reference_autocomplete_tags
+    weight: 128
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_course_rec_prereqs:
+    type: entity_reference_autocomplete_tags
+    weight: 129
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_course_semester:
     type: options_select
     weight: 124
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_course_year_cycle:
+    type: options_select
+    weight: 130
     region: content
     settings: {  }
     third_party_settings: {  }

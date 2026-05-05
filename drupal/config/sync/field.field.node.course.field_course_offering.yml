@@ -1,0 +1,29 @@
+uuid: 4fa107ad-1d27-4b41-b9d1-24638050a1f9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_course_offering
+    - node.type.course
+    - taxonomy.vocabulary.course_offering
+id: node.course.field_course_offering
+field_name: field_course_offering
+entity_type: node
+bundle: course
+label: 'Offered Semesters'
+description: 'Semesters in which the course is offered (Fall, Spring, etc.). Tags are auto-created from the catalog during import; admins should not add new tags manually.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      course_offering: course_offering
+    sort:
+      field: name
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

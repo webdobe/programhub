@@ -1,0 +1,26 @@
+programhub_course_import.import_program:
+  path: '/admin/programhub/import-courses/{node}'
+  defaults:
+    _controller: 'Drupal\programhub_course_import\Controller\CourseImportController::importOne'
+    _title: 'Import courses'
+  requirements:
+    _permission: 'import programhub courses'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: entity:node
+
+programhub_course_import.courses_tab:
+  path: '/node/{node}/courses'
+  defaults:
+    _controller: 'Drupal\programhub_course_import\Controller\CourseImportController::coursesTab'
+    _title: 'Courses'
+  requirements:
+    _entity_access: 'node.view'
+    _entity_bundles: 'node:program'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: entity:node

@@ -1,0 +1,9 @@
+uuid: 93b41968-0e84-4642-aaf5-a7928ec030eb
+langcode: en
+status: true
+dependencies: {  }
+name: 'Course Offering'
+vid: course_offering
+description: 'Semesters in which a course is offered (Fall, Spring, Summer, etc.). One term per semester. Terms are auto-created during catalog imports; admins should not add new terms manually.'
+weight: 0
+new_revision: false

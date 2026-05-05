@@ -6,13 +6,19 @@ dependencies:
     - field.field.node.course.field_course_credits
     - field.field.node.course.field_course_instructors
     - field.field.node.course.field_course_number
+    - field.field.node.course.field_course_offering
+    - field.field.node.course.field_course_prereqs
+    - field.field.node.course.field_course_rec_prereqs
     - field.field.node.course.field_course_semester
+    - field.field.node.course.field_course_year_cycle
     - field.field.node.course.field_description
     - field.field.node.course.field_path
     - field.field.node.course.og_audience
     - node.type.course
+    - taxonomy.vocabulary.course_offering
   module:
     - options
+    - taxonomy
     - text
     - user
 id: node.course.default
@@ -45,12 +51,43 @@ content:
     third_party_settings: {  }
     weight: 101
     region: content
+  field_course_offering:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: false
+    third_party_settings: {  }
+    weight: 107
+    region: content
+  field_course_prereqs:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 108
+    region: content
+  field_course_rec_prereqs:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 109
+    region: content
   field_course_semester:
     type: list_default
     label: above
     settings: {  }
     third_party_settings: {  }
     weight: 104
+    region: content
+  field_course_year_cycle:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 110
     region: content
   field_description:
     type: text_default

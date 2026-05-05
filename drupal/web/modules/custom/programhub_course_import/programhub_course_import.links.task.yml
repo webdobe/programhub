@@ -1,0 +1,5 @@
+programhub_course_import.courses_tab:
+  route_name: programhub_course_import.courses_tab
+  base_route: entity.node.canonical
+  title: 'Courses'
+  weight: 10

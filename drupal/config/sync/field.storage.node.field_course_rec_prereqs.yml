@@ -1,0 +1,19 @@
+uuid: 18b3d676-76d2-4170-944c-bf7651a6113b
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_course_rec_prereqs
+field_name: field_course_rec_prereqs
+entity_type: node
+type: entity_reference
+settings:
+  target_type: node
+module: core
+locked: false
+cardinality: -1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
