@@ -30,11 +30,11 @@ final class CertificateScraper {
    *
    * @return array{
    *   title:string,
+   *   typeAbbr:?string,
    *   overviewHtml:string,
    *   outcomesHtml:string,
-   *   requirementsHtml:string,
    *   totalCredits:?int,
-   *   courses:array<int, array{number:string, semester:?int}>,
+   *   courses:array<int, array{number:string, semester:?int, credits:string}>,
    * }|null
    *   NULL if fetch failed or page didn't look like a program-guidelines page.
    */
@@ -86,12 +86,12 @@ final class CertificateScraper {
     $xpath = new \DOMXPath($dom);
 
     $title = $this->extractTitle($xpath);
+    $typeAbbr = $this->extractTypeAbbr($title);
 
-    $overviewHtml = $this->innerHtmlOfContainer($dom, $xpath, 'textcontainer');
+    $overviewHtml = $this->extractProgramDescriptionProse($dom, $xpath);
     $outcomesHtml = $this->innerHtmlOfContainer($dom, $xpath, 'outcomestextcontainer');
-    $requirementsHtml = $this->innerHtmlOfContainer($dom, $xpath, 'requirementstextcontainer');
 
-    if ($overviewHtml === '' && $requirementsHtml === '' && $outcomesHtml === '') {
+    if ($overviewHtml === '' && $outcomesHtml === '') {
       // Doesn't look like a program-guidelines page.
       return NULL;
     }
@@ -100,12 +100,57 @@ final class CertificateScraper {
 
     return [
       'title' => $title,
+      'typeAbbr' => $typeAbbr,
       'overviewHtml' => $overviewHtml,
       'outcomesHtml' => $outcomesHtml,
-      'requirementsHtml' => $requirementsHtml,
       'totalCredits' => $totalCredits,
       'courses' => $courses,
     ];
+  }
+
+  /**
+   * Pull the parenthesised credential abbreviation out of "Foo Bar (XYZ)".
+   * Returns NULL if no parens found.
+   */
+  private function extractTypeAbbr(string $title): ?string {
+    if (preg_match('/\(([A-Z]{2,5})\)\s*$/u', $title, $m)) {
+      return $m[1];
+    }
+    return NULL;
+  }
+
+  /**
+   * Inner HTML of #programdescriptions, but ONLY the prose that appears
+   * BEFORE any tab container (textcontainer, requirementstextcontainer,
+   * outcomestextcontainer). The tabs are typically wrapped or follow as
+   * sibling divs; we stop at the first one we encounter.
+   */
+  private function extractProgramDescriptionProse(\DOMDocument $dom, \DOMXPath $xpath): string {
+    $container = $xpath->query("//*[@id='programdescriptions']")->item(0);
+    if ($container === NULL) {
+      return '';
+    }
+
+    $tabIds = ['textcontainer', 'requirementstextcontainer', 'outcomestextcontainer'];
+    $html = '';
+    foreach ($container->childNodes as $child) {
+      if ($child instanceof \DOMElement) {
+        $childId = $child->getAttribute('id');
+        if (in_array($childId, $tabIds, TRUE)) {
+          break;
+        }
+        // Some sites wrap tabs in a tab-strip <div>; if any descendant has
+        // those ids, this child likely contains tab markup — stop.
+        foreach ($tabIds as $tid) {
+          if ($xpath->query(".//*[@id='" . $tid . "']", $child)->length > 0) {
+            break 2;
+          }
+        }
+      }
+      $html .= $dom->saveHTML($child);
+    }
+
+    return trim($html);
   }
 
   private function extractTitle(\DOMXPath $xpath): string {
@@ -149,7 +194,7 @@ final class CertificateScraper {
    * Walk the Plan of Study table, capturing course rows under their semester
    * heading and the trailing "Total Credits / Total Hours" row if present.
    *
-   * @return array{0: array<int, array{number:string, semester:?int}>, 1: ?int}
+   * @return array{0: array<int, array{number:string, semester:?int, credits:string}>, 1: ?int}
    */
   private function parseRequirements(\DOMXPath $xpath): array {
     $courses = [];
@@ -161,6 +206,7 @@ final class CertificateScraper {
     }
 
     $currentSemester = NULL;
+    $pendingCredits = '';
     $seenNumbers = [];
     foreach ($rows as $tr) {
       $classAttr = $tr instanceof \DOMElement ? $tr->getAttribute('class') : '';
@@ -168,6 +214,7 @@ final class CertificateScraper {
       // Semester heading row: <tr class="plangridterm">…<th>Semester N</th>
       if (str_contains(' ' . $classAttr . ' ', ' plangridterm ')) {
         $currentSemester = $this->parseSemester($tr->textContent ?? '');
+        $pendingCredits = '';
         continue;
       }
 
@@ -182,33 +229,65 @@ final class CertificateScraper {
         continue;
       }
 
-      // Skip "Select one of the following:" comment rows entirely — we still
-      // pick up the indented courses below them as ordinary rows because the
-      // <a> matching catches them on subsequent iterations.
+      // Credits cell: usually the last <td class="hourscol">. Empty string if
+      // the row doesn't carry its own credits — e.g. an indented option under
+      // a "Select one of the following: 3-5" header. In that case, an earlier
+      // row supplied the credits in $pendingCredits.
+      $rowCredits = $this->extractRowCredits($xpath, $tr);
 
-      // Pull every course-number anchor found in this row. Multiple anchors
-      // can appear (e.g. cross-listed options); each gets its own paragraph
-      // entry under the current semester.
+      // "Select one of the following:" rows have no anchor but DO have credits
+      // (e.g. "3-5"). Stash the value so the next indented option-row uses it.
+      $isCommentRow = $xpath->query(".//span[contains(concat(' ', normalize-space(@class), ' '), ' comment ')]", $tr)->length > 0;
+      if ($isCommentRow) {
+        if ($rowCredits !== '') {
+          $pendingCredits = $rowCredits;
+        }
+        continue;
+      }
+
+      // Pull every course-number anchor found in this row.
       $anchors = $xpath->query('.//a', $tr);
+      $foundAnchorInRow = FALSE;
       foreach ($anchors as $a) {
         $text = trim($a->textContent ?? '');
         if (preg_match('/^([A-Z]{2,5})[- ](\d+[A-Z]?)$/u', $text, $m)) {
+          $foundAnchorInRow = TRUE;
           $number = strtoupper($m[1]) . '-' . $m[2];
           $key = $number . '|' . ($currentSemester ?? '');
           if (isset($seenNumbers[$key])) {
-            // Avoid duplicate within the same row/semester.
             continue;
           }
           $seenNumbers[$key] = TRUE;
+          $credits = $rowCredits !== '' ? $rowCredits : $pendingCredits;
           $courses[] = [
             'number' => $number,
             'semester' => $currentSemester,
+            'credits' => $credits,
           ];
         }
+      }
+
+      // Once a real anchor row has consumed the pending credits, clear it so
+      // it doesn't bleed into unrelated rows further down.
+      if ($foundAnchorInRow) {
+        $pendingCredits = '';
       }
     }
 
     return [$courses, $totalCredits];
+  }
+
+  /**
+   * Read the credits cell of a plan-grid row (the last `.hourscol` td). Returns
+   * the trimmed text — typically "3", "2", or a range "3-5"; "" if absent.
+   */
+  private function extractRowCredits(\DOMXPath $xpath, \DOMNode $tr): string {
+    $cells = $xpath->query(".//td[contains(concat(' ', normalize-space(@class), ' '), ' hourscol ')]", $tr);
+    if ($cells === FALSE || $cells->length === 0) {
+      return '';
+    }
+    $last = $cells->item($cells->length - 1);
+    return trim($last->textContent ?? '');
   }
 
   private function parseSemester(string $text): ?int {

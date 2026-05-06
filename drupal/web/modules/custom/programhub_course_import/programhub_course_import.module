@@ -6,10 +6,15 @@
  *
  * - Adds an "Import Courses" operation link on each `program` node row
  *   in admin lists. Clicking it triggers a single-program scrape+import.
+ * - Hides the "Courses" local task on nodes whose bundle isn't `program`
+ *   (the route already gates URL access via _entity_bundles, but Drupal
+ *   doesn't carry that through to tab visibility).
  */
 
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
 
 /**
  * Implements hook_entity_operation().
@@ -33,4 +38,32 @@ function programhub_course_import_entity_operation(EntityInterface $entity): arr
   }
 
   return $operations;
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ *
+ * Drop the "Courses" tab when we're not on a program node. The route already
+ * blocks the URL via _entity_bundles, but local-task rendering doesn't honor
+ * that, so the tab would otherwise appear on every node.
+ */
+function programhub_course_import_menu_local_tasks_alter(array &$data, string $route_name, ?CacheableMetadata $cacheability = NULL): void {
+  if ($route_name !== 'entity.node.canonical') {
+    return;
+  }
+
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if ($node instanceof NodeInterface && $node->bundle() === 'program') {
+    return;
+  }
+
+  foreach ($data['tabs'] ?? [] as $level => $tabs) {
+    if (isset($tabs['programhub_course_import.courses_tab'])) {
+      unset($data['tabs'][$level]['programhub_course_import.courses_tab']);
+    }
+  }
+
+  if ($cacheability) {
+    $cacheability->addCacheContexts(['route']);
+  }
 }

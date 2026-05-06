@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.paragraph.certificate_course.field_course
+    - field.field.paragraph.certificate_course.field_credits
     - field.field.paragraph.certificate_course.field_semester
     - paragraphs.paragraphs_type.certificate_course
   module:
@@ -20,6 +21,14 @@ content:
       link: true
     third_party_settings: {  }
     weight: 0
+    region: content
+  field_credits:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 2
     region: content
   field_semester:
     type: list_default

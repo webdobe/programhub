@@ -3,15 +3,16 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.certificate.field_certificate_type
     - field.field.node.certificate.field_certificate_url
     - field.field.node.certificate.field_courses
     - field.field.node.certificate.field_outcomes
     - field.field.node.certificate.field_overview
     - field.field.node.certificate.field_path
-    - field.field.node.certificate.field_requirements_text
     - field.field.node.certificate.field_total_credits
     - field.field.node.certificate.og_audience
     - node.type.certificate
+    - taxonomy.vocabulary.certificate_type
   module:
     - entity_reference_revisions
     - link
@@ -22,6 +23,14 @@ targetEntityType: node
 bundle: certificate
 mode: default
 content:
+  field_certificate_type:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: false
+    third_party_settings: {  }
+    weight: 101
+    region: content
   field_certificate_url:
     type: link
     label: above
@@ -57,13 +66,6 @@ content:
     third_party_settings: {  }
     weight: 103
     region: content
-  field_requirements_text:
-    type: text_default
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    weight: 104
-    region: content
   field_total_credits:
     type: number_integer
     label: above
@@ -73,6 +75,11 @@ content:
     third_party_settings: {  }
     weight: 106
     region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
   og_audience:
     type: entity_reference_label
     label: above
@@ -80,11 +87,6 @@ content:
       link: true
     third_party_settings: {  }
     weight: 120
-    region: content
-  links:
-    settings: {  }
-    third_party_settings: {  }
-    weight: 100
     region: content
 hidden:
   field_path: true

@@ -39,8 +39,9 @@ final class CertificateImporter {
    *   changed:bool,
    *   overviewChanged:bool,
    *   outcomesChanged:bool,
-   *   requirementsChanged:bool,
+   *   typeChanged:bool,
    *   totalCredits:?int,
+   *   typeAbbr:?string,
    *   coursesResolved:int,
    *   coursesMissing:array<int,string>,
    *   spidered:int,
@@ -55,8 +56,9 @@ final class CertificateImporter {
       'changed' => FALSE,
       'overviewChanged' => FALSE,
       'outcomesChanged' => FALSE,
-      'requirementsChanged' => FALSE,
+      'typeChanged' => FALSE,
       'totalCredits' => NULL,
+      'typeAbbr' => NULL,
       'coursesResolved' => 0,
       'coursesMissing' => [],
       'spidered' => 0,
@@ -84,6 +86,7 @@ final class CertificateImporter {
     }
 
     $result['totalCredits'] = $scraped['totalCredits'];
+    $result['typeAbbr'] = $scraped['typeAbbr'];
 
     // ---- Resolve course nodes (spidering missing ones) -----------------------
     $numbers = array_values(array_unique(array_map(
@@ -95,8 +98,8 @@ final class CertificateImporter {
     $result['spidered'] = $resolution['spidered'];
     $result['coursesMissing'] = $resolution['missing'];
 
-    // ---- Compute new paragraph plan (course node id + semester pairs) -------
-    /** @var array<int, array{nodeId:int, semester:?int}> $plan */
+    // ---- Compute new paragraph plan (course node id + semester + credits) ---
+    /** @var array<int, array{nodeId:int, semester:?int, credits:string}> $plan */
     $plan = [];
     foreach ($scraped['courses'] as $row) {
       $node = $resolution['nodes'][$row['number']] ?? NULL;
@@ -107,6 +110,7 @@ final class CertificateImporter {
       $plan[] = [
         'nodeId' => (int) $node->id(),
         'semester' => $row['semester'] !== NULL ? (int) $row['semester'] : NULL,
+        'credits' => (string) ($row['credits'] ?? ''),
       ];
     }
     $result['paragraphsBuilt'] = count($plan);
@@ -116,9 +120,11 @@ final class CertificateImporter {
     foreach ($certificate->get('field_courses')->referencedEntities() as $existing) {
       $courseRef = $existing->get('field_course')->target_id;
       $sem = $existing->get('field_semester')->value;
+      $credits = $existing->hasField('field_credits') ? (string) ($existing->get('field_credits')->value ?? '') : '';
       $currentPlan[] = [
         'nodeId' => $courseRef !== NULL ? (int) $courseRef : 0,
         'semester' => $sem !== NULL ? (int) $sem : NULL,
+        'credits' => $credits,
       ];
     }
     $paragraphsChanged = $currentPlan !== $plan;
@@ -126,16 +132,12 @@ final class CertificateImporter {
     // ---- Diff scalar fields --------------------------------------------------
     $newOverview = $scraped['overviewHtml'];
     $newOutcomes = $scraped['outcomesHtml'];
-    $newRequirements = $scraped['requirementsHtml'];
 
     if ($this->textValueDiffers($certificate, 'field_overview', $newOverview)) {
       $result['overviewChanged'] = TRUE;
     }
     if ($this->textValueDiffers($certificate, 'field_outcomes', $newOutcomes)) {
       $result['outcomesChanged'] = TRUE;
-    }
-    if ($this->textValueDiffers($certificate, 'field_requirements_text', $newRequirements)) {
-      $result['requirementsChanged'] = TRUE;
     }
 
     $totalCreditsChanged = FALSE;
@@ -147,10 +149,20 @@ final class CertificateImporter {
       }
     }
 
+    // Resolve certificate type (taxonomy reference) from "(XYZ)" abbr in title.
+    $newTypeTid = $this->resolveCertificateType($scraped['typeAbbr']);
+    $currentTypeTid = NULL;
+    if ($certificate->hasField('field_certificate_type') && !$certificate->get('field_certificate_type')->isEmpty()) {
+      $currentTypeTid = (int) $certificate->get('field_certificate_type')->target_id;
+    }
+    if ($newTypeTid !== NULL && $newTypeTid !== $currentTypeTid) {
+      $result['typeChanged'] = TRUE;
+    }
+
     $result['changed'] =
       $result['overviewChanged']
       || $result['outcomesChanged']
-      || $result['requirementsChanged']
+      || $result['typeChanged']
       || $totalCreditsChanged
       || $paragraphsChanged;
 
@@ -160,16 +172,16 @@ final class CertificateImporter {
 
     // ---- Write back ----------------------------------------------------------
     if ($result['overviewChanged']) {
-      $certificate->set('field_overview', $newOverview === '' ? NULL : ['value' => $newOverview, 'format' => 'basic_html']);
+      $certificate->set('field_overview', $newOverview === '' ? NULL : ['value' => $newOverview, 'format' => 'html']);
     }
     if ($result['outcomesChanged']) {
-      $certificate->set('field_outcomes', $newOutcomes === '' ? NULL : ['value' => $newOutcomes, 'format' => 'basic_html']);
-    }
-    if ($result['requirementsChanged']) {
-      $certificate->set('field_requirements_text', $newRequirements === '' ? NULL : ['value' => $newRequirements, 'format' => 'basic_html']);
+      $certificate->set('field_outcomes', $newOutcomes === '' ? NULL : ['value' => $newOutcomes, 'format' => 'html']);
     }
     if ($totalCreditsChanged) {
       $certificate->set('field_total_credits', $scraped['totalCredits']);
+    }
+    if ($result['typeChanged']) {
+      $certificate->set('field_certificate_type', ['target_id' => $newTypeTid]);
     }
 
     if ($paragraphsChanged) {
@@ -182,6 +194,7 @@ final class CertificateImporter {
           'type' => 'certificate_course',
           'field_course' => ['target_id' => $entry['nodeId']],
           'field_semester' => $entry['semester'],
+          'field_credits' => $entry['credits'] !== '' ? $entry['credits'] : NULL,
         ]);
         $paragraph->save();
         $newParagraphRefs[] = [
@@ -213,13 +226,41 @@ final class CertificateImporter {
     return $result;
   }
 
+  /**
+   * Look up a certificate_type term by exact name (e.g. "AAS"). Does NOT
+   * auto-create — admins seed the vocabulary; the importer only resolves.
+   */
+  private function resolveCertificateType(?string $abbr): ?int {
+    if ($abbr === NULL || $abbr === '') {
+      return NULL;
+    }
+    $existing = $this->entityTypeManager->getStorage('taxonomy_term')->loadByProperties([
+      'vid' => 'certificate_type',
+      'name' => $abbr,
+    ]);
+    if (!$existing) {
+      return NULL;
+    }
+    $term = reset($existing);
+    return (int) $term->id();
+  }
+
   private function textValueDiffers(NodeInterface $node, string $field, string $newValue): bool {
     if (!$node->hasField($field)) {
       return FALSE;
     }
     $current = trim((string) ($node->get($field)->value ?? ''));
+    $currentFormat = (string) ($node->get($field)->format ?? '');
     $new = trim($newValue);
-    return $current !== $new;
+    if ($current !== $new) {
+      return TRUE;
+    }
+    // If we'd write a non-empty value, also flag mismatched format so a
+    // legacy 'basic_html' value gets migrated to 'html' on next import.
+    if ($new !== '' && $currentFormat !== 'html') {
+      return TRUE;
+    }
+    return FALSE;
   }
 
 }

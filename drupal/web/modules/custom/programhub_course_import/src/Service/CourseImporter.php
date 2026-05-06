@@ -525,7 +525,7 @@ final class CourseImporter {
       'field_course_number' => $row['number'],
       'field_description' => $row['description'] !== '' ? [
         'value' => $row['description'],
-        'format' => 'basic_html',
+        'format' => 'html',
       ] : NULL,
       'field_course_credits' => $row['credits'],
       'field_course_offering' => array_map(fn(int $tid) => ['target_id' => $tid], $semesterTids),
@@ -564,10 +564,15 @@ final class CourseImporter {
     $currentDesc = $node->hasField('field_description')
       ? trim((string) $node->get('field_description')->value)
       : '';
-    if ($currentDesc !== $newDesc) {
+    $currentDescFormat = $node->hasField('field_description')
+      ? (string) $node->get('field_description')->format
+      : '';
+    $needsDescRewrite = $currentDesc !== $newDesc
+      || ($newDesc !== '' && $currentDescFormat !== 'html');
+    if ($needsDescRewrite) {
       $node->set('field_description', $newDesc !== '' ? [
         'value' => $newDesc,
-        'format' => 'basic_html',
+        'format' => 'html',
       ] : NULL);
       $changed = TRUE;
     }

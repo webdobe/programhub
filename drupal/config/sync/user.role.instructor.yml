@@ -2,7 +2,10 @@ uuid: 3dd45a59-28cd-4336-a7b0-84c5357e4574
 langcode: en
 status: true
 dependencies:
+  config:
+    - filter.format.html
   module:
+    - filter
     - node
     - profile
     - toolbar
@@ -14,4 +17,5 @@ permissions:
   - 'access content overview'
   - 'access toolbar'
   - 'administer nodes'
+  - 'use text format html'
   - 'view own profile'

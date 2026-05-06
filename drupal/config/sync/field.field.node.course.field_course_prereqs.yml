@@ -9,7 +9,7 @@ id: node.course.field_course_prereqs
 field_name: field_course_prereqs
 entity_type: node
 bundle: course
-label: 'Prerequisites'
+label: Prerequisites
 description: 'Required prerequisite and corequisite courses, as listed in the catalog.'
 required: false
 translatable: false

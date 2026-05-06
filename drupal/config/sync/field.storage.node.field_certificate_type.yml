@@ -1,0 +1,20 @@
+uuid: 21aef8e2-0094-46bd-b39f-c387c594b783
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - taxonomy
+id: node.field_certificate_type
+field_name: field_certificate_type
+entity_type: node
+type: entity_reference
+settings:
+  target_type: taxonomy_term
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

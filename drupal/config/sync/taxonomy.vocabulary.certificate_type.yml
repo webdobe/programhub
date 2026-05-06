@@ -1,0 +1,9 @@
+uuid: a5d8f8e8-b911-435a-b008-ce3f1be3bd8d
+langcode: en
+status: true
+dependencies: {  }
+name: 'Certificate Type'
+vid: certificate_type
+description: 'Credential category for a certificate node — AAS (Associate of Applied Science), AS, ATC (Advanced Technical Certificate), ITC (Intermediate Technical Certificate), BTC (Basic Technical Certificate), etc.'
+weight: 0
+new_revision: false
