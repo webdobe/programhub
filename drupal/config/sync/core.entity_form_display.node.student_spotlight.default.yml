@@ -1,18 +1,22 @@
-uuid: a4c834b9-ed39-4090-add9-5f629246ccb9
+uuid: 9b1c8d4a-8e2f-4d6b-bf1a-1e2f7c8d4b0a
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.division.field_abbreviation
-    - field.field.node.division.field_path
-    - field.field.node.division.field_website
-    - node.type.division
+    - field.field.node.student_spotlight.field_description
+    - field.field.node.student_spotlight.field_graduate
+    - field.field.node.student_spotlight.field_main_image
+    - field.field.node.student_spotlight.field_path
+    - field.field.node.student_spotlight.field_quote
+    - field.field.node.student_spotlight.og_audience
+    - node.type.student_spotlight
   module:
-    - link
+    - image
     - path
-id: node.division.default
+    - text
+id: node.student_spotlight.default
 targetEntityType: node
-bundle: division
+bundle: student_spotlight
 mode: default
 content:
   created:
@@ -21,13 +25,31 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_abbreviation:
-    type: string_textfield
-    weight: -4
+  field_description:
+    type: text_textarea
+    weight: 3
     region: content
     settings:
-      size: 20
+      rows: 8
       placeholder: ''
+    third_party_settings: {  }
+  field_graduate:
+    type: entity_reference_autocomplete
+    weight: 0
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_main_image:
+    type: image_image
+    weight: 4
+    region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: medium
     third_party_settings: {  }
   field_path:
     type: string_textfield
@@ -37,13 +59,19 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  field_website:
-    type: link_default
-    weight: -3
+  field_quote:
+    type: string_textarea
+    weight: 1
     region: content
     settings:
-      placeholder_url: 'https://example.com'
-      placeholder_title: ''
+      rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+  og_audience:
+    type: options_select
+    weight: 5
+    region: content
+    settings: {  }
     third_party_settings: {  }
   path:
     type: path

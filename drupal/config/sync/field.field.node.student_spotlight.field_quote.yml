@@ -1,0 +1,19 @@
+uuid: 9b1c8d4a-8e2f-4d6b-bf1a-1e2f7c8d4b06
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_quote
+    - node.type.student_spotlight
+id: node.student_spotlight.field_quote
+field_name: field_quote
+entity_type: node
+bundle: student_spotlight
+label: Quote
+description: 'A pull quote from the graduate — used as the marketing hook on cards and headers.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

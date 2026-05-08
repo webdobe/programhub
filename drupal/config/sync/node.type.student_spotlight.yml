@@ -1,0 +1,11 @@
+uuid: 9b1c8d4a-8e2f-4d6b-bf1a-1e2f7c8d4b01
+langcode: en
+status: true
+dependencies: {  }
+name: 'Student Spotlight'
+type: student_spotlight
+description: 'A curated feature highlighting a graduate — pairs a graduate profile with editorial copy, a pull quote, and a feature image. Use to showcase student outcomes on division and program pages.'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: false

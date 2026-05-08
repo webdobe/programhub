@@ -1,0 +1,69 @@
+uuid: 9b1c8d4a-8e2f-4d6b-bf1a-1e2f7c8d4b0b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.student_spotlight.field_description
+    - field.field.node.student_spotlight.field_graduate
+    - field.field.node.student_spotlight.field_main_image
+    - field.field.node.student_spotlight.field_path
+    - field.field.node.student_spotlight.field_quote
+    - field.field.node.student_spotlight.og_audience
+    - node.type.student_spotlight
+  module:
+    - image
+    - text
+    - user
+id: node.student_spotlight.default
+targetEntityType: node
+bundle: student_spotlight
+mode: default
+content:
+  field_description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_graduate:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_main_image:
+    type: image
+    label: hidden
+    settings:
+      image_style: ''
+      image_link: ''
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_quote:
+    type: basic_string
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+  og_audience:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 5
+    region: content
+hidden:
+  field_path: true

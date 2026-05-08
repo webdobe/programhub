@@ -31,7 +31,7 @@ final class CertificateScraper {
    * @return array{
    *   title:string,
    *   typeAbbr:?string,
-   *   overviewHtml:string,
+   *   overview:string,
    *   outcomesHtml:string,
    *   totalCredits:?int,
    *   courses:array<int, array{number:string, semester:?int, credits:string}>,
@@ -88,10 +88,10 @@ final class CertificateScraper {
     $title = $this->extractTitle($xpath);
     $typeAbbr = $this->extractTypeAbbr($title);
 
-    $overviewHtml = $this->extractProgramDescriptionProse($dom, $xpath);
+    $overview = $this->extractProgramDescriptionText($xpath);
     $outcomesHtml = $this->innerHtmlOfContainer($dom, $xpath, 'outcomestextcontainer');
 
-    if ($overviewHtml === '' && $outcomesHtml === '') {
+    if ($overview === '' && $outcomesHtml === '') {
       // Doesn't look like a program-guidelines page.
       return NULL;
     }
@@ -101,7 +101,7 @@ final class CertificateScraper {
     return [
       'title' => $title,
       'typeAbbr' => $typeAbbr,
-      'overviewHtml' => $overviewHtml,
+      'overview' => $overview,
       'outcomesHtml' => $outcomesHtml,
       'totalCredits' => $totalCredits,
       'courses' => $courses,
@@ -120,37 +120,50 @@ final class CertificateScraper {
   }
 
   /**
-   * Inner HTML of #programdescriptions, but ONLY the prose that appears
-   * BEFORE any tab container (textcontainer, requirementstextcontainer,
-   * outcomestextcontainer). The tabs are typically wrapped or follow as
-   * sibling divs; we stop at the first one we encounter.
+   * Plain-text overview from #programdescriptions, paragraph-by-paragraph.
+   *
+   * DOM structure on catalog.nic.edu places the prose `<p>` elements inside
+   * `#programdescriptions`, while `#requirementstextcontainer` and
+   * `#outcomestextcontainer` are siblings of the wrapping `#textcontainer`
+   * (i.e. not descendants of `#programdescriptions`) — so a plain `//p`
+   * query under #programdescriptions safely catches only the overview prose.
+   *
+   * The catalog sometimes wraps `<p>` inside another `<p>`; DOMDocument
+   * normalizes those into split siblings, so we just iterate and skip empty
+   * results. Each paragraph is run through `cleanText()` (entity decode +
+   * whitespace collapse) and joined with `\n\n`.
    */
-  private function extractProgramDescriptionProse(\DOMDocument $dom, \DOMXPath $xpath): string {
-    $container = $xpath->query("//*[@id='programdescriptions']")->item(0);
-    if ($container === NULL) {
+  private function extractProgramDescriptionText(\DOMXPath $xpath): string {
+    $ps = $xpath->query("//*[@id='programdescriptions']//p");
+    if ($ps === FALSE) {
       return '';
     }
 
-    $tabIds = ['textcontainer', 'requirementstextcontainer', 'outcomestextcontainer'];
-    $html = '';
-    foreach ($container->childNodes as $child) {
-      if ($child instanceof \DOMElement) {
-        $childId = $child->getAttribute('id');
-        if (in_array($childId, $tabIds, TRUE)) {
-          break;
-        }
-        // Some sites wrap tabs in a tab-strip <div>; if any descendant has
-        // those ids, this child likely contains tab markup — stop.
-        foreach ($tabIds as $tid) {
-          if ($xpath->query(".//*[@id='" . $tid . "']", $child)->length > 0) {
-            break 2;
-          }
-        }
+    $paragraphs = [];
+    foreach ($ps as $p) {
+      // Skip <p> elements that contain another <p> — the inner ones surface
+      // in their own iteration (DOM may or may not nest them depending on
+      // the parser's quirks-mode handling of `<p><p>...</p></p>`).
+      if ($xpath->query('.//p', $p)->length > 0) {
+        continue;
       }
-      $html .= $dom->saveHTML($child);
+      $text = $this->cleanText($p->textContent ?? '');
+      if ($text !== '') {
+        $paragraphs[] = $text;
+      }
     }
 
-    return trim($html);
+    return implode("\n\n", $paragraphs);
+  }
+
+  /**
+   * Decode HTML entities and collapse runs of whitespace to a single space.
+   * Used for paragraph-level plain-text extraction.
+   */
+  private function cleanText(string $text): string {
+    $decoded = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $collapsed = preg_replace('/\s+/u', ' ', $decoded);
+    return trim($collapsed ?? '');
   }
 
   private function extractTitle(\DOMXPath $xpath): string {

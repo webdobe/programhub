@@ -1,0 +1,25 @@
+uuid: 9b1c8d4a-8e2f-4d6b-bf1a-1e2f7c8d4b04
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_graduate
+    - node.type.student_spotlight
+id: node.student_spotlight.field_graduate
+field_name: field_graduate
+entity_type: node
+bundle: student_spotlight
+label: Graduate
+description: 'The graduate being spotlighted.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: views
+  handler_settings:
+    view:
+      view_name: profile_reference
+      display_name: profile_reference
+      arguments: {  }
+field_type: entity_reference

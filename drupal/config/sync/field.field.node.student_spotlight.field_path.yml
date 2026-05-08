@@ -1,0 +1,21 @@
+uuid: 9b1c8d4a-8e2f-4d6b-bf1a-1e2f7c8d4b08
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_path
+    - node.type.student_spotlight
+  module:
+    - fieldable_path
+id: node.student_spotlight.field_path
+field_name: field_path
+entity_type: node
+bundle: student_spotlight
+label: Path
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: fieldable_path

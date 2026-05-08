@@ -1,0 +1,22 @@
+uuid: 9b1c8d4a-8e2f-4d6b-bf1a-1e2f7c8d4b02
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.student_spotlight
+id: node.student_spotlight.promote
+field_name: promote
+entity_type: node
+bundle: student_spotlight
+label: 'Promoted to front page'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

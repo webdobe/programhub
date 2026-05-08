@@ -1,0 +1,22 @@
+uuid: 9b1c8d4a-8e2f-4d6b-bf1a-1e2f7c8d4b05
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_description
+    - node.type.student_spotlight
+  module:
+    - text
+id: node.student_spotlight.field_description
+field_name: field_description
+entity_type: node
+bundle: student_spotlight
+label: Description
+description: 'Editorial copy for the spotlight — outcome, project highlights, why this graduate stands out.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

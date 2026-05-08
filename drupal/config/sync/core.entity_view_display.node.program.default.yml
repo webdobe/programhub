@@ -5,9 +5,11 @@ dependencies:
   config:
     - field.field.node.program.field_abbreviation
     - field.field.node.program.field_path
+    - field.field.node.program.field_website
     - field.field.node.program.og_audience
     - node.type.program
   module:
+    - link
     - og
     - user
 id: node.program.default
@@ -22,6 +24,18 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     weight: 0
+    region: content
+  field_website:
+    type: link
+    label: inline
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: _blank
+    third_party_settings: {  }
+    weight: 1
     region: content
   links:
     settings: {  }

@@ -130,13 +130,13 @@ final class CertificateImporter {
     $paragraphsChanged = $currentPlan !== $plan;
 
     // ---- Diff scalar fields --------------------------------------------------
-    $newOverview = $scraped['overviewHtml'];
+    $newOverview = $scraped['overview'];
     $newOutcomes = $scraped['outcomesHtml'];
 
-    if ($this->textValueDiffers($certificate, 'field_overview', $newOverview)) {
+    if ($this->textValueDiffers($certificate, 'field_overview', $newOverview, 'plain_text')) {
       $result['overviewChanged'] = TRUE;
     }
-    if ($this->textValueDiffers($certificate, 'field_outcomes', $newOutcomes)) {
+    if ($this->textValueDiffers($certificate, 'field_outcomes', $newOutcomes, 'html')) {
       $result['outcomesChanged'] = TRUE;
     }
 
@@ -172,7 +172,7 @@ final class CertificateImporter {
 
     // ---- Write back ----------------------------------------------------------
     if ($result['overviewChanged']) {
-      $certificate->set('field_overview', $newOverview === '' ? NULL : ['value' => $newOverview, 'format' => 'html']);
+      $certificate->set('field_overview', $newOverview === '' ? NULL : ['value' => $newOverview, 'format' => 'plain_text']);
     }
     if ($result['outcomesChanged']) {
       $certificate->set('field_outcomes', $newOutcomes === '' ? NULL : ['value' => $newOutcomes, 'format' => 'html']);
@@ -245,7 +245,12 @@ final class CertificateImporter {
     return (int) $term->id();
   }
 
-  private function textValueDiffers(NodeInterface $node, string $field, string $newValue): bool {
+  private function textValueDiffers(
+    NodeInterface $node,
+    string $field,
+    string $newValue,
+    string $expectedFormat = 'html',
+  ): bool {
     if (!$node->hasField($field)) {
       return FALSE;
     }
@@ -255,9 +260,10 @@ final class CertificateImporter {
     if ($current !== $new) {
       return TRUE;
     }
-    // If we'd write a non-empty value, also flag mismatched format so a
-    // legacy 'basic_html' value gets migrated to 'html' on next import.
-    if ($new !== '' && $currentFormat !== 'html') {
+    // If we'd write a non-empty value, also flag mismatched format so legacy
+    // values get migrated (e.g. 'basic_html' → 'html', or 'html' → 'plain_text'
+    // for the overview field that switched formats).
+    if ($new !== '' && $currentFormat !== $expectedFormat) {
       return TRUE;
     }
     return FALSE;
