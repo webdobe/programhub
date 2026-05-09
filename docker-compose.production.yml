@@ -37,6 +37,13 @@ services:
       VARNISH_BACKEND_PORT: 80
       VARNISH_CONFIG_PRESET: drupal
       VARNISH_PURGE_EXTERNAL_REQUEST_HEADER: X-Real-IP
+      # Long-running admin batch ops (notably the BLS XLSX parse, ~100s)
+      # otherwise hit varnish's 60s first_byte_timeout and return a synth
+      # 503. 600s gives plenty of headroom; raise further if a future BLS
+      # release blows past it.
+      VARNISH_BACKEND_CONNECT_TIMEOUT: 30s
+      VARNISH_BACKEND_FIRST_BYTE_TIMEOUT: 600s
+      VARNISH_BACKEND_BETWEEN_BYTES_TIMEOUT: 600s
     depends_on:
       - nginx
     networks:
