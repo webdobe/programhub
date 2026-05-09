@@ -1,0 +1,4 @@
+administer programhub careers:
+  title: 'Administer ProgramHub careers import'
+  description: 'Configure the BLS/O*NET import sources and trigger a refresh.'
+  restrict access: true

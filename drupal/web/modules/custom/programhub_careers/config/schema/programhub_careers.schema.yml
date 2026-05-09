@@ -1,0 +1,13 @@
+programhub_careers.settings:
+  type: config_object
+  label: 'ProgramHub careers settings'
+  mapping:
+    bls_year:
+      type: string
+      label: 'BLS OEWS year (two-digit suffix)'
+    bls_msa_code:
+      type: string
+      label: 'BLS MSA code'
+    bls_state_code:
+      type: string
+      label: 'BLS state FIPS code'

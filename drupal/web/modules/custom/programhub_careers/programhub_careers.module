@@ -1,0 +1,10 @@
+<?php
+
+/**
+ * @file
+ * ProgramHub Careers — BLS/O*NET import for career_outcome nodes.
+ *
+ * The heavy lifting lives in Service/CareersImporter; this file is just the
+ * module bootstrap. Hooks intentionally absent — we don't react to entity
+ * events here, we drive imports via form button or drush command.
+ */

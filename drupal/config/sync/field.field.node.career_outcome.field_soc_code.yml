@@ -1,0 +1,19 @@
+uuid: 9b1c8d4a-8e2f-4d6b-bf1a-2e3f7c8d4a04
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_soc_code
+    - node.type.career_outcome
+id: node.career_outcome.field_soc_code
+field_name: field_soc_code
+entity_type: node
+bundle: career_outcome
+label: 'SOC Code'
+description: 'BLS Standard Occupational Classification code (e.g. 15-1212). Upsert key for the careers refresh script — must be unique per career_outcome.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

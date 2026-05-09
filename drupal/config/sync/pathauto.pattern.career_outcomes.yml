@@ -1,0 +1,22 @@
+uuid: df928dc2-258e-46cf-a1b6-909e3485dcd2
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: career_outcomes
+label: 'Career outcomes'
+type: 'canonical_entities:node'
+pattern: 'careers/[node:title]'
+selection_criteria:
+  61ef9f06-020a-4fed-85ee-0db2442cccdc:
+    id: 'entity_bundle:node'
+    negate: false
+    uuid: 61ef9f06-020a-4fed-85ee-0db2442cccdc
+    context_mapping:
+      node: node
+    bundles:
+      career_outcome: career_outcome
+selection_logic: and
+weight: -5
+relationships: {  }

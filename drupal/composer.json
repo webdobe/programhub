@@ -49,7 +49,9 @@
         "drupal/views_bulk_operations": "^4.4",
         "drupal/webform": "^6.3@beta",
         "drupal/webform_rest": "^4.2",
-        "drush/drush": "^13.6"
+        "drush/drush": "^13.6",
+        "openspout/openspout": "^5.3",
+        "phpoffice/phpspreadsheet": "^4.0"
     },
     "conflict": {
         "drupal/drupal": "*"

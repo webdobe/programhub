@@ -1,0 +1,19 @@
+uuid: 9b1c8d4a-8e2f-4d6b-bf1a-2e3f7c8d4a02
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_soc_codes
+    - node.type.program
+id: node.program.field_soc_codes
+field_name: field_soc_codes
+entity_type: node
+bundle: program
+label: 'SOC Codes'
+description: 'BLS Standard Occupational Classification codes this program prepares students for (e.g. 15-1212, 15-1244). Used by the careers refresh script to upsert career_outcome nodes.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

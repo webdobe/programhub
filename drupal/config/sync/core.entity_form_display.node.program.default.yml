@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.program.field_abbreviation
     - field.field.node.program.field_path
+    - field.field.node.program.field_soc_codes
     - field.field.node.program.field_website
     - field.field.node.program.og_audience
     - node.type.program
@@ -37,6 +38,14 @@ content:
     settings:
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  field_soc_codes:
+    type: string_textfield
+    weight: 35
+    region: content
+    settings:
+      size: 16
+      placeholder: 15-1212
     third_party_settings: {  }
   field_website:
     type: link_default

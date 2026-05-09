@@ -1,0 +1,23 @@
+uuid: 9b1c8d4a-8e2f-4d6b-bf1a-2e3f7c8d4a08
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_pay_median
+    - node.type.career_outcome
+id: node.career_outcome.field_pay_median
+field_name: field_pay_median
+entity_type: node
+bundle: career_outcome
+label: 'Pay (median, annual)'
+description: 'Verbatim from BLS OEWS — median annual wage in USD. Do not modify.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: $
+  suffix: ''
+field_type: integer

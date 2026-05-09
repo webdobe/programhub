@@ -1,0 +1,23 @@
+uuid: 9b1c8d4a-8e2f-4d6b-bf1a-2e3f7c8d4a0a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_pay_high
+    - node.type.career_outcome
+id: node.career_outcome.field_pay_high
+field_name: field_pay_high
+entity_type: node
+bundle: career_outcome
+label: 'Pay (75th percentile, annual)'
+description: 'Verbatim from BLS OEWS — 75th percentile annual wage in USD. Do not modify.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: $
+  suffix: ''
+field_type: integer

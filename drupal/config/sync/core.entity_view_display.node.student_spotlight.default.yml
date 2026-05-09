@@ -38,8 +38,8 @@ content:
     type: image
     label: hidden
     settings:
-      image_style: ''
       image_link: ''
+      image_style: ''
       image_loading:
         attribute: lazy
     third_party_settings: {  }

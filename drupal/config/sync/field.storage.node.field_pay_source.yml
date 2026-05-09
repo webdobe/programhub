@@ -1,19 +1,21 @@
-uuid: 9b1c8d4a-8e2f-4d6b-bf1a-1e2f7c8d4b03
+uuid: 9b1c8d4a-8e2f-4d6b-bf1a-2e3f7c8d4a0b
 langcode: en
 status: true
 dependencies:
   module:
     - node
-id: node.field_quote
-field_name: field_quote
+id: node.field_pay_source
+field_name: field_pay_source
 entity_type: node
-type: string_long
+type: string
 settings:
+  max_length: 255
   case_sensitive: false
+  is_ascii: false
 module: core
 locked: false
 cardinality: 1
-translatable: true
+translatable: false
 indexes: {  }
 persist_with_no_fields: false
 custom_storage: false

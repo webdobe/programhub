@@ -1,0 +1,9 @@
+name: 'ProgramHub Careers'
+type: module
+description: 'Imports BLS OEWS wage data and O*NET task descriptions, keyed on SOC code, into career_outcome nodes. Surfaces a "Refresh now" admin button and a `programhub:refresh-careers` drush command.'
+package: ProgramHub
+core_version_requirement: ^10 || ^11
+dependencies:
+  - drupal:node
+  - drupal:system
+  - og:og

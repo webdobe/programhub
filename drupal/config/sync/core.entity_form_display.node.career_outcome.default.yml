@@ -6,7 +6,13 @@ dependencies:
     - field.field.node.career_outcome.field_career_track
     - field.field.node.career_outcome.field_description
     - field.field.node.career_outcome.field_path
+    - field.field.node.career_outcome.field_pay_high
+    - field.field.node.career_outcome.field_pay_low
+    - field.field.node.career_outcome.field_pay_median
     - field.field.node.career_outcome.field_pay_range
+    - field.field.node.career_outcome.field_pay_source
+    - field.field.node.career_outcome.field_soc_code
+    - field.field.node.career_outcome.field_tasks
     - field.field.node.career_outcome.og_audience
     - node.type.career_outcome
   module:
@@ -45,6 +51,27 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_pay_high:
+    type: number
+    weight: 42
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_pay_low:
+    type: number
+    weight: 40
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_pay_median:
+    type: number
+    weight: 41
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
   field_pay_range:
     type: string_textfield
     weight: 1
@@ -52,6 +79,30 @@ content:
     settings:
       size: 32
       placeholder: 'e.g. $17–22 / hr'
+    third_party_settings: {  }
+  field_pay_source:
+    type: string_textfield
+    weight: 43
+    region: content
+    settings:
+      size: 60
+      placeholder: "BLS OEWS May 2024 · Coeur d'Alene MSA"
+    third_party_settings: {  }
+  field_soc_code:
+    type: string_textfield
+    weight: -4
+    region: content
+    settings:
+      size: 16
+      placeholder: 15-1212
+    third_party_settings: {  }
+  field_tasks:
+    type: string_textarea
+    weight: 44
+    region: content
+    settings:
+      rows: 4
+      placeholder: ''
     third_party_settings: {  }
   og_audience:
     type: options_select

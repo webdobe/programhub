@@ -1,0 +1,5 @@
+programhub_careers.refresh:
+  title: 'ProgramHub careers'
+  description: 'Refresh career_outcome nodes from BLS OEWS + O*NET.'
+  parent: system.admin_config_services
+  route_name: programhub_careers.refresh

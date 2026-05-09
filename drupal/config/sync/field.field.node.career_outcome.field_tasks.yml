@@ -1,0 +1,19 @@
+uuid: 9b1c8d4a-8e2f-4d6b-bf1a-2e3f7c8d4a0e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_tasks
+    - node.type.career_outcome
+id: node.career_outcome.field_tasks
+field_name: field_tasks
+entity_type: node
+bundle: career_outcome
+label: Tasks
+description: 'Verbatim from O*NET (CC BY 4.0) — daily/typical tasks for this occupation. Do not modify. Single site-wide credit required (not per page).'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

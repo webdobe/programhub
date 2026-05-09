@@ -58,6 +58,7 @@
 /drupal/keys/
 
 # Ignore vendor dependencies and scripts
+/drupal/private
 /drupal/vendor
 /drupal/composer.phar
 /drupal/composer

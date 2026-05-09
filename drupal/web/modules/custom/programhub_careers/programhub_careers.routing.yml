@@ -1,0 +1,7 @@
+programhub_careers.refresh:
+  path: '/admin/config/programhub/careers'
+  defaults:
+    _form: '\Drupal\programhub_careers\Form\RefreshForm'
+    _title: 'ProgramHub careers refresh'
+  requirements:
+    _permission: 'administer programhub careers'

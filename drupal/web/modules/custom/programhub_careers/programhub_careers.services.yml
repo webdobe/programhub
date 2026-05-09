@@ -1,0 +1,28 @@
+services:
+  programhub_careers.bls_loader:
+    class: Drupal\programhub_careers\Service\BlsLoader
+    arguments:
+      - '@file_system'
+      - '@logger.factory'
+
+  programhub_careers.onet_loader:
+    class: Drupal\programhub_careers\Service\OnetLoader
+    arguments:
+      - '@file_system'
+      - '@logger.factory'
+
+  programhub_careers.importer:
+    class: Drupal\programhub_careers\Service\CareersImporter
+    arguments:
+      - '@entity_type.manager'
+      - '@config.factory'
+      - '@programhub_careers.bls_loader'
+      - '@programhub_careers.onet_loader'
+      - '@logger.factory'
+
+  programhub_careers.batch_builder:
+    class: Drupal\programhub_careers\Service\CareersBatchBuilder
+    arguments:
+      - '@config.factory'
+      - '@programhub_careers.bls_loader'
+      - '@programhub_careers.onet_loader'
