@@ -13,8 +13,10 @@ services:
       PHP_MAX_EXECUTION_TIME: 300
       PHP_MAX_INPUT_VARS: 3000
       PHP_MEMORY_LIMIT: 512M
-      PHP_POST_MAX_SIZE: 64M
-      PHP_UPLOAD_MAX_FILESIZE: 64M
+      # Sized for the BLS OEWS master XLSX (~80 MB) uploaded via the careers
+      # refresh form. Bump in lockstep with NGINX_CLIENT_MAX_BODY_SIZE below.
+      PHP_POST_MAX_SIZE: 128M
+      PHP_UPLOAD_MAX_FILESIZE: 128M
       REVALIDATE_SECRET: ${REVALIDATE_SECRET}
       NEXTJS_REVALIDATE_URL: ${NEXTJS_REVALIDATE_URL}
     volumes:
@@ -58,6 +60,10 @@ services:
       NGINX_VHOST_PRESET: drupal10
       NGINX_SERVER_ROOT: /var/www/html/web
       NGINX_SERVER_NAME: ${DRUPAL_DOMAIN}
+      # Match PHP_POST_MAX_SIZE / PHP_UPLOAD_MAX_FILESIZE on the php service.
+      # Without this, the BLS XLSX upload returns 413 at the nginx layer
+      # before it ever reaches PHP. Wodby's default is 1 MB.
+      NGINX_CLIENT_MAX_BODY_SIZE: 128m
     volumes:
       - ./drupal:/var/www/html
       - ./files/public:/var/www/html/web/sites/default/files
