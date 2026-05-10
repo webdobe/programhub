@@ -7,7 +7,7 @@ dependencies:
 id: courses
 label: Courses
 type: 'canonical_entities:node'
-pattern: 'courses/[node:title]'
+pattern: 'courses/[node:field_course_number]-[node:title]'
 selection_criteria:
   88428dd7-e695-4b19-8cf1-727bc5464f40:
     id: 'entity_bundle:node'

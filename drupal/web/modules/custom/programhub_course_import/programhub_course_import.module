@@ -9,8 +9,11 @@
  * - Hides the "Courses" local task on nodes whose bundle isn't `program`
  *   (the route already gates URL access via _entity_bundles, but Drupal
  *   doesn't carry that through to tab visibility).
- * - Self-heals course path aliases on every save (`courses/<course-number>`
- *   lowercased) — see hook_node_presave below.
+ *
+ * Path aliases for course nodes are handled by pathauto using the pattern
+ * defined in config/sync/pathauto.pattern.courses.yml — no presave hook
+ * needed because course titles don't contain the special characters
+ * (`+`, parentheticals) that forced the certificate hook approach.
  */
 
 use Drupal\Core\Cache\CacheableMetadata;
@@ -68,81 +71,4 @@ function programhub_course_import_menu_local_tasks_alter(array &$data, string $r
   if ($cacheability) {
     $cacheability->addCacheContexts(['route']);
   }
-}
-
-/**
- * Implements hook_ENTITY_TYPE_presave() for node entities.
- *
- * Self-healing path alias for course nodes. The slug shape is
- * `<dept>-<num>-<slugified-title>`; computing it on every save means
- * UI-created and importer-created courses end up at the same URL with no
- * deploy-hook dance.
- *
- * Writes to `field_path` (a fieldable_path field), which is the canonical
- * source for these nodes — the field type maintains the core path_alias
- * entity to match. pathauto = 0 prevents pathauto's pattern from
- * overwriting our value on the same save cycle.
- */
-function programhub_course_import_node_presave(NodeInterface $node): void {
-  if ($node->bundle() !== 'course') {
-    return;
-  }
-  $alias = programhub_course_import_compute_course_alias($node);
-  if ($alias === '' || !$node->hasField('field_path')) {
-    return;
-  }
-  $current = (string) ($node->get('field_path')->value ?? '');
-  if ($current !== $alias) {
-    $node->set('field_path', $alias);
-  }
-  $node->path->pathauto = 0;
-}
-
-/**
- * Compute the canonical /courses/<slug> alias for a course node.
- *
- * Slug rule: `<course-number>-<slugified-title>`. The number is the unique
- * catalog identifier and goes first; the title supplies the descriptive
- * suffix. Different importers populate titles differently — some prefix
- * the number into the title field (e.g. "CITE-118 Computer Information
- * Technology Essentials"), others use just the descriptive part
- * ("Survey of Graphic Design") — so we strip any leading number prefix
- * from the title before slugifying to avoid duplicating it in the URL.
- *
- * Returns "" when the course has no number AND no title (defensive).
- */
-function programhub_course_import_compute_course_alias(NodeInterface $course): string {
-  $number = $course->hasField('field_course_number')
-    ? trim((string) $course->get('field_course_number')->value)
-    : '';
-  $title = trim((string) $course->getTitle());
-  if ($number === '' && $title === '') {
-    return '';
-  }
-
-  // Strip any leading "{NUMBER} " prefix the title might already carry,
-  // so slugifying doesn't produce "cite-118-cite-118-...".
-  $titleClean = $title;
-  if ($number !== '') {
-    $titleClean = preg_replace(
-      '/^' . preg_quote($number, '/') . '\s+/iu',
-      '',
-      $title,
-    ) ?? $title;
-  }
-
-  // Slugify each piece, then join.
-  $numberSlug = $number === '' ? '' : _programhub_course_import_slug_part($number);
-  $titleSlug = $titleClean === '' ? '' : _programhub_course_import_slug_part($titleClean);
-  $slug = trim($numberSlug . '-' . $titleSlug, '-');
-  return $slug === '' ? '' : '/courses/' . $slug;
-}
-
-/**
- * Slugify one segment: non-alphanum → hyphen, collapse, lowercase, trim.
- */
-function _programhub_course_import_slug_part(string $s): string {
-  $s = preg_replace('/[^A-Za-z0-9-]+/u', '-', $s) ?? '';
-  $s = preg_replace('/-+/', '-', $s) ?? '';
-  return trim(strtolower($s), '-');
 }

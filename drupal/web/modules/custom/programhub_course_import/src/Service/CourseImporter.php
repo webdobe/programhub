@@ -529,7 +529,11 @@ final class CourseImporter {
     $semesterTids = $this->ensureSemesterTerms($row['semesters'] ?? []);
     $values = [
       'type' => 'course',
-      'title' => sprintf('%s %s', $row['number'], $row['title']),
+      // Title is the descriptive name only; the catalog number lives in
+      // field_course_number. The path-alias builder concatenates them when
+      // generating /courses/<num>-<title-slug>, so we don't duplicate the
+      // number into the title field.
+      'title' => $row['title'],
       'status' => 1,
       'uid' => $this->currentUser->id() ?: 1,
       'field_course_number' => $row['number'],
@@ -560,7 +564,8 @@ final class CourseImporter {
    * Returns TRUE if any scalar field changed.
    */
   private function updateCourseFields(NodeInterface $node, array $row, bool $dryRun): bool {
-    $newTitle = sprintf('%s %s', $row['number'], $row['title']);
+    // Title is the descriptive name only — see createCourse() comment.
+    $newTitle = $row['title'];
     $newDesc = $row['description'];
     $newCredits = $row['credits'];
 
