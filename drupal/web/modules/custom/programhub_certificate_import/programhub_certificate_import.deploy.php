@@ -315,10 +315,10 @@ function programhub_certificate_import_deploy_06_rebuild_certificate_aliases(arr
   $touched = 0;
   foreach ($certs as $cert) {
     $expected = programhub_certificate_import_compute_cert_alias($cert);
-    if ($expected === '') {
+    if ($expected === '' || !$cert->hasField('field_path')) {
       continue;
     }
-    $current = (string) ($cert->get('path')->alias ?? '');
+    $current = (string) ($cert->get('field_path')->value ?? '');
     $hasStale = FALSE;
     foreach ($aliasStorage->loadByProperties(['path' => '/node/' . $cert->id()]) as $a) {
       if ($a->getAlias() !== $expected) {
@@ -326,8 +326,8 @@ function programhub_certificate_import_deploy_06_rebuild_certificate_aliases(arr
         $hasStale = TRUE;
       }
     }
-    // Re-save when the alias is wrong OR we deleted stale variants — the
-    // presave hook will compute and set the canonical value.
+    // Re-save when field_path is wrong OR we deleted stale path_alias rows —
+    // the presave hook will write the canonical field_path on save.
     if ($current !== $expected || $hasStale) {
       $cert->save();
       $touched++;

@@ -77,22 +77,22 @@ function programhub_certificate_import_menu_local_tasks_alter(array &$data, stri
  * on every save means the URL is always correct — whether the cert was
  * created via UI, programmatic import, or the deploy hook.
  *
- * pathauto = 0 prevents pathauto from overwriting our explicit value on
- * the same save cycle.
+ * Writes to `field_path` (a fieldable_path field), which is the canonical
+ * source for these nodes — the field type's postSave maintains the
+ * core path_alias entity to match. pathauto = 0 disables pathauto's own
+ * pattern from overwriting our value on the same save cycle.
  */
 function programhub_certificate_import_node_presave(NodeInterface $node): void {
   if ($node->bundle() !== 'certificate') {
     return;
   }
   $alias = programhub_certificate_import_compute_cert_alias($node);
-  if ($alias === '') {
+  if ($alias === '' || !$node->hasField('field_path')) {
     return;
   }
-  // Only touch the alias if it actually differs — keeps revision diffs clean
-  // and avoids needless cache invalidations.
-  $current = (string) ($node->get('path')->alias ?? '');
+  $current = (string) ($node->get('field_path')->value ?? '');
   if ($current !== $alias) {
-    $node->path->alias = $alias;
+    $node->set('field_path', $alias);
   }
   $node->path->pathauto = 0;
 }
