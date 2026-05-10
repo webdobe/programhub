@@ -338,6 +338,83 @@ function programhub_certificate_import_deploy_08_reseed_industry_cert_prep_cours
   return programhub_certificate_import_deploy_04_industry_cert_prep_courses($sandbox);
 }
 
+/**
+ * Force-attach industry-cert → prep-course mappings, overwriting whatever's
+ * there. Unlike `_04`/`_07`/`_08` which skip when field_prep_courses already
+ * has values, this one ALWAYS writes the canonical map. Needed when the
+ * referenced course nodes got recreated with fresh node ids (e.g. courses
+ * were deleted and re-imported), leaving the certs with non-empty but
+ * dangling references that the skip-if-non-empty guard never refreshes.
+ */
+function programhub_certificate_import_deploy_09_force_reattach_industry_cert_prep_courses(array &$sandbox): string {
+  $map = [
+    'CompTIA Security+' => ['CITE-140', 'CITE-142', 'CITE-145'],
+    'CompTIA Network+' => ['CITE-152', 'CITE-121', 'CITE-122'],
+    'CompTIA A+' => ['CITE-118', 'CITE-119', 'CITE-127'],
+    'CompTIA CySA+' => ['CITE-140', 'CITE-142', 'CITE-213', 'CITE-217'],
+    'Cisco CCNA' => ['CITE-152', 'CITE-121', 'CITE-213', 'CITE-217'],
+    'Microsoft AZ-900 (Azure Fundamentals)' => ['CITE-104', 'CITE-206'],
+    'Microsoft SC-900 (Security, Compliance, and Identity Fundamentals)' => ['CITE-140', 'CITE-142', 'CITE-208'],
+    'Microsoft MD-100 / MD-101 (Modern Desktop Administrator)' => ['CITE-116', 'CITE-127'],
+  ];
+
+  $nodeStorage = \Drupal::entityTypeManager()->getStorage('node');
+
+  $allNumbers = array_unique(array_merge(...array_values($map)));
+  $courseIdsByNumber = [];
+  foreach ($allNumbers as $num) {
+    $found = $nodeStorage->loadByProperties([
+      'type' => 'course',
+      'field_course_number' => $num,
+    ]);
+    if ($found) {
+      $courseIdsByNumber[$num] = (int) array_keys($found)[0];
+    }
+  }
+
+  $written = 0;
+  $missingCerts = [];
+  $missingCourses = [];
+  foreach ($map as $certTitle => $prepNumbers) {
+    $certs = $nodeStorage->loadByProperties([
+      'type' => 'certificate',
+      'title' => $certTitle,
+    ]);
+    if (!$certs) {
+      $missingCerts[] = $certTitle;
+      continue;
+    }
+    $cert = reset($certs);
+
+    $targetIds = [];
+    foreach ($prepNumbers as $num) {
+      if (isset($courseIdsByNumber[$num])) {
+        $targetIds[] = ['target_id' => $courseIdsByNumber[$num]];
+      }
+      else {
+        $missingCourses[$certTitle][] = $num;
+      }
+    }
+    // Write even if empty — empty is preferable to dangling refs.
+    $cert->set('field_prep_courses', $targetIds);
+    $cert->save();
+    $written++;
+  }
+
+  $report = sprintf('Industry-cert prep courses — force-written: %d.', $written);
+  if ($missingCerts) {
+    $report .= ' Missing certs: ' . implode(', ', $missingCerts) . '.';
+  }
+  if ($missingCourses) {
+    $bits = [];
+    foreach ($missingCourses as $title => $nums) {
+      $bits[] = sprintf('"%s" missing %s', $title, implode('/', $nums));
+    }
+    $report .= ' Course-resolution gaps: ' . implode(' · ', $bits);
+  }
+  return $report;
+}
+
 function programhub_certificate_import_deploy_06_rebuild_certificate_aliases(array &$sandbox): string {
   $storage = \Drupal::entityTypeManager()->getStorage('node');
   $aliasStorage = \Drupal::entityTypeManager()->getStorage('path_alias');
