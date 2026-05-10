@@ -308,30 +308,52 @@ function programhub_certificate_import_deploy_05_certificate_type_abbreviations(
  * Idempotent: re-running this when aliases are already correct is a no-op
  * because the presave hook only writes when the alias differs.
  */
+/**
+ * Re-seed industry-cert → prep-course mappings.
+ *
+ * Same body as `_04_industry_cert_prep_courses` — exists under a fresh hook
+ * name so Drupal will run it again on environments where field_prep_courses
+ * got accidentally cleared (e.g. a snapshot restore or manual blow-away).
+ * Idempotent: only writes where field_prep_courses is currently empty, so
+ * editor-set values are preserved.
+ */
+function programhub_certificate_import_deploy_07_reseed_industry_cert_prep_courses(array &$sandbox): string {
+  return programhub_certificate_import_deploy_04_industry_cert_prep_courses($sandbox);
+}
+
 function programhub_certificate_import_deploy_06_rebuild_certificate_aliases(array &$sandbox): string {
   $storage = \Drupal::entityTypeManager()->getStorage('node');
   $aliasStorage = \Drupal::entityTypeManager()->getStorage('path_alias');
-  $certs = $storage->loadByProperties(['type' => 'certificate']);
+
+  // Pre-pass: drop every stale alias before we touch any node. The next
+  // save() then creates a fresh path_alias from scratch — no risk of the
+  // node's in-memory path field holding a `pid` reference to a row that's
+  // already been deleted (which is what triggered the
+  // PathItem::postSave() null-getAlias error in production).
+  $certIds = $storage->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('type', 'certificate')
+    ->execute();
+  foreach ($certIds as $nid) {
+    foreach ($aliasStorage->loadByProperties(['path' => '/node/' . $nid]) as $a) {
+      $a->delete();
+    }
+  }
+  // Reset the cert storage cache so the next loadMultiple() doesn't return
+  // entities that still cache the deleted aliases on $node->path.
+  $storage->resetCache();
+
   $touched = 0;
-  foreach ($certs as $cert) {
+  foreach ($storage->loadMultiple($certIds) as $cert) {
     $expected = programhub_certificate_import_compute_cert_alias($cert);
-    if ($expected === '' || !$cert->hasField('field_path')) {
+    if ($expected === '') {
       continue;
     }
-    $current = (string) ($cert->get('field_path')->value ?? '');
-    $hasStale = FALSE;
-    foreach ($aliasStorage->loadByProperties(['path' => '/node/' . $cert->id()]) as $a) {
-      if ($a->getAlias() !== $expected) {
-        $a->delete();
-        $hasStale = TRUE;
-      }
-    }
-    // Re-save when field_path is wrong OR we deleted stale path_alias rows —
-    // the presave hook will write the canonical field_path on save.
-    if ($current !== $expected || $hasStale) {
-      $cert->save();
-      $touched++;
-    }
+    // The presave hook writes path.alias; the path field then creates a
+    // brand-new path_alias on save. fieldable_path mirrors that to field_path
+    // via its path_alias_insert hook.
+    $cert->save();
+    $touched++;
   }
   return sprintf('Certificate aliases — touched: %d (presave handled the writes).', $touched);
 }

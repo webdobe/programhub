@@ -77,22 +77,25 @@ function programhub_certificate_import_menu_local_tasks_alter(array &$data, stri
  * on every save means the URL is always correct — whether the cert was
  * created via UI, programmatic import, or the deploy hook.
  *
- * Writes to `field_path` (a fieldable_path field), which is the canonical
- * source for these nodes — the field type's postSave maintains the
- * core path_alias entity to match. pathauto = 0 disables pathauto's own
- * pattern from overwriting our value on the same save cycle.
+ * Writes to `$node->path->alias` (the core path field). On save Drupal's
+ * Path module creates/updates the actual `path_alias` entity, then the
+ * `fieldable_path` module's path_alias hooks sync the value back into
+ * `field_path` automatically. Setting `field_path` directly does NOT work
+ * because the fieldable_path field type only mirrors path_alias → field,
+ * never the reverse. pathauto = 0 disables pathauto's pattern from
+ * overwriting our explicit alias on the same save cycle.
  */
 function programhub_certificate_import_node_presave(NodeInterface $node): void {
   if ($node->bundle() !== 'certificate') {
     return;
   }
   $alias = programhub_certificate_import_compute_cert_alias($node);
-  if ($alias === '' || !$node->hasField('field_path')) {
+  if ($alias === '') {
     return;
   }
-  $current = (string) ($node->get('field_path')->value ?? '');
+  $current = (string) ($node->get('path')->alias ?? '');
   if ($current !== $alias) {
-    $node->set('field_path', $alias);
+    $node->path->alias = $alias;
   }
   $node->path->pathauto = 0;
 }
