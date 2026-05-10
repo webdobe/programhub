@@ -7,7 +7,7 @@ dependencies:
 id: certificates
 label: Certificates
 type: 'canonical_entities:node'
-pattern: 'certificates/[node:title]'
+pattern: 'certificates/[node:title]-[node:field_certificate_type:0:entity:field_abbreviation]'
 selection_criteria:
   77904072-a6fd-4361-8b4e-71db60627ce1:
     id: 'entity_bundle:node'

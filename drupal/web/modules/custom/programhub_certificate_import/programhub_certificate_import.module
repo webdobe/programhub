@@ -7,6 +7,8 @@
  * - Adds an "Import from catalog" operation link on each `certificate` node row
  *   (in admin lists) when the certificate has a configured catalog URL.
  * - Hides the "Certificates" local task on nodes whose bundle isn't `program`.
+ * - Self-heals certificate path aliases on every save (`+` → "-plus", strips
+ *   parentheticals, appends type abbreviation) — see hook_node_presave below.
  */
 
 use Drupal\Core\Cache\CacheableMetadata;
@@ -64,4 +66,71 @@ function programhub_certificate_import_menu_local_tasks_alter(array &$data, stri
   if ($cacheability) {
     $cacheability->addCacheContexts(['route']);
   }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave() for node entities.
+ *
+ * Self-healing path alias for certificate nodes. Pathauto's pattern is the
+ * right shape for the common case but can't express the cleanup rules we
+ * need (`+` → "-plus", strip parentheticals). Computing the canonical alias
+ * on every save means the URL is always correct — whether the cert was
+ * created via UI, programmatic import, or the deploy hook.
+ *
+ * pathauto = 0 prevents pathauto from overwriting our explicit value on
+ * the same save cycle.
+ */
+function programhub_certificate_import_node_presave(NodeInterface $node): void {
+  if ($node->bundle() !== 'certificate') {
+    return;
+  }
+  $alias = programhub_certificate_import_compute_cert_alias($node);
+  if ($alias === '') {
+    return;
+  }
+  // Only touch the alias if it actually differs — keeps revision diffs clean
+  // and avoids needless cache invalidations.
+  $current = (string) ($node->get('path')->alias ?? '');
+  if ($current !== $alias) {
+    $node->path->alias = $alias;
+  }
+  $node->path->pathauto = 0;
+}
+
+/**
+ * Compute the canonical /certificates/<slug> alias for a certificate node.
+ *
+ * Public so deploy hooks (and tests) can reuse the same logic. Slug rules:
+ *   1. `+` → " Plus" (preserves the brand mark in the URL)
+ *   2. Strip parenthetical descriptions
+ *   3. ` / ` separators → space
+ *   4. Slugify (lowercase, non-alphanum → hyphen, collapse runs)
+ *   5. Append "-{abbr}" when the cert's certificate_type term has a
+ *      field_abbreviation value (BTC/ITC/ATC/AAS); industry certs have no
+ *      abbreviation and no suffix.
+ *
+ * Returns "" when the node has no title (defensive — caller should skip).
+ */
+function programhub_certificate_import_compute_cert_alias(NodeInterface $cert): string {
+  $title = (string) $cert->getTitle();
+  if ($title === '') {
+    return '';
+  }
+
+  $clean = str_replace('+', ' Plus', $title);
+  $clean = preg_replace('/\s*\([^)]*\)\s*/u', '', $clean);
+  $clean = preg_replace('/\s*\/\s*/u', ' ', $clean);
+  $clean = preg_replace('/[^A-Za-z0-9\s-]/u', '', $clean);
+  $clean = preg_replace('/[\s-]+/u', '-', trim((string) $clean));
+  $slug = trim(strtolower((string) $clean), '-');
+
+  if ($cert->hasField('field_certificate_type') && !$cert->get('field_certificate_type')->isEmpty()) {
+    $term = $cert->get('field_certificate_type')->entity;
+    if ($term && $term->hasField('field_abbreviation') && !$term->get('field_abbreviation')->isEmpty()) {
+      $abbr = strtolower((string) $term->get('field_abbreviation')->value);
+      $slug .= '-' . $abbr;
+    }
+  }
+
+  return '/certificates/' . $slug;
 }

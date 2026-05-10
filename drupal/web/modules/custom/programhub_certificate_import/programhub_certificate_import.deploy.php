@@ -254,6 +254,89 @@ function programhub_certificate_import_deploy_04_industry_cert_prep_courses(arra
 }
 
 /**
+ * Seed credential-type abbreviations on the certificate_type taxonomy terms.
+ * Used by the alias rebuild below to produce URLs like
+ * /certificates/computer-information-technology-aas.
+ */
+function programhub_certificate_import_deploy_05_certificate_type_abbreviations(array &$sandbox): string {
+  $map = [
+    'Basic Technical Certificate' => 'BTC',
+    'Intermediate Technical Certificate' => 'ITC',
+    'Advanced Technical Certificate' => 'ATC',
+    'Associate of Applied Science Degree' => 'AAS',
+    // Industry Certification intentionally absent — its abbreviation is left
+    // blank, which the alias builder treats as "no suffix needed".
+  ];
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+  $updated = 0;
+  $skipped = 0;
+  foreach ($map as $name => $abbr) {
+    $found = $storage->loadByProperties([
+      'vid' => 'certificate_type',
+      'name' => $name,
+    ]);
+    if (!$found) {
+      $skipped++;
+      continue;
+    }
+    /** @var \Drupal\taxonomy\TermInterface $term */
+    $term = reset($found);
+    if (!$term->hasField('field_abbreviation')) {
+      $skipped++;
+      continue;
+    }
+    if (!$term->get('field_abbreviation')->isEmpty()) {
+      $skipped++;
+      continue;
+    }
+    $term->set('field_abbreviation', $abbr);
+    $term->save();
+    $updated++;
+  }
+  return sprintf('Type abbreviations — set: %d, skipped: %d.', $updated, $skipped);
+}
+
+/**
+ * Rebuild every certificate's path alias.
+ *
+ * Saves each cert through hook_node_presave (in
+ * programhub_certificate_import.module), which is the canonical place where
+ * cert aliases get computed. This hook also drops any stale aliases left
+ * from earlier slug schemes (e.g. `-0`, `-1` suffixes from pathauto's
+ * disambiguation pass).
+ *
+ * Idempotent: re-running this when aliases are already correct is a no-op
+ * because the presave hook only writes when the alias differs.
+ */
+function programhub_certificate_import_deploy_06_rebuild_certificate_aliases(array &$sandbox): string {
+  $storage = \Drupal::entityTypeManager()->getStorage('node');
+  $aliasStorage = \Drupal::entityTypeManager()->getStorage('path_alias');
+  $certs = $storage->loadByProperties(['type' => 'certificate']);
+  $touched = 0;
+  foreach ($certs as $cert) {
+    $expected = programhub_certificate_import_compute_cert_alias($cert);
+    if ($expected === '') {
+      continue;
+    }
+    $current = (string) ($cert->get('path')->alias ?? '');
+    $hasStale = FALSE;
+    foreach ($aliasStorage->loadByProperties(['path' => '/node/' . $cert->id()]) as $a) {
+      if ($a->getAlias() !== $expected) {
+        $a->delete();
+        $hasStale = TRUE;
+      }
+    }
+    // Re-save when the alias is wrong OR we deleted stale variants — the
+    // presave hook will compute and set the canonical value.
+    if ($current !== $expected || $hasStale) {
+      $cert->save();
+      $touched++;
+    }
+  }
+  return sprintf('Certificate aliases — touched: %d (presave handled the writes).', $touched);
+}
+
+/**
  * Resolve a program node id by its field_abbreviation. Returns null if absent.
  */
 function _programhub_certificate_import_program_nid(string $abbr): ?int {

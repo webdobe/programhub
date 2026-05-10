@@ -1,0 +1,20 @@
+uuid: 06dafb86-6510-4c82-99df-a0ba5ac152be
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_abbreviation
+    - taxonomy.vocabulary.certificate_type
+id: taxonomy_term.certificate_type.field_abbreviation
+field_name: field_abbreviation
+entity_type: taxonomy_term
+bundle: certificate_type
+label: Abbreviation
+description: 'Short credential abbreviation (e.g. AAS, ATC, ITC, BTC) used in URL paths. Leave blank for industry certifications — their titles are unique enough to disambiguate.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  max_length: 16
+field_type: string
