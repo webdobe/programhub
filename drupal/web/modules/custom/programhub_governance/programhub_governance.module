@@ -1,0 +1,12 @@
+<?php
+
+/**
+ * @file
+ * Governance hooks for ProgramHub.
+ *
+ * Deploy-time data migrations live in `programhub_governance.deploy.php`.
+ * Future runtime hooks (OG membership → role assignment, moderation
+ * notifications, etc.) live here.
+ */
+
+declare(strict_types=1);

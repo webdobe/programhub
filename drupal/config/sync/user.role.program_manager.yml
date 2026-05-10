@@ -4,7 +4,9 @@ status: true
 dependencies:
   config:
     - filter.format.html
+    - workflows.workflow.community_content
   module:
+    - content_moderation
     - filter
     - node
     - toolbar
@@ -15,5 +17,14 @@ is_admin: false
 permissions:
   - 'access content overview'
   - 'access toolbar'
+  - 'use community_content transition approve'
+  - 'use community_content transition archive'
+  - 'use community_content transition create_new_draft'
+  - 'use community_content transition reject'
+  - 'use community_content transition restore'
+  - 'use community_content transition revise'
+  - 'use community_content transition submit'
   - 'use text format html'
+  - 'view all revisions'
+  - 'view any unpublished content'
   - 'view own profile'

@@ -1,0 +1,9 @@
+name: 'ProgramHub governance'
+type: module
+description: 'Cross-cutting governance, moderation, and access-control hooks for ProgramHub. Currently: backfills content_moderation_state for existing community-content nodes on deploy.'
+core_version_requirement: ^10 || ^11
+package: 'ProgramHub'
+dependencies:
+  - drupal:node
+  - drupal:content_moderation
+  - drupal:workflows

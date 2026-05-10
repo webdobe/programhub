@@ -1,45 +1,66 @@
-uuid: e4b0cd5a-943f-4bc4-8e4a-9eefc0503276
+uuid: 4d6b8a91-c2f7-4e1d-b5a3-7c9e1d4b8f20
 langcode: en
 status: true
 dependencies:
   config:
     - node.type.program
-id: node-program-instructor
-label: Instructor
+id: node-program-manager
+label: 'Program Manager'
 weight: 0
 group_id: null
 group_type: node
 group_bundle: program
 is_admin: false
 permissions:
-  # Project — instructors edit any student/grad project in their program
+  # OG meta — invite/approve members, manage program membership rolls
+  - 'manage members'
+  - 'approve and deny subscription'
+  - 'add user'
+  # Project
   - 'create project content'
   - 'update own project content'
   - 'update any project content'
   - 'delete own project content'
+  - 'delete any project content'
   # Award
   - 'create award content'
   - 'update own award content'
   - 'update any award content'
   - 'delete own award content'
+  - 'delete any award content'
   # Student spotlight
   - 'create student_spotlight content'
   - 'update own student_spotlight content'
   - 'update any student_spotlight content'
   - 'delete own student_spotlight content'
+  - 'delete any student_spotlight content'
   # Event
   - 'create event content'
   - 'update own event content'
   - 'update any event content'
   - 'delete own event content'
+  - 'delete any event content'
   # Article (news)
   - 'create article content'
   - 'update own article content'
   - 'update any article content'
   - 'delete own article content'
+  - 'delete any article content'
   # Portfolio show
   - 'create portfolio_show content'
   - 'update own portfolio_show content'
   - 'update any portfolio_show content'
   - 'delete own portfolio_show content'
+  - 'delete any portfolio_show content'
+  # Newsletter — manager-and-up only
+  - 'create newsletter_issue content'
+  - 'update own newsletter_issue content'
+  - 'update any newsletter_issue content'
+  - 'delete own newsletter_issue content'
+  - 'delete any newsletter_issue content'
+  # Career outcome — editorial fields only. Drupal can't enforce
+  # field-level perms natively; this grants `update any` and relies on
+  # convention (per ACCESS.md: BLS fields are overwritten by phcr
+  # anyway, so editing them is futile).
+  - 'update any career_outcome content'
 role_type: standard

@@ -41,17 +41,17 @@ final class OgAccessOverrideDecorator implements OgAccessInterface {
   /**
    * {@inheritdoc}
    */
-  public function userAccess(EntityInterface $group, string $operation, ?AccountInterface $user = NULL): AccessResultInterface {
+  public function userAccess(EntityInterface $group, string $permission, ?AccountInterface $user = NULL, bool $skip_alter = FALSE): AccessResultInterface {
     // Phase 1: pass-through. Phase 4: apply resolver delta on top.
-    return $this->inner->userAccess($group, $operation, $user);
+    return $this->inner->userAccess($group, $permission, $user, $skip_alter);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function userAccessEntity(string $operation, EntityInterface $entity, ?AccountInterface $user = NULL): AccessResultInterface {
+  public function userAccessEntity(string $permission, EntityInterface $entity, ?AccountInterface $user = NULL): AccessResultInterface {
     // Phase 1: pass-through. Phase 4: apply resolver delta on top.
-    return $this->inner->userAccessEntity($operation, $entity, $user);
+    return $this->inner->userAccessEntity($permission, $entity, $user);
   }
 
   /**
@@ -64,8 +64,8 @@ final class OgAccessOverrideDecorator implements OgAccessInterface {
   /**
    * {@inheritdoc}
    */
-  public function userAccessGroupContentEntityOperation(string $operation, EntityInterface $group_content, ?AccountInterface $user = NULL): AccessResultInterface {
-    return $this->inner->userAccessGroupContentEntityOperation($operation, $group_content, $user);
+  public function userAccessGroupContentEntityOperation(string $operation, EntityInterface $group_entity, EntityInterface $group_content_entity, ?AccountInterface $user = NULL): AccessResultInterface {
+    return $this->inner->userAccessGroupContentEntityOperation($operation, $group_entity, $group_content_entity, $user);
   }
 
   /**

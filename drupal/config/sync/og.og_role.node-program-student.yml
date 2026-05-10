@@ -1,0 +1,27 @@
+uuid: 5a3e8c12-d7f4-4b9a-9e1c-6f8d2a4b9c70
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.program
+id: node-program-student
+label: Student
+weight: 0
+group_id: null
+group_type: node
+group_bundle: program
+is_admin: false
+permissions:
+  # Project work
+  - 'create project content'
+  - 'update own project content'
+  - 'delete own project content'
+  # Award submissions
+  - 'create award content'
+  - 'update own award content'
+  - 'delete own award content'
+  # Student spotlight suggestions
+  - 'create student_spotlight content'
+  - 'update own student_spotlight content'
+  - 'delete own student_spotlight content'
+role_type: standard

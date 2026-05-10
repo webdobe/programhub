@@ -4,7 +4,9 @@ status: true
 dependencies:
   config:
     - filter.format.html
+    - workflows.workflow.community_content
   module:
+    - content_moderation
     - filter
     - toolbar
 id: student
@@ -13,5 +15,9 @@ weight: -7
 is_admin: false
 permissions:
   - 'access toolbar'
+  - 'use community_content transition create_new_draft'
+  - 'use community_content transition revise'
+  - 'use community_content transition submit'
   - 'use text format html'
   - 'view own profile'
+  - 'view own unpublished content'

@@ -1,0 +1,19 @@
+uuid: 9c1a5e67-b8d3-4a2f-8c7e-2a5b9d3f1c80
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.program
+id: node-program-tac_member
+label: 'TAC Member'
+weight: 0
+group_id: null
+group_type: node
+group_bundle: program
+is_admin: false
+permissions:
+  # Submit articles / industry resources for review
+  - 'create article content'
+  - 'update own article content'
+  - 'delete own article content'
+role_type: standard
