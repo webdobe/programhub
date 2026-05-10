@@ -116,6 +116,7 @@ final class CourseImporter {
       'flagged' => 0,
       'spidered' => 0,
       'errors' => [],
+      'notices' => [],
       'prefix' => '',
       'url' => '',
     ];
@@ -140,7 +141,16 @@ final class CourseImporter {
 
     $rows = $this->fetchPrefix($prefix, $rowCache);
     if ($rows === []) {
-      $result['errors'][] = sprintf('No courses found at %s. Check the prefix and that the catalog page is reachable.', $result['url']);
+      // Two reasons we can land here, both benign for cross-program runs:
+      //   1. The prefix has no own catalog page (404). E.g. CYBER courses are
+      //      catalogued under CITE; CYBER's "/course-descriptions/cyber/" 404s.
+      //   2. The page exists but contains no courseblocks (catalog reorg).
+      // Surface as a notice — caller decides whether to treat it as an error.
+      $result['notices'][] = sprintf(
+        'No courses to import for "%s" — no catalog page at %s. (If this program reuses another department\'s prefix, that\'s expected.)',
+        $program->label(),
+        $result['url'],
+      );
       return $result;
     }
 

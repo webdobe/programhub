@@ -44,6 +44,12 @@ final class CourseImportCommands extends DrushCommands {
       $this->io()->section(sprintf('Program: %s', $program->label()));
       $result = $importer->importForProgram($program, (bool) $options['dry-run']);
 
+      if (!empty($result['notices'])) {
+        foreach ($result['notices'] as $note) {
+          $this->io()->note((string) $note);
+        }
+      }
+
       if ($result['errors']) {
         foreach ($result['errors'] as $err) {
           $this->io()->error((string) $err);

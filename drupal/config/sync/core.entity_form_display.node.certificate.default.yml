@@ -6,15 +6,18 @@ dependencies:
     - field.field.node.certificate.field_certificate_type
     - field.field.node.certificate.field_certificate_url
     - field.field.node.certificate.field_courses
+    - field.field.node.certificate.field_logo
     - field.field.node.certificate.field_outcomes
     - field.field.node.certificate.field_overview
     - field.field.node.certificate.field_path
+    - field.field.node.certificate.field_prep_courses
     - field.field.node.certificate.field_total_credits
     - field.field.node.certificate.og_audience
     - node.type.certificate
     - taxonomy.vocabulary.certificate_type
   module:
     - link
+    - media_library
     - paragraphs
     - path
     - text
@@ -63,6 +66,14 @@ content:
         duplicate: duplicate
       default_paragraph_count: 0
     third_party_settings: {  }
+  field_logo:
+    type: media_library_widget
+    weight: 50
+    region: content
+    settings:
+      media_types:
+        - image
+    third_party_settings: {  }
   field_outcomes:
     type: text_textarea
     weight: 105
@@ -84,6 +95,16 @@ content:
     weight: 30
     region: content
     settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_prep_courses:
+    type: entity_reference_autocomplete_tags
+    weight: 108
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }

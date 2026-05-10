@@ -6,9 +6,11 @@ dependencies:
     - field.field.node.certificate.field_certificate_type
     - field.field.node.certificate.field_certificate_url
     - field.field.node.certificate.field_courses
+    - field.field.node.certificate.field_logo
     - field.field.node.certificate.field_outcomes
     - field.field.node.certificate.field_overview
     - field.field.node.certificate.field_path
+    - field.field.node.certificate.field_prep_courses
     - field.field.node.certificate.field_total_credits
     - field.field.node.certificate.og_audience
     - node.type.certificate
@@ -52,6 +54,15 @@ content:
     third_party_settings: {  }
     weight: 110
     region: content
+  field_logo:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 50
+    region: content
   field_outcomes:
     type: text_default
     label: above
@@ -65,6 +76,14 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 103
+    region: content
+  field_prep_courses:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 108
     region: content
   field_total_credits:
     type: number_integer

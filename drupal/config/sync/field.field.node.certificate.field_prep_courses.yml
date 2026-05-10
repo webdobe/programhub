@@ -1,0 +1,28 @@
+uuid: d0fe5265-3e56-4250-8c10-172c4e5c065f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_prep_courses
+    - node.type.certificate
+id: node.certificate.field_prep_courses
+field_name: field_prep_courses
+entity_type: node
+bundle: certificate
+label: 'Prep courses'
+description: "Courses that prepare a student to sit for this certification's exam. Used primarily on industry certifications (CompTIA, Cisco, Microsoft, …) — academic credentials use field_courses for their full plan-of-study instead."
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      course: course
+    sort:
+      field: field_course_number
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

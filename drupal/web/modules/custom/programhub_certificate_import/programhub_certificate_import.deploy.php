@@ -1,0 +1,267 @@
+<?php
+
+/**
+ * @file
+ * Deploy hooks for programhub_certificate_import.
+ *
+ * `drush deploy` runs hooks in this order:
+ *   1. updatedb        — hook_update_N + hook_post_update_NAME
+ *   2. config:import   — applies YAML in config/sync/
+ *   3. cache:rebuild
+ *   4. deploy:hook     — runs hook_deploy_NAME (this file)
+ *
+ * Anything in here can rely on configuration added in the same deploy:
+ * field_logo (new on certificate), the pathauto.pattern.certificates pattern,
+ * etc. If we put this in *post_update* it would run BEFORE cim and the new
+ * pathauto pattern wouldn't be available yet — alias regen would fail.
+ *
+ * All hooks must be idempotent: prod deploys, snapshot restores, and fresh
+ * environment builds may all replay them.
+ */
+
+declare(strict_types=1);
+
+use Drupal\node\Entity\Node;
+use Drupal\taxonomy\Entity\Term;
+
+/**
+ * Seed the "Industry Certification" certificate_type taxonomy term.
+ *
+ * This term distinguishes vendor exam credentials (CompTIA Security+,
+ * Cisco CCNA, Microsoft AZ-900, …) from the existing academic credential
+ * terms (BTC, ITC, ATC, AAS, AS).
+ *
+ * Numeric prefix forces ordering — Drupal runs deploy hooks alphabetically
+ * by function name, and the cert-node seed below depends on this term.
+ */
+function programhub_certificate_import_deploy_01_industry_cert_term(array &$sandbox): string {
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+  $existing = $storage->loadByProperties([
+    'vid' => 'certificate_type',
+    'name' => 'Industry Certification',
+  ]);
+  if ($existing) {
+    return 'Industry Certification term already exists; skipped.';
+  }
+  $term = Term::create([
+    'vid' => 'certificate_type',
+    'name' => 'Industry Certification',
+    'description' => [
+      'value' => 'Third-party / vendor exam credential (CompTIA, Cisco, Microsoft, etc.) — earned by passing the vendor exam, not by completing NIC coursework.',
+      'format' => 'basic_html',
+    ],
+  ]);
+  $term->save();
+  return sprintf('Created Industry Certification term (tid=%d).', $term->id());
+}
+
+/**
+ * Seed the initial industry certification nodes for the CITE + CYBER programs.
+ *
+ * Each node:
+ *  - title:                  vendor cert name (e.g. "CompTIA Security+")
+ *  - field_certificate_type: Industry Certification term
+ *  - field_certificate_url:  vendor exam page (used as the canonical link)
+ *  - og_audience:            programs that prepare students for this cert
+ *
+ * Logos (field_logo) are intentionally not set here — editors upload them
+ * via the admin UI once the appropriate logo media is in place.
+ */
+function programhub_certificate_import_deploy_02_industry_cert_nodes(array &$sandbox): string {
+  $nodeStorage = \Drupal::entityTypeManager()->getStorage('node');
+  $termStorage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+
+  // Resolve the Industry Certification term tid.
+  $type = $termStorage->loadByProperties([
+    'vid' => 'certificate_type',
+    'name' => 'Industry Certification',
+  ]);
+  if (!$type) {
+    return 'Industry Certification term missing — run the 01_industry_cert_term deploy hook first.';
+  }
+  $typeTid = (int) array_keys($type)[0];
+
+  // Resolve programs by their abbreviation. Skip the entire seed if both
+  // programs are absent — cleaner than partial seeding on a fresh database.
+  $cite = _programhub_certificate_import_program_nid('CITE');
+  $cyber = _programhub_certificate_import_program_nid('CYBER');
+  if (!$cite && !$cyber) {
+    return 'No CITE or CYBER programs found; skipping industry cert seed.';
+  }
+
+  $programs = static function (array $abbrs) use ($cite, $cyber): array {
+    $ids = [];
+    foreach ($abbrs as $abbr) {
+      if ($abbr === 'CITE' && $cite) {
+        $ids[] = $cite;
+      }
+      if ($abbr === 'CYBER' && $cyber) {
+        $ids[] = $cyber;
+      }
+    }
+    return $ids;
+  };
+
+  $seed = [
+    ['CompTIA Security+', 'https://www.comptia.org/certifications/security', ['CITE', 'CYBER']],
+    ['CompTIA Network+', 'https://www.comptia.org/certifications/network', ['CITE', 'CYBER']],
+    ['CompTIA A+', 'https://www.comptia.org/certifications/a', ['CITE']],
+    ['CompTIA CySA+', 'https://www.comptia.org/certifications/cybersecurity-analyst', ['CYBER']],
+    ['Cisco CCNA', 'https://www.cisco.com/site/us/en/learn/training-certifications/certifications/enterprise/ccna/index.html', ['CYBER']],
+    ['Microsoft AZ-900 (Azure Fundamentals)', 'https://learn.microsoft.com/en-us/credentials/certifications/azure-fundamentals/', ['CITE']],
+    ['Microsoft SC-900 (Security, Compliance, and Identity Fundamentals)', 'https://learn.microsoft.com/en-us/credentials/certifications/security-compliance-and-identity-fundamentals/', ['CITE']],
+    ['Microsoft MD-100 / MD-101 (Modern Desktop Administrator)', 'https://learn.microsoft.com/en-us/credentials/certifications/modern-desktop/', ['CITE']],
+  ];
+
+  $created = 0;
+  $skipped = 0;
+  foreach ($seed as [$title, $url, $abbrs]) {
+    $existing = $nodeStorage->loadByProperties([
+      'type' => 'certificate',
+      'title' => $title,
+    ]);
+    if ($existing) {
+      $skipped++;
+      continue;
+    }
+    $programIds = $programs($abbrs);
+    if (!$programIds) {
+      $skipped++;
+      continue;
+    }
+    $node = Node::create([
+      'type' => 'certificate',
+      'title' => $title,
+      'status' => 1,
+      'field_certificate_type' => ['target_id' => $typeTid],
+      'field_certificate_url' => ['uri' => $url, 'title' => 'Vendor exam page'],
+      'og_audience' => array_map(fn(int $nid): array => ['target_id' => $nid], $programIds),
+    ]);
+    // Force pathauto to mint a /certificates/<title> alias on save.
+    $node->path->pathauto = 1;
+    $node->save();
+    $created++;
+  }
+
+  return sprintf('Industry cert nodes — created: %d, skipped (already present): %d.', $created, $skipped);
+}
+
+/**
+ * Regenerate path aliases for every existing certificate node.
+ *
+ * Why: the pathauto.pattern.certificates pattern is added in the same deploy
+ * via config sync, but pathauto only fires on entity save. Existing
+ * certificate nodes (academic credentials imported before this deploy) will
+ * still resolve at /node/<nid> until they're resaved with pathauto enabled.
+ */
+function programhub_certificate_import_deploy_03_regenerate_certificate_aliases(array &$sandbox): string {
+  $storage = \Drupal::entityTypeManager()->getStorage('node');
+  $nodes = $storage->loadByProperties(['type' => 'certificate']);
+  $count = 0;
+  foreach ($nodes as $node) {
+    $node->path->pathauto = 1;
+    $node->save();
+    $count++;
+  }
+  return sprintf('Regenerated path aliases for %d certificate nodes.', $count);
+}
+
+/**
+ * Seed initial cert → prep-course relationships for the 8 industry certs.
+ *
+ * Maps each industry cert to the NIC catalog courses that prepare a student
+ * to sit the exam. Initial mappings reflect typical CITE department coverage;
+ * editors can refine via the admin UI without losing this baseline (we only
+ * write when field_prep_courses is empty, never overwrite existing edits).
+ */
+function programhub_certificate_import_deploy_04_industry_cert_prep_courses(array &$sandbox): string {
+  // cert title → list of prep-course numbers. Numbers are normalized to the
+  // catalog "PREFIX-NUMBER" form. Unknown numbers are silently skipped per cert.
+  $map = [
+    'CompTIA Security+' => ['CITE-140', 'CITE-142', 'CITE-145'],
+    'CompTIA Network+' => ['CITE-152', 'CITE-121', 'CITE-122'],
+    'CompTIA A+' => ['CITE-118', 'CITE-119', 'CITE-127'],
+    'CompTIA CySA+' => ['CITE-140', 'CITE-142', 'CITE-213', 'CITE-217'],
+    'Cisco CCNA' => ['CITE-152', 'CITE-121', 'CITE-213', 'CITE-217'],
+    'Microsoft AZ-900 (Azure Fundamentals)' => ['CITE-104', 'CITE-206'],
+    'Microsoft SC-900 (Security, Compliance, and Identity Fundamentals)' => ['CITE-140', 'CITE-142', 'CITE-208'],
+    'Microsoft MD-100 / MD-101 (Modern Desktop Administrator)' => ['CITE-116', 'CITE-127'],
+  ];
+
+  $nodeStorage = \Drupal::entityTypeManager()->getStorage('node');
+
+  // Pre-resolve every course number we'll need to a node id.
+  $allNumbers = array_unique(array_merge(...array_values($map)));
+  $courseIdsByNumber = [];
+  foreach ($allNumbers as $num) {
+    $found = $nodeStorage->loadByProperties([
+      'type' => 'course',
+      'field_course_number' => $num,
+    ]);
+    if ($found) {
+      $courseIdsByNumber[$num] = (int) array_keys($found)[0];
+    }
+  }
+
+  $updated = 0;
+  $skipped = 0;
+  $missingByCert = [];
+  foreach ($map as $certTitle => $prepNumbers) {
+    $certs = $nodeStorage->loadByProperties([
+      'type' => 'certificate',
+      'title' => $certTitle,
+    ]);
+    if (!$certs) {
+      $skipped++;
+      continue;
+    }
+    /** @var \Drupal\node\NodeInterface $cert */
+    $cert = reset($certs);
+
+    // Idempotent: don't clobber editor-set values.
+    if (!$cert->get('field_prep_courses')->isEmpty()) {
+      $skipped++;
+      continue;
+    }
+
+    $targetIds = [];
+    foreach ($prepNumbers as $num) {
+      if (isset($courseIdsByNumber[$num])) {
+        $targetIds[] = ['target_id' => $courseIdsByNumber[$num]];
+      }
+      else {
+        $missingByCert[$certTitle][] = $num;
+      }
+    }
+    if (!$targetIds) {
+      $skipped++;
+      continue;
+    }
+    $cert->set('field_prep_courses', $targetIds);
+    $cert->save();
+    $updated++;
+  }
+
+  $report = sprintf('Industry-cert prep courses — updated: %d, skipped (already set or missing cert): %d.', $updated, $skipped);
+  if ($missingByCert) {
+    $bits = [];
+    foreach ($missingByCert as $title => $nums) {
+      $bits[] = sprintf('"%s" missing courses: %s', $title, implode(', ', $nums));
+    }
+    $report .= ' Course-resolution gaps: ' . implode(' · ', $bits);
+  }
+  return $report;
+}
+
+/**
+ * Resolve a program node id by its field_abbreviation. Returns null if absent.
+ */
+function _programhub_certificate_import_program_nid(string $abbr): ?int {
+  $ids = \Drupal::entityTypeManager()->getStorage('node')->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('type', 'program')
+    ->condition('field_abbreviation', $abbr)
+    ->range(0, 1)
+    ->execute();
+  return $ids ? (int) reset($ids) : NULL;
+}

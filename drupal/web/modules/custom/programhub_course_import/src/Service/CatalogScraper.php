@@ -51,6 +51,11 @@ final class CatalogScraper {
           'Accept' => 'text/html',
         ],
         'timeout' => 30,
+        // Don't throw on 4xx — we want to handle 404 ourselves as a "no
+        // catalog page for this prefix" notice, not a hard error. Common
+        // case: programs whose courses live under a different department's
+        // prefix (e.g. CYBER courses are catalogued under CITE).
+        'http_errors' => FALSE,
       ]);
     }
     catch (GuzzleException $e) {
@@ -61,10 +66,17 @@ final class CatalogScraper {
       return [];
     }
 
-    if ($response->getStatusCode() !== 200) {
+    $status = $response->getStatusCode();
+    if ($status === 404) {
+      $logger->notice('No catalog page at @url — program has no own-prefix course descriptions; skipping.', [
+        '@url' => $url,
+      ]);
+      return [];
+    }
+    if ($status !== 200) {
       $logger->error('Catalog fetch non-200 for @url: @code', [
         '@url' => $url,
-        '@code' => $response->getStatusCode(),
+        '@code' => $status,
       ]);
       return [];
     }
