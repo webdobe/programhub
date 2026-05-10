@@ -316,8 +316,25 @@ function programhub_certificate_import_deploy_05_certificate_type_abbreviations(
  * got accidentally cleared (e.g. a snapshot restore or manual blow-away).
  * Idempotent: only writes where field_prep_courses is currently empty, so
  * editor-set values are preserved.
+ *
+ * If the data gets wiped *again* later, the recipe is to add the next
+ * sequential `_NN_reseed_industry_cert_prep_courses` (e.g. `_09`, `_10`).
+ * Drupal tracks deploy-hook completion by function name, so each new
+ * suffix triggers a fresh execution.
  */
 function programhub_certificate_import_deploy_07_reseed_industry_cert_prep_courses(array &$sandbox): string {
+  return programhub_certificate_import_deploy_04_industry_cert_prep_courses($sandbox);
+}
+
+/**
+ * Force-rerun of the industry-cert → prep-course seed.
+ *
+ * `_07` was committed but on prod it ran once (or aborted in the same
+ * deploy as `_06`) and didn't populate the field. This duplicate-named
+ * hook gives Drupal a new function-name to track, so deploy:hook will
+ * execute it on the next run.
+ */
+function programhub_certificate_import_deploy_08_reseed_industry_cert_prep_courses(array &$sandbox): string {
   return programhub_certificate_import_deploy_04_industry_cert_prep_courses($sandbox);
 }
 
