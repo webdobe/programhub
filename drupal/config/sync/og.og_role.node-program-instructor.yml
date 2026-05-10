@@ -1,0 +1,15 @@
+uuid: e4b0cd5a-943f-4bc4-8e4a-9eefc0503276
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.program
+id: node-program-instructor
+label: Instructor
+weight: 0
+group_id: null
+group_type: node
+group_bundle: program
+is_admin: false
+permissions: {  }
+role_type: standard

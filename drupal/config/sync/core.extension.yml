@@ -8,6 +8,7 @@ module:
   commerce: 0
   commerce_price: 0
   config: 0
+  content_moderation: 0
   datetime: 0
   datetime_range: 0
   dblog: 0
@@ -37,6 +38,7 @@ module:
   name: 0
   node: 0
   og: 0
+  og_permissions_override: 0
   og_ui: 0
   options: 0
   page_cache: 0
@@ -67,6 +69,7 @@ module:
   webform: 0
   webform_rest: 0
   webform_ui: 0
+  workflows: 0
   pathauto: 1
   views: 10
   paragraphs: 11

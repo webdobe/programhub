@@ -1,0 +1,8 @@
+name: 'OG permission overrides'
+type: module
+description: 'Per-group permission overrides on top of bundle-level OG roles. Lets a specific program/division grant or revoke permissions for an OG role on just that group, without changing the bundle defaults. Overrides are CMI-tracked.'
+core_version_requirement: ^10 || ^11
+package: 'ProgramHub'
+dependencies:
+  - og:og
+configure: og_permissions_override.collection

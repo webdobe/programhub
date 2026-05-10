@@ -16,6 +16,6 @@ is_admin: false
 permissions:
   - 'access content overview'
   - 'access toolbar'
-  - 'administer nodes'
+  - 'update own instructor profile'
   - 'use text format html'
   - 'view own profile'

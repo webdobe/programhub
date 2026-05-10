@@ -1,4 +1,4 @@
-uuid: 81d2ca79-1dee-4021-bfd4-3c37a3b927d4
+uuid: 8c5e3f1d-7a9b-4d2c-b6e8-3f1a5d9c7b40
 langcode: en
 status: true
 dependencies:
@@ -6,14 +6,14 @@ dependencies:
     - filter.format.html
   module:
     - filter
-    - profile
+    - node
     - toolbar
-id: graduate
-label: 'Graduate user'
-weight: -8
+id: division_admin
+label: 'Division Admin'
+weight: -3
 is_admin: false
 permissions:
+  - 'access content overview'
   - 'access toolbar'
-  - 'update own graduate profile'
   - 'use text format html'
   - 'view own profile'

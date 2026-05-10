@@ -1,9 +1,17 @@
 uuid: feb5f49b-16ad-4121-909a-199997f0eb01
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  config:
+    - filter.format.html
+  module:
+    - filter
+    - toolbar
 id: student
 label: 'Student user'
 weight: -7
 is_admin: false
-permissions: {  }
+permissions:
+  - 'access toolbar'
+  - 'use text format html'
+  - 'view own profile'

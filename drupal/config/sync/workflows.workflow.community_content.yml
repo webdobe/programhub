@@ -1,0 +1,107 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.article
+    - node.type.award
+    - node.type.event
+    - node.type.game
+    - node.type.high_score
+    - node.type.menu
+    - node.type.newsletter_issue
+    - node.type.outcome
+    - node.type.portfolio_show
+    - node.type.project
+    - node.type.student_spotlight
+  module:
+    - content_moderation
+id: community_content
+label: 'Community content'
+type: content_moderation
+type_settings:
+  states:
+    draft:
+      label: Draft
+      weight: -5
+      published: false
+      default_revision: false
+    pending_review:
+      label: 'Pending review'
+      weight: -3
+      published: false
+      default_revision: false
+    published:
+      label: Published
+      weight: 0
+      published: true
+      default_revision: true
+    rejected:
+      label: Rejected
+      weight: 2
+      published: false
+      default_revision: false
+    archived:
+      label: Archived
+      weight: 5
+      published: false
+      default_revision: true
+  transitions:
+    create_new_draft:
+      label: 'Save as draft'
+      from:
+        - draft
+        - pending_review
+        - rejected
+        - archived
+      to: draft
+      weight: -5
+    submit:
+      label: 'Submit for review'
+      from:
+        - draft
+      to: pending_review
+      weight: -4
+    approve:
+      label: Approve
+      from:
+        - pending_review
+      to: published
+      weight: -3
+    reject:
+      label: Reject
+      from:
+        - pending_review
+      to: rejected
+      weight: -2
+    revise:
+      label: 'Send back to draft'
+      from:
+        - rejected
+      to: draft
+      weight: -1
+    archive:
+      label: Archive
+      from:
+        - published
+      to: archived
+      weight: 1
+    restore:
+      label: 'Restore to draft'
+      from:
+        - archived
+      to: draft
+      weight: 2
+  entity_types:
+    node:
+      - article
+      - award
+      - event
+      - game
+      - high_score
+      - menu
+      - newsletter_issue
+      - outcome
+      - portfolio_show
+      - project
+      - student_spotlight
+  default_moderation_state: draft
