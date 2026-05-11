@@ -1,0 +1,59 @@
+/**
+ * Dashboard styles. Minimal — Gin already styles:
+ *   - the page layout container (.layout-container)
+ *   - the page-title block (h1.page-title)
+ *   - <details> as cards (.claro-details)
+ *   - typography, colors, dark mode
+ *
+ * The only thing this file contributes is the widget GRID layout. If a
+ * widget needs special internal styling, put it in that widget's render
+ * array via #attached.library and keep the global stylesheet thin.
+ */
+
+.programhub-dashboard__grid {
+  display: grid;
+  gap: var(--gin-spacing-l);
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+}
+
+.programhub-dashboard__empty {
+  margin: var(--gin-spacing-l) 0;
+  color: var(--gin-color-text-light);
+}
+
+/* Small in-widget patterns reused across plugins. Keep these
+ * structural/utility — chrome still belongs to Gin's claro-details. */
+
+.programhub-widget__meta {
+  color: var(--gin-color-text-light);
+  font-size: var(--gin-font-size-s);
+}
+
+.programhub-widget__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gin-spacing-xs);
+}
+
+.programhub-widget__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.programhub-widget__table th,
+.programhub-widget__table td {
+  padding: var(--gin-spacing-xs) var(--gin-spacing-s);
+  text-align: start;
+  border-bottom: var(--gin-border-xs) solid var(--gin-border-color-layer);
+}
+
+.programhub-widget__table th {
+  font-weight: var(--gin-font-weight-semibold);
+  color: var(--gin-color-text-light);
+  font-size: var(--gin-font-size-s);
+}
+
+.programhub-widget__numeric {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}

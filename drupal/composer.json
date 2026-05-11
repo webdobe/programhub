@@ -24,6 +24,7 @@
         "drupal/core-project-message": "^11.2",
         "drupal/core-recipe-unpack": "^11.2",
         "drupal/core-recommended": "^11.2",
+        "drupal/dashboards": "2.1.x-dev@dev",
         "drupal/entity_reference_revisions": "^1.14",
         "drupal/gin": "^5.0",
         "drupal/gin_login": "^2.1",

@@ -12,8 +12,7 @@ group_type: node
 group_bundle: program
 is_admin: false
 permissions:
-  # Submit articles / industry resources for review
   - 'create article content'
-  - 'update own article content'
   - 'delete own article content'
+  - 'update own article content'
 role_type: standard

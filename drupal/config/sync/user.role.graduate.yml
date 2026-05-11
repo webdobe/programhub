@@ -15,7 +15,11 @@ label: 'Graduate user'
 weight: -8
 is_admin: false
 permissions:
+  - 'access dashboard'
   - 'access toolbar'
+  - 'create award content'
+  - 'create project content'
+  - 'create student_spotlight content'
   - 'update own graduate profile'
   - 'use community_content transition create_new_draft'
   - 'use community_content transition revise'

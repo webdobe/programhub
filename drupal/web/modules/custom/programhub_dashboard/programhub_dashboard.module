@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * @file
+ * ProgramHub dashboard.
+ *
+ * The dashboard is a single route (`/dashboard`) that renders all
+ * `@DashboardWidget` plugins the current user has access to, ordered by
+ * each widget's `weight`. Widgets live anywhere — this module ships
+ * universal widgets (profile, notifications, drafts), and any other
+ * custom module can contribute its own widgets by dropping a class into
+ * its own `Plugin/DashboardWidget/` folder.
+ *
+ * Each widget's `access()` method is the access-control surface; combine
+ * global Drupal permissions, OG memberships, and group-content checks
+ * there. See ACCESS.md for the permission model.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Implements hook_theme().
+ *
+ * Two templates:
+ *   - `programhub_dashboard` — the page shell (title, widget grid).
+ *   - `programhub_dashboard_widget` — chrome around one widget's body
+ *     (heading, container, category data attribute for CSS hooks).
+ */
+function programhub_dashboard_theme(): array {
+  return [
+    'programhub_dashboard' => [
+      'variables' => [
+        'widgets' => [],
+        'user' => [],
+      ],
+      'template' => 'programhub-dashboard',
+    ],
+    'programhub_dashboard_widget' => [
+      'variables' => [
+        'widget_id' => '',
+        'label' => '',
+        'category' => '',
+        'body' => [],
+      ],
+      'template' => 'programhub-dashboard-widget',
+    ],
+  ];
+}

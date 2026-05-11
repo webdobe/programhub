@@ -1,0 +1,30 @@
+{#
+/**
+ * @file
+ * Template for the dashboard page shell.
+ *
+ * Deliberately minimal. Gin already renders:
+ *   - the layout container (.layout-container)
+ *   - the page title "Dashboard" via the page_title_block
+ *   - all spacing for .region-content
+ *
+ * Our only contribution is the widget grid. Don't add wrapper padding,
+ * max-width, or H1s here — Gin owns those.
+ *
+ * Available variables:
+ * - widgets: render array of widgets keyed by plugin id, already
+ *   filtered to those the user can see.
+ * - user: { id, name }
+ */
+#}
+{% if widgets is empty %}
+  <p class="programhub-dashboard__empty">
+    {{ 'No widgets to show. Talk to your program admin if this looks wrong.'|t }}
+  </p>
+{% else %}
+  <div class="programhub-dashboard__grid">
+    {% for widget in widgets %}
+      {{ widget }}
+    {% endfor %}
+  </div>
+{% endif %}

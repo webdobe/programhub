@@ -39,6 +39,39 @@ programs can override permissions for an individual group via the
 row in §5 of this document for that program**, so reviewers can see who
 can do what in CITE vs. GDES at a glance.
 
+### The OG canonical create flow
+
+Drupal's `/node/add/<bundle>` route checks the **global**
+`create <bundle> content` permission. OG's `og_entity_create_access()`
+hook returns `AccessResult::neutral()` (not allowed) — meaning OG
+doesn't actively grant route access on its own.
+
+To make creates work, our user-type global roles carry the
+**global** `create <bundle> content` perm for the bundles each role
+should be able to create. This grants ROUTE access only. Actual scoping
+happens via:
+
+1. The required `og_audience` field on every Community bundle —
+   the user MUST select a group on save.
+2. OG's `OgSelection` reference handler — the dropdown shows ONLY
+   groups the user has OG-scoped `create <bundle> content` on.
+3. Form validation rejects saves where the user has no OG perm in
+   the selected audience.
+
+Net effect: the matrix rows below (which describe OG-scoped behaviour)
+remain the source of truth for *where* a user can create. Global perm
+is a route-access requirement, not an authorisation bypass.
+
+### Edit/delete access on existing content
+
+`/node/<nid>/edit` and `/node/<nid>/delete` route to `hook_node_access`,
+which OG implements via `og_entity_access()`. With
+`node_access_strict: true` (already set), OG checks the user's OG
+permissions against the node's `og_audience`. **After changing OG
+role perms or membership data, run `drush php:eval 'node_access_rebuild();'`
+to sync the node_access grants table** — otherwise existing nodes may
+fall through to stale grants and reject otherwise-permitted edits.
+
 ---
 
 ## 1. Role catalog
@@ -110,7 +143,7 @@ can touch it.
 | `student_spotlight` | Community                        | Suggested → moderated → published.                 |
 | `event`             | Community                        | Program events.                                    |
 | `article`           | Community                        | News / blog content.                               |
-| `newsletter_issue`  | Community                        | Newsletter editions.                               |
+| `simplenews_issue`  | Community                        | Newsletter editions.                               |
 | `portfolio_show`    | Community                        | Cohort show + submissions.                         |
 | `menu`              | Community **(program-scoped)**   | CULA culinary menus published for a venue.         |
 | `game`              | Community **(program-scoped)**   | GDES game-artifact (dormant; revived only if a portfolio show creates a game). |
@@ -220,10 +253,13 @@ career_track) survive.
 | edit editorial fields | —       | —        | —          | —          | ✓       | ✓             |
 | delete                | —       | —        | —          | —          | —       | ✓ (admin only) |
 
-> **Graduate self-reported career data** belongs in a separate construct
-> (paragraph on the graduate profile, or a future `graduate_career`
-> content type) — *not* on the BLS-imported node. Tracked as a future
-> design decision; until then, graduates have no edit on `career_outcome`.
+> **Graduate self-reported career data** lives in the existing
+> `field_experience` paragraph reference on the `graduate` profile
+> type — *not* on the BLS-imported `career_outcome` node. The
+> `experience` paragraph already captures: title, location, start/end
+> dates, type, description, website URL. Graduates edit their own
+> entries inline on their profile via `update own graduate profile`
+> permission (already granted to the graduate global role).
 
 ### Student Spotlight
 

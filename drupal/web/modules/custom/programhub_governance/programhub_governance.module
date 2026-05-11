@@ -5,8 +5,87 @@
  * Governance hooks for ProgramHub.
  *
  * Deploy-time data migrations live in `programhub_governance.deploy.php`.
- * Future runtime hooks (OG membership → role assignment, moderation
- * notifications, etc.) live here.
+ * Runtime hooks (moderation notifications, OG enrollment side-effects)
+ * live here.
  */
 
 declare(strict_types=1);
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_entity_update().
+ *
+ * Detects content_moderation state transitions on community-content
+ * nodes and hands them to the notifier service. Only delegates when the
+ * moderation_state actually changed — we don't want to notify on every
+ * node save (e.g. an instructor editing the body of a draft).
+ */
+function programhub_governance_entity_update(EntityInterface $entity): void {
+  if (!$entity instanceof NodeInterface) {
+    return;
+  }
+  if (!$entity->hasField('moderation_state')) {
+    return;
+  }
+  $original = $entity->original ?? NULL;
+  if (!$original instanceof NodeInterface || !$original->hasField('moderation_state')) {
+    return;
+  }
+  $from = (string) $original->get('moderation_state')->value;
+  $to = (string) $entity->get('moderation_state')->value;
+  if ($from === $to || $to === '') {
+    return;
+  }
+  \Drupal::service('programhub_governance.moderation_notifier')
+    ->notify($entity, $from, $to);
+}
+
+/**
+ * Implements hook_mail().
+ *
+ * Templates for moderation-transition notifications. The `key` selects
+ * which template body to use; tokens come from `params`.
+ */
+function programhub_governance_mail(string $key, array &$message, array $params): void {
+  $title = $params['title'] ?? '';
+  $url = $params['url'] ?? '';
+  $bundle = $params['bundle'] ?? '';
+  $author = $params['author'] ?? '';
+  $reviewer = $params['reviewer'] ?? '';
+  $reason = $params['reason'] ?? '';
+
+  switch ($key) {
+    case 'submission_pending':
+      $message['subject'] = t('Review needed: @title', ['@title' => $title]);
+      $message['body'][] = t(
+        '@author submitted a @bundle for review.',
+        ['@author' => $author, '@bundle' => $bundle],
+      );
+      $message['body'][] = t('Title: @title', ['@title' => $title]);
+      $message['body'][] = t('Review it here: @url', ['@url' => $url]);
+      break;
+
+    case 'submission_approved':
+      $message['subject'] = t('Approved: @title', ['@title' => $title]);
+      $message['body'][] = t(
+        'Your @bundle "@title" has been approved and is now published.',
+        ['@bundle' => $bundle, '@title' => $title],
+      );
+      $message['body'][] = t('View it: @url', ['@url' => $url]);
+      break;
+
+    case 'submission_rejected':
+      $message['subject'] = t('Revision requested: @title', ['@title' => $title]);
+      $message['body'][] = t(
+        'Your @bundle "@title" needs revision before it can be published.',
+        ['@bundle' => $bundle, '@title' => $title],
+      );
+      if ($reason !== '') {
+        $message['body'][] = t('Note: @reason', ['@reason' => $reason]);
+      }
+      $message['body'][] = t('Edit it here: @url', ['@url' => $url]);
+      break;
+  }
+}

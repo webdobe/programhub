@@ -1,0 +1,11 @@
+services:
+  # Sends emails on moderation state transitions. Called from
+  # hook_entity_update in .module. Recipients come from the OG group
+  # the affected node belongs to.
+  programhub_governance.moderation_notifier:
+    class: Drupal\programhub_governance\Notification\ModerationNotifier
+    arguments:
+      - '@entity_type.manager'
+      - '@plugin.manager.mail'
+      - '@language_manager'
+      - '@logger.factory'

@@ -4,53 +4,128 @@ declare(strict_types=1);
 
 namespace Drupal\og_permissions_override\Access;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\og\MembershipManagerInterface;
+use Drupal\og\OgAccess;
 use Drupal\og\OgAccessInterface;
 use Drupal\og_permissions_override\OgPermissionOverrideResolver;
 
 /**
  * Decorates `og.access` to apply per-group permission overrides.
  *
- * Phase 1 ships this as a pass-through — every method delegates to the
- * inner service unchanged. The plumbing is in place; no permission
- * decisions are altered yet.
+ * Extends the concrete `OgAccess` class rather than just implementing
+ * `OgAccessInterface` because contrib OG type-hints the CONCRETE class
+ * on several consumer constructor params (e.g. `OgMembershipAccessControlHandler`).
+ * Decoration would TypeError on first request if the decorator weren't
+ * an `OgAccess` instance.
  *
- * Phase 4 will add the actual override logic in `userAccess()`:
+ * We deliberately do NOT call `parent::__construct()` — the parent's
+ * 8 readonly properties stay uninitialized. That's safe because:
+ *   1. OG's public surface (4 methods on OgAccessInterface) is fully
+ *      overridden here; nothing ever invokes the parent's logic.
+ *   2. The parent's readonly props are only used internally by the
+ *      parent's own public methods, which we no longer call.
  *
- *   1. Call the inner `$this->inner->userAccess($group, $operation, $user)`.
- *   2. Ask the resolver for any granted/revoked permissions for the
- *      user's OG role(s) on this group.
- *   3. If `$operation` is in `granted`, return `AccessResult::allowed()`.
- *   4. If `$operation` is in `revoked`, return `AccessResult::forbidden()`.
- *   5. Otherwise return the inner result.
+ * Override semantics:
+ *   - The decorator first asks the inner (real) `og.access` for the
+ *     base access decision.
+ *   - It then consults the resolver for permission deltas on every
+ *     OG role the user holds in the target group.
+ *   - **Revoke wins over grant.** If any matching override revokes the
+ *     permission, the decision becomes forbidden. Otherwise, if any
+ *     matching override grants the permission and the base was not
+ *     already allowed, the decision flips to allowed.
+ *   - Cacheability: result inherits all cache tags/contexts from both
+ *     the inner result and the resolver. If overrides are added or
+ *     removed, the resolver's tags invalidate this decision.
  *
- * The decorator must implement every method of `OgAccessInterface`
- * verbatim — Drupal's service-decoration model requires the wrapper to
- * preserve the contract.
+ * Only `userAccess()` consults overrides today. The other three
+ * interface methods (`userAccessEntity()`, `userAccessEntityOperation()`,
+ * `userAccessGroupContentEntityOperation()`) ultimately delegate to
+ * `userAccess()` inside OG's own implementation, so overrides propagate
+ * automatically.
  */
-final class OgAccessOverrideDecorator implements OgAccessInterface {
+final class OgAccessOverrideDecorator extends OgAccess implements OgAccessInterface {
 
   public function __construct(
     private readonly OgAccessInterface $inner,
-    // Resolver is injected for Phase 4; not yet consulted.
     private readonly OgPermissionOverrideResolver $resolver,
-  ) {}
+    // Renamed from `membershipManager` to avoid colliding with the
+    // protected property of the same name on parent OgAccess. PHP
+    // forbids narrowing visibility (protected → private = fatal).
+    private readonly MembershipManagerInterface $ogMembershipManager,
+  ) {
+    // No parent::__construct() — see class docblock.
+  }
 
   /**
    * {@inheritdoc}
    */
   public function userAccess(EntityInterface $group, string $permission, ?AccountInterface $user = NULL, bool $skip_alter = FALSE): AccessResultInterface {
-    // Phase 1: pass-through. Phase 4: apply resolver delta on top.
-    return $this->inner->userAccess($group, $permission, $user, $skip_alter);
+    $base = $this->inner->userAccess($group, $permission, $user, $skip_alter);
+
+    // Anonymous / no user context — nothing to override. Most OG checks
+    // pass a user; the null fallback is defensive.
+    if ($user === NULL) {
+      return $base;
+    }
+
+    // Look up the user's OG roles in THIS specific group. If they're
+    // not a member, no per-group override applies.
+    $membership = $this->ogMembershipManager->getMembership($group, (int) $user->id());
+    if ($membership === NULL) {
+      return $base;
+    }
+
+    $hasGrant = FALSE;
+    $hasRevoke = FALSE;
+    foreach ($membership->getRoles() as $role) {
+      $delta = $this->resolver->getDelta(
+        $role->id(),
+        $group->getEntityTypeId(),
+        (int) $group->id(),
+      );
+      if (in_array($permission, $delta['granted'], TRUE)) {
+        $hasGrant = TRUE;
+      }
+      if (in_array($permission, $delta['revoked'], TRUE)) {
+        $hasRevoke = TRUE;
+      }
+    }
+
+    // Revoke always wins: even if base allowed, an explicit revoke
+    // takes precedence. Carry through base's cacheability so cache
+    // invalidation still works when bundle-level perms change.
+    if ($hasRevoke) {
+      return AccessResult::forbidden('Revoked by og_permissions_override')
+        ->addCacheableDependency($base)
+        ->addCacheTags(['config:og_permissions_override.override.list'])
+        ->addCacheContexts(['user']);
+    }
+
+    // Grant flips a forbidden base to allowed. Doesn't touch a base
+    // that's already allowed (no-op) or neutral.
+    if ($hasGrant && !$base->isAllowed()) {
+      return AccessResult::allowed()
+        ->addCacheableDependency($base)
+        ->addCacheTags(['config:og_permissions_override.override.list'])
+        ->addCacheContexts(['user']);
+    }
+
+    // No override applies — return the base decision, but include
+    // override cache tags so adding an override later invalidates this.
+    return $base
+      ->addCacheTags(['config:og_permissions_override.override.list'])
+      ->addCacheContexts(['user']);
   }
 
   /**
    * {@inheritdoc}
    */
   public function userAccessEntity(string $permission, EntityInterface $entity, ?AccountInterface $user = NULL): AccessResultInterface {
-    // Phase 1: pass-through. Phase 4: apply resolver delta on top.
     return $this->inner->userAccessEntity($permission, $entity, $user);
   }
 
@@ -66,23 +141,6 @@ final class OgAccessOverrideDecorator implements OgAccessInterface {
    */
   public function userAccessGroupContentEntityOperation(string $operation, EntityInterface $group_entity, EntityInterface $group_content_entity, ?AccountInterface $user = NULL): AccessResultInterface {
     return $this->inner->userAccessGroupContentEntityOperation($operation, $group_entity, $group_content_entity, $user);
-  }
-
-  /**
-   * Catch-all for any other method on `OgAccessInterface` that the OG
-   * version we're depending on adds. Without this, a future OG release
-   * adding a method to the interface would break the decorator on
-   * `composer update`.
-   *
-   * Removed in Phase 4 once we override every method explicitly.
-   *
-   * @phpstan-ignore method.unused
-   */
-  public function __call(string $name, array $arguments): mixed {
-    if (method_exists($this->inner, $name)) {
-      return $this->inner->{$name}(...$arguments);
-    }
-    throw new \BadMethodCallException("Method {$name} does not exist on the decorated OG access service.");
   }
 
 }

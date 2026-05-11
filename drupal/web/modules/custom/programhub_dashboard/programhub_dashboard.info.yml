@@ -1,0 +1,9 @@
+name: 'ProgramHub dashboard'
+type: module
+description: 'Authenticated dashboard with permission/OG-aware widget plugins. One route, many widgets — each widget declares its own access check (combining global role, OG membership, and Drupal permission).'
+core_version_requirement: ^10 || ^11
+package: 'ProgramHub'
+dependencies:
+  - drupal:user
+  - drupal:system
+  - og:og

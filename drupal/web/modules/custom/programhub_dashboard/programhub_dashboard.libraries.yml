@@ -1,0 +1,12 @@
+dashboard:
+  version: 1.x
+  css:
+    theme:
+      css/programhub-dashboard.css: {}
+  dependencies:
+    # Gin's CSS custom properties (--gin-color-*, --gin-spacing-*, etc.)
+    # live in this library. Depending on it explicitly means our dashboard
+    # styles work even if the page somehow renders without Gin's full
+    # asset chain attached (admin route mismatches, route-specific theme
+    # negotiation, etc.).
+    - gin/gin_base

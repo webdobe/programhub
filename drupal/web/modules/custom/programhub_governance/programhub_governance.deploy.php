@@ -44,7 +44,7 @@ function programhub_governance_deploy_01_backfill_moderation_states(?array &$san
     'game',
     'high_score',
     'menu',
-    'newsletter_issue',
+    'simplenews_issue',
     'outcome',
     'portfolio_show',
     'project',

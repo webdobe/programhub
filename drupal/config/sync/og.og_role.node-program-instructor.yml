@@ -12,34 +12,28 @@ group_type: node
 group_bundle: program
 is_admin: false
 permissions:
-  # Project — instructors edit any student/grad project in their program
-  - 'create project content'
-  - 'update own project content'
-  - 'update any project content'
-  - 'delete own project content'
-  # Award
-  - 'create award content'
-  - 'update own award content'
-  - 'update any award content'
-  - 'delete own award content'
-  # Student spotlight
-  - 'create student_spotlight content'
-  - 'update own student_spotlight content'
-  - 'update any student_spotlight content'
-  - 'delete own student_spotlight content'
-  # Event
-  - 'create event content'
-  - 'update own event content'
-  - 'update any event content'
-  - 'delete own event content'
-  # Article (news)
   - 'create article content'
-  - 'update own article content'
-  - 'update any article content'
-  - 'delete own article content'
-  # Portfolio show
+  - 'create award content'
+  - 'create event content'
   - 'create portfolio_show content'
-  - 'update own portfolio_show content'
-  - 'update any portfolio_show content'
+  - 'create project content'
+  - 'create student_spotlight content'
+  - 'delete own article content'
+  - 'delete own award content'
+  - 'delete own event content'
   - 'delete own portfolio_show content'
+  - 'delete own project content'
+  - 'delete own student_spotlight content'
+  - 'update any article content'
+  - 'update any award content'
+  - 'update any event content'
+  - 'update any portfolio_show content'
+  - 'update any project content'
+  - 'update any student_spotlight content'
+  - 'update own article content'
+  - 'update own award content'
+  - 'update own event content'
+  - 'update own portfolio_show content'
+  - 'update own project content'
+  - 'update own student_spotlight content'
 role_type: standard

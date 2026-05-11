@@ -48,6 +48,7 @@ module:
   programhub_careers: 0
   programhub_certificate_import: 0
   programhub_course_import: 0
+  programhub_dashboard: 0
   programhub_governance: 0
   programhub_profile_paths: 0
   rest: 0

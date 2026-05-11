@@ -1,26 +1,19 @@
 services:
-  # The resolver loads matching override config entities for a given
-  # (og_role_id, group_entity_type, group_entity_id) tuple. Phase 1: returns
-  # empty deltas for everything. Phase 4: real lookups + caching.
+  # Loads matching override config entities for a given
+  # (og_role_id, group_entity_type, group_entity_id) tuple.
   og_permissions_override.resolver:
     class: Drupal\og_permissions_override\OgPermissionOverrideResolver
     arguments:
       - '@entity_type.manager'
 
-  # Decorates OG's access service so overrides can adjust the result of
-  # userAccess() / userAccessEntity() for a specific group.
-  #
-  # Phase 1 (stub): pass-through. The decorator calls the inner service and
-  # returns the result unchanged. The plumbing exists; no overrides apply yet.
-  #
-  # Phase 4: walk through the user's OG memberships for the group, ask the
-  # resolver for any granted/revoked permission deltas, and combine with the
-  # inner service's decision (grant short-circuits a deny; revoke short-
-  # circuits a grant). Until then, the resolver returns empty and this
-  # decorator is a no-op.
+  # Decorates `og.access` so per-group overrides actually affect access
+  # decisions. The decorator extends concrete `OgAccess` (not just the
+  # interface) so contrib OG's type-hints — which expect the concrete
+  # class — accept our instance. See the decorator's class docblock.
   og_permissions_override.og_access_decorator:
     class: Drupal\og_permissions_override\Access\OgAccessOverrideDecorator
     decorates: og.access
     arguments:
       - '@og_permissions_override.og_access_decorator.inner'
       - '@og_permissions_override.resolver'
+      - '@og.membership_manager'

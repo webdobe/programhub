@@ -1,0 +1,6 @@
+services:
+  # Plugin manager for dashboard widgets. Discovers any class annotated
+  # with @DashboardWidget in plugin namespace Drupal\*\Plugin\DashboardWidget.
+  plugin.manager.programhub_dashboard_widget:
+    class: Drupal\programhub_dashboard\DashboardWidgetPluginManager
+    parent: default_plugin_manager

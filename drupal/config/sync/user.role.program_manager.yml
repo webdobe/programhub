@@ -16,7 +16,15 @@ weight: -4
 is_admin: false
 permissions:
   - 'access content overview'
+  - 'access dashboard'
   - 'access toolbar'
+  - 'create article content'
+  - 'create award content'
+  - 'create event content'
+  - 'create portfolio_show content'
+  - 'create project content'
+  - 'create simplenews_issue content'
+  - 'create student_spotlight content'
   - 'use community_content transition approve'
   - 'use community_content transition archive'
   - 'use community_content transition create_new_draft'

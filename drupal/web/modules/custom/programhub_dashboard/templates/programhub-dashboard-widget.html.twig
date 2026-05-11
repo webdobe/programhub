@@ -1,0 +1,25 @@
+{#
+/**
+ * @file
+ * Template for a single dashboard widget.
+ *
+ * Rendered as a `<details open>` element so Gin's native details
+ * styling does the card chrome. Don't add custom card CSS here —
+ * Gin handles the border, padding, heading, and dark-mode states.
+ *
+ * Available variables:
+ * - widget_id, label, category
+ * - body: the widget's own render array (output of its build() method).
+ */
+#}
+<details
+  class="claro-details programhub-widget"
+  data-widget-id="{{ widget_id }}"
+  data-widget-category="{{ category }}"
+  open
+>
+  <summary class="claro-details__summary">{{ label }}</summary>
+  <div class="claro-details__wrapper">
+    {{ body }}
+  </div>
+</details>

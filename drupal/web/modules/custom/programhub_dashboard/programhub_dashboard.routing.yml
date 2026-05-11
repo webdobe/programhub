@@ -1,0 +1,13 @@
+programhub_dashboard.dashboard:
+  path: '/dashboard'
+  defaults:
+    _controller: 'Drupal\programhub_dashboard\Controller\DashboardController::view'
+    _title: 'Dashboard'
+  requirements:
+    _permission: 'access dashboard'
+  options:
+    no_cache: TRUE
+    # Mark as admin route so Drupal uses the admin theme (Gin) and the
+    # admin asset/toolbar chain, even if the front-end default theme is
+    # different in the future.
+    _admin_route: TRUE
