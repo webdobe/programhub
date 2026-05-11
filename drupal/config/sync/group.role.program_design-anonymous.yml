@@ -1,0 +1,28 @@
+uuid: 7b9adab7-b98b-4ebf-94b3-add77cab6efe
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program_design
+    - user.role.anonymous
+id: program_design-anonymous
+label: Anonymous
+weight: 21
+admin: false
+scope: outsider
+global_role: anonymous
+group_type: program_design
+permissions:
+  - 'view group'
+  - 'view group_node:article entity'
+  - 'view group_node:award entity'
+  - 'view group_node:career_outcome entity'
+  - 'view group_node:certificate entity'
+  - 'view group_node:course entity'
+  - 'view group_node:event entity'
+  - 'view group_node:menu entity'
+  - 'view group_node:portfolio_show entity'
+  - 'view group_node:project entity'
+  - 'view group_node:simplenews_issue entity'
+  - 'view group_node:student_spotlight entity'
+  - 'view group_node:venue entity'

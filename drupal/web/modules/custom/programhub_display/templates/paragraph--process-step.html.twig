@@ -1,0 +1,24 @@
+{#
+/**
+ * @file
+ * Process step paragraph — one step in a project's process narrative.
+ */
+#}
+<div{{ attributes.addClass(['ph-paragraph', 'ph-paragraph--process-step']) }}>
+  {% if content.field_image|render %}
+    <div class="ph-paragraph--process-step__image">{{ content.field_image }}</div>
+  {% endif %}
+  <div class="ph-paragraph--process-step__body">
+    <div class="ph-paragraph--process-step__head">
+      {% if content.field_label|render %}
+        <h4 class="ph-paragraph--process-step__label">{{ content.field_label }}</h4>
+      {% endif %}
+      {% if content.field_process_type|render %}
+        <span class="ph-paragraph--process-step__type">{{ content.field_process_type }}</span>
+      {% endif %}
+    </div>
+    {% if content.field_description|render %}
+      <div class="ph-paragraph--process-step__desc">{{ content.field_description }}</div>
+    {% endif %}
+  </div>
+</div>

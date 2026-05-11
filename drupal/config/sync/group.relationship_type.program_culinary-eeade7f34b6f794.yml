@@ -1,0 +1,17 @@
+uuid: bd047cd3-2f3b-43ef-8b7a-5f6ab313488d
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program_culinary
+    - node.type.award
+  module:
+    - gnode
+    - node
+id: program_culinary-eeade7f34b6f794
+group_type: program_culinary
+content_plugin: 'group_node:award'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

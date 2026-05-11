@@ -1,0 +1,15 @@
+node_display:
+  version: 1.x
+  css:
+    theme:
+      css/node-display.css: {}
+  dependencies:
+    - gin/gin_base
+
+node_form:
+  version: 1.x
+  css:
+    theme:
+      css/node-form.css: {}
+  dependencies:
+    - gin/gin_base

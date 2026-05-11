@@ -1,0 +1,17 @@
+uuid: 768671d6-45bc-442a-9074-ab94056825c0
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program
+    - node.type.simplenews_issue
+  module:
+    - gnode
+    - node
+id: program-28cd992cb62a9224cf4cf966
+group_type: program
+content_plugin: 'group_node:simplenews_issue'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

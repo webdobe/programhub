@@ -1,0 +1,23 @@
+uuid: bc0dd4bb-bcae-4f79-bc54-6952f497f1ea
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.field_website
+    - group.type.program_culinary
+  module:
+    - link
+id: group.program_culinary.field_website
+field_name: field_website
+entity_type: group
+bundle: program_culinary
+label: Website
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 1
+  link_type: 17
+field_type: link

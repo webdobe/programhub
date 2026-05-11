@@ -76,24 +76,27 @@ class CareersImporter {
   }
 
   /**
-   * Walk every program and collect:
-   *   - socsByProgram: program nid → string[]
-   *   - programsBySoc: SOC code → program nid[]
+   * Walk every program group and collect:
+   *   - socsByProgram: group gid → string[]
+   *   - programsBySoc: SOC code → group gid[]
    *
    * Public so the batch ops can call it directly.
    *
    * @return array{0: array<int, string[]>, 1: array<string, int[]>}
    */
   public function collectSocs(): array {
-    $programs = $this->entityTypeManager->getStorage('node')->loadByProperties([
-      'type' => 'program',
-      'status' => 1,
-    ]);
+    // Sweep every program subtype — `program`, `program_design`,
+    // `program_culinary`, etc. — so retyped programs (e.g. GDES under
+    // program_design) still contribute their SOC codes.
+    $gids = $this->entityTypeManager->getStorage('group')->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('type', \Drupal\programhub_dashboard\Service\GroupContext::PROGRAM_GROUP_TYPES, 'IN')
+      ->execute();
+    $programs = $this->entityTypeManager->getStorage('group')->loadMultiple($gids);
 
     $socsByProgram = [];
     $programsBySoc = [];
     foreach ($programs as $program) {
-      assert($program instanceof NodeInterface);
       $codes = [];
       if ($program->hasField('field_soc_codes')) {
         foreach ($program->get('field_soc_codes') as $item) {
@@ -182,18 +185,25 @@ class CareersImporter {
     $node->set('field_pay_source', $p['pay_source']);
     $node->set('field_tasks', array_map(fn($t) => ['value' => $t], $p['tasks']));
 
-    // Group audience — union with whatever's already there. We don't remove
-    // group memberships an editor may have added by hand.
-    $current = [];
-    foreach ($node->get('og_audience') as $item) {
-      $current[(int) $item->target_id] = TRUE;
-    }
-    foreach ($p['program_ids'] as $pid) {
-      $current[$pid] = TRUE;
-    }
-    $node->set('og_audience', array_map(fn($id) => ['target_id' => $id], array_keys($current)));
-
     $node->save();
+
+    // Group memberships — union with whatever's already there. Attach to
+    // each program group that claims this SOC; existing relationships
+    // are preserved (we never remove a group an editor has added).
+    $existingGroupIds = [];
+    foreach (\Drupal\group\Entity\GroupRelationship::loadByEntity($node) as $rel) {
+      $existingGroupIds[(int) $rel->getGroupId()] = TRUE;
+    }
+    $groupStorage = $this->entityTypeManager->getStorage('group');
+    foreach ($p['program_ids'] as $gid) {
+      if (isset($existingGroupIds[(int) $gid])) {
+        continue;
+      }
+      $group = $groupStorage->load($gid);
+      if ($group) {
+        $group->addRelationship($node, 'group_node:career_outcome');
+      }
+    }
     return $action;
   }
 

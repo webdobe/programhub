@@ -5,15 +5,70 @@ dependencies:
   config:
     - field.field.node.simplenews_issue.body
     - field.field.node.simplenews_issue.field_path
-    - field.field.node.simplenews_issue.og_audience
     - field.field.node.simplenews_issue.simplenews_issue
     - node.type.simplenews_issue
+    - workflows.workflow.community_content
   module:
+    - content_moderation
+    - field_group
     - path
     - simplenews
     - text
-_core:
-  default_config_hash: 95gz1Cn7UjP1ED-lgXnR9ucmWPz9TOn1YEuKUllmELo
+third_party_settings:
+  field_group:
+    group_main:
+      children:
+        - group_issue
+        - group_newsletter
+        - group_publishing
+      label: ''
+      region: content
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        classes: ph-form-tabs
+        id: simplenews_issue-tabs
+        direction: horizontal
+        width_breakpoint: 640
+    group_issue:
+      children:
+        - body
+      label: Issue
+      region: content
+      parent_name: group_main
+      weight: 0
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: open
+        description: 'The body of the newsletter issue.'
+    group_newsletter:
+      children:
+        - simplenews_issue
+      label: Newsletter
+      region: content
+      parent_name: group_main
+      weight: 1
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Which newsletter this issue belongs to and send settings.'
+    group_publishing:
+      children:
+        - og_audience
+        - moderation_state
+        - status
+      label: Publishing
+      region: content
+      parent_name: group_main
+      weight: 2
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Program scope and review state.'
 id: node.simplenews_issue.default
 targetEntityType: node
 bundle: simplenews_issue
@@ -21,55 +76,48 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 2
+    weight: 0
     region: content
     settings:
-      rows: 9
+      rows: 14
       summary_rows: 3
       placeholder: ''
+      show_summary: false
     third_party_settings: {  }
   created:
     type: datetime_timestamp
     weight: 10
-    region: content
+    region: advanced
     settings: {  }
     third_party_settings: {  }
-  field_path:
-    type: string_textfield
-    weight: 30
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  og_audience:
-    type: options_select
-    weight: 121
+  moderation_state:
+    type: moderation_state_default
+    weight: 1
     region: content
     settings: {  }
     third_party_settings: {  }
   path:
     type: path
     weight: 30
-    region: content
+    region: advanced
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
     weight: 15
-    region: content
+    region: advanced
     settings:
       display_label: true
     third_party_settings: {  }
   simplenews_issue:
     type: simplenews_issue
-    weight: 3
+    weight: 0
     region: content
     settings: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 120
+    weight: 2
     region: content
     settings:
       display_label: true
@@ -77,26 +125,27 @@ content:
   sticky:
     type: boolean_checkbox
     weight: 16
-    region: content
+    region: advanced
     settings:
       display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 0
+    weight: -10
     region: content
     settings:
       size: 60
-      placeholder: ''
+      placeholder: 'Subject line'
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
     weight: 5
-    region: content
+    region: advanced
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_path: true

@@ -1,0 +1,141 @@
+<?php
+
+/**
+ * @file
+ * ProgramHub display.
+ *
+ * Registers per-bundle view templates for nodes, profiles, and
+ * paragraphs. Attaches the shared Gin-styled display CSS on full-view
+ * renders of any bundle this module owns a template for.
+ *
+ * Adding a new template: drop the Twig file in templates/, list the
+ * bundle in the relevant constant below, clear cache. The template
+ * filename uses dashes (`node--my-bundle.html.twig`) even though the
+ * machine name uses underscores — that's Drupal's convention.
+ */
+
+declare(strict_types=1);
+
+use Drupal\node\NodeInterface;
+
+/**
+ * Node bundles with custom templates.
+ */
+const PROGRAMHUB_DISPLAY_NODE_TEMPLATES = [
+  'project',
+  'event',
+  'award',
+  'article',
+  'student_spotlight',
+  'menu',
+  'simplenews_issue',
+  'portfolio_show',
+  'certificate',
+  'course',
+  'program',
+  'division',
+  'venue',
+  'career_outcome',
+];
+
+/**
+ * Profile bundles with custom templates.
+ */
+const PROGRAMHUB_DISPLAY_PROFILE_TEMPLATES = [
+  'graduate',
+  'instructor',
+  'tac_member',
+];
+
+/**
+ * Paragraph bundles with custom templates.
+ */
+const PROGRAMHUB_DISPLAY_PARAGRAPH_TEMPLATES = [
+  'experience',
+  'skill',
+  'certificate_course',
+  'hours',
+  'menu_item',
+  'process_step',
+];
+
+/**
+ * Implements hook_theme().
+ */
+function programhub_display_theme(): array {
+  $themes = [];
+  foreach (PROGRAMHUB_DISPLAY_NODE_TEMPLATES as $bundle) {
+    $themes['node__' . $bundle] = [
+      'template' => 'node--' . str_replace('_', '-', $bundle),
+      'base hook' => 'node',
+    ];
+  }
+  foreach (PROGRAMHUB_DISPLAY_PROFILE_TEMPLATES as $bundle) {
+    $themes['profile__' . $bundle] = [
+      'template' => 'profile--' . str_replace('_', '-', $bundle),
+      'base hook' => 'profile',
+    ];
+  }
+  foreach (PROGRAMHUB_DISPLAY_PARAGRAPH_TEMPLATES as $bundle) {
+    $themes['paragraph__' . $bundle] = [
+      'template' => 'paragraph--' . str_replace('_', '-', $bundle),
+      'base hook' => 'paragraph',
+    ];
+  }
+  return $themes;
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for node.
+ */
+function programhub_display_preprocess_node(array &$variables): void {
+  $node = $variables['elements']['#node'] ?? NULL;
+  if (!$node instanceof NodeInterface) {
+    return;
+  }
+  $viewMode = $variables['view_mode'] ?? 'full';
+  if ($viewMode !== 'full' && $viewMode !== 'default') {
+    return;
+  }
+  if (!in_array($node->bundle(), PROGRAMHUB_DISPLAY_NODE_TEMPLATES, TRUE)) {
+    return;
+  }
+  $variables['#attached']['library'][] = 'programhub_display/node_display';
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for profile.
+ */
+function programhub_display_preprocess_profile(array &$variables): void {
+  $bundle = $variables['elements']['#profile']?->bundle();
+  if ($bundle === NULL) {
+    return;
+  }
+  $viewMode = $variables['view_mode'] ?? 'full';
+  if ($viewMode !== 'full' && $viewMode !== 'default') {
+    return;
+  }
+  if (!in_array($bundle, PROGRAMHUB_DISPLAY_PROFILE_TEMPLATES, TRUE)) {
+    return;
+  }
+  $variables['#attached']['library'][] = 'programhub_display/node_display';
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter() for node_form.
+ *
+ * Attaches the form-layout CSS on every node add/edit form. The CSS
+ * targets field-group tab artefacts that exist regardless of bundle,
+ * plus our `.ph-form-*` classes — broadening the attach makes sure
+ * the styles are present whenever field_group tabs render.
+ */
+function programhub_display_form_node_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface $form_state): void {
+  $form['#attached']['library'][] = 'programhub_display/node_form';
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter() for profile_form.
+ */
+function programhub_display_form_profile_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface $form_state): void {
+  $form['#attached']['library'][] = 'programhub_display/node_form';
+}

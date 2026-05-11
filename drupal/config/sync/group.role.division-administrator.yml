@@ -1,0 +1,14 @@
+uuid: f029022e-dc3a-4832-b500-9c9571e14484
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.division
+id: division-administrator
+label: Administrator
+weight: 6
+admin: true
+scope: individual
+global_role: null
+group_type: division
+permissions: {  }

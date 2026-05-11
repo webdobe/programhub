@@ -1,0 +1,14 @@
+uuid: 4bb71520-5018-4887-989b-7d59d92bb1e7
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program
+id: program-administrator
+label: Administrator
+weight: null
+admin: true
+scope: individual
+global_role: null
+group_type: program
+permissions: {  }

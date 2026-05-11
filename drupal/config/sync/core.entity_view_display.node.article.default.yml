@@ -8,7 +8,6 @@ dependencies:
     - field.field.node.article.field_main_image
     - field.field.node.article.field_path
     - field.field.node.article.field_preview
-    - field.field.node.article.og_audience
     - node.type.article
   module:
     - fieldable_path
@@ -21,6 +20,11 @@ targetEntityType: node
 bundle: article
 mode: default
 content:
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
   field_article_url:
     type: link
     label: above
@@ -73,13 +77,5 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 100
-    region: content
-  og_audience:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 109
     region: content
 hidden: {  }

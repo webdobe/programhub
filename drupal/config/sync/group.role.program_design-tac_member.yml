@@ -1,0 +1,19 @@
+uuid: 5e5faa78-8d57-4085-94d9-6c922903f02d
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program_design
+id: program_design-tac_member
+label: 'TAC Member'
+weight: 18
+admin: false
+scope: individual
+global_role: null
+group_type: program_design
+permissions:
+  - 'create group_node:article entity'
+  - 'delete own group_node:article entity'
+  - 'update own group_node:article entity'
+  - 'view group'
+  - 'view group_node:article entity'

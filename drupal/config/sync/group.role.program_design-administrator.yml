@@ -1,0 +1,14 @@
+uuid: 0bb35328-4278-47ea-ab5c-92abded8a979
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program_design
+id: program_design-administrator
+label: Administrator
+weight: 13
+admin: true
+scope: individual
+global_role: null
+group_type: program_design
+permissions: {  }

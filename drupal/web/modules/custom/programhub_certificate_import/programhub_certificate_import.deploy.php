@@ -21,6 +21,7 @@
 
 declare(strict_types=1);
 
+use Drupal\group\Entity\Group;
 use Drupal\node\Entity\Node;
 use Drupal\taxonomy\Entity\Term;
 
@@ -62,7 +63,7 @@ function programhub_certificate_import_deploy_01_industry_cert_term(array &$sand
  *  - title:                  vendor cert name (e.g. "CompTIA Security+")
  *  - field_certificate_type: Industry Certification term
  *  - field_certificate_url:  vendor exam page (used as the canonical link)
- *  - og_audience:            programs that prepare students for this cert
+ *  - attached to:            program groups that prepare students for this cert
  *
  * Logos (field_logo) are intentionally not set here — editors upload them
  * via the admin UI once the appropriate logo media is in place.
@@ -83,23 +84,26 @@ function programhub_certificate_import_deploy_02_industry_cert_nodes(array &$san
 
   // Resolve programs by their abbreviation. Skip the entire seed if both
   // programs are absent — cleaner than partial seeding on a fresh database.
-  $cite = _programhub_certificate_import_program_nid('CITE');
-  $cyber = _programhub_certificate_import_program_nid('CYBER');
+  $cite = _programhub_certificate_import_program_group('CITE');
+  $cyber = _programhub_certificate_import_program_group('CYBER');
   if (!$cite && !$cyber) {
     return 'No CITE or CYBER programs found; skipping industry cert seed.';
   }
 
+  /**
+   * @return \Drupal\group\Entity\GroupInterface[]
+   */
   $programs = static function (array $abbrs) use ($cite, $cyber): array {
-    $ids = [];
+    $groups = [];
     foreach ($abbrs as $abbr) {
       if ($abbr === 'CITE' && $cite) {
-        $ids[] = $cite;
+        $groups[] = $cite;
       }
       if ($abbr === 'CYBER' && $cyber) {
-        $ids[] = $cyber;
+        $groups[] = $cyber;
       }
     }
-    return $ids;
+    return $groups;
   };
 
   $seed = [
@@ -124,8 +128,8 @@ function programhub_certificate_import_deploy_02_industry_cert_nodes(array &$san
       $skipped++;
       continue;
     }
-    $programIds = $programs($abbrs);
-    if (!$programIds) {
+    $programGroups = $programs($abbrs);
+    if (!$programGroups) {
       $skipped++;
       continue;
     }
@@ -135,11 +139,13 @@ function programhub_certificate_import_deploy_02_industry_cert_nodes(array &$san
       'status' => 1,
       'field_certificate_type' => ['target_id' => $typeTid],
       'field_certificate_url' => ['uri' => $url, 'title' => 'Vendor exam page'],
-      'og_audience' => array_map(fn(int $nid): array => ['target_id' => $nid], $programIds),
     ]);
-    // Force pathauto to mint a /certificates/<title> alias on save.
     $node->path->pathauto = 1;
     $node->save();
+    // Attach the cert to each owning program via group_relationship.
+    foreach ($programGroups as $group) {
+      $group->addRelationship($node, 'group_node:certificate');
+    }
     $created++;
   }
 
@@ -453,14 +459,17 @@ function programhub_certificate_import_deploy_06_rebuild_certificate_aliases(arr
 }
 
 /**
- * Resolve a program node id by its field_abbreviation. Returns null if absent.
+ * Resolve a program Group entity by its field_abbreviation. Searches
+ * every program subtype (program, program_design, program_culinary, …)
+ * so retyping a base `program` to a specialized variant doesn't break
+ * this lookup.
  */
-function _programhub_certificate_import_program_nid(string $abbr): ?int {
-  $ids = \Drupal::entityTypeManager()->getStorage('node')->getQuery()
+function _programhub_certificate_import_program_group(string $abbr): ?\Drupal\group\Entity\GroupInterface {
+  $ids = \Drupal::entityTypeManager()->getStorage('group')->getQuery()
     ->accessCheck(FALSE)
-    ->condition('type', 'program')
+    ->condition('type', \Drupal\programhub_dashboard\Service\GroupContext::PROGRAM_GROUP_TYPES, 'IN')
     ->condition('field_abbreviation', $abbr)
     ->range(0, 1)
     ->execute();
-  return $ids ? (int) reset($ids) : NULL;
+  return $ids ? Group::load((int) reset($ids)) : NULL;
 }

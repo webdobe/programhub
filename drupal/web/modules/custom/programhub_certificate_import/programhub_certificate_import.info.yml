@@ -7,5 +7,7 @@ dependencies:
   - drupal:node
   - drupal:taxonomy
   - drupal:paragraphs
-  - og:og
   - programhub_course_import:programhub_course_import
+  - group:group
+  - group:gnode
+  - programhub_dashboard:programhub_dashboard

@@ -1,4 +1,4 @@
-uuid: 0832b340-facc-466b-be96-6322d4963d89
+uuid: 3ad0162f-df26-4d79-9d9e-fa5994192e13
 langcode: en
 status: true
 dependencies:
@@ -6,8 +6,6 @@ dependencies:
     - node
     - user
     - views_bulk_operations
-_core:
-  default_config_hash: d7p-wwJZ_Wmz1gnvla9jDtRsjOaWAhPoIoW9w3vo4R4
 id: content
 label: Content
 module: node
@@ -32,7 +30,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: views_bulk_operations_bulk_form
-          label: 'Views bulk operations'
+          label: 'Bulk actions'
           exclude: false
           alter:
             alter_text: false
@@ -65,7 +63,7 @@ display:
           element_class: ''
           element_label_type: ''
           element_label_class: ''
-          element_label_colon: false
+          element_label_colon: true
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
@@ -74,15 +72,29 @@ display:
           empty_zero: false
           hide_alter_empty: true
           batch: true
-          batch_size: 10
+          batch_size: 25
           form_step: true
-          ajax_loader: false
+          ajax_loader: true
           buttons: false
           action_title: Action
           clear_on_exposed: true
           show_multipage_selection_box: default
           show_select_all: default
           selected_actions:
+            -
+              action_id: programhub_attach_to_group
+              preconfiguration:
+                add_confirmation: false
+                confirm_help_text: ''
+                label_override: ''
+                message_override: ''
+            -
+              action_id: views_bulk_operations_delete_entity
+              preconfiguration:
+                add_confirmation: true
+                confirm_help_text: ''
+                label_override: ''
+                message_override: ''
             -
               action_id: fieldable_path_copy_path
               preconfiguration:
@@ -126,13 +138,6 @@ display:
                 label_override: ''
                 message_override: ''
                 get_bundles_from_results: true
-            -
-              action_id: views_bulk_operations_delete_entity
-              preconfiguration:
-                add_confirmation: false
-                confirm_help_text: ''
-                label_override: ''
-                message_override: ''
             -
               action_id: pathauto_update_alias
               preconfiguration:

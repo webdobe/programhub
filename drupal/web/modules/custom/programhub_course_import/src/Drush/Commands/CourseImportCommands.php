@@ -26,8 +26,12 @@ final class CourseImportCommands extends DrushCommands {
     /** @var CourseImporter $importer */
     $importer = \Drupal::service('programhub_course_import.importer');
 
-    $storage = $etm->getStorage('node');
-    $query = $storage->getQuery()->accessCheck(FALSE)->condition('type', 'program');
+    // Programs are Group entities post-OG migration. Searches every
+    // program subtype (program, program_design, program_culinary).
+    $storage = $etm->getStorage('group');
+    $query = $storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('type', \Drupal\programhub_dashboard\Service\GroupContext::PROGRAM_GROUP_TYPES, 'IN');
     if (!empty($options['program'])) {
       $query->condition('field_abbreviation', $options['program']);
     }

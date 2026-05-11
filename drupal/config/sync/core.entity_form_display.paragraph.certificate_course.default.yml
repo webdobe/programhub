@@ -7,8 +7,6 @@ dependencies:
     - field.field.paragraph.certificate_course.field_credits
     - field.field.paragraph.certificate_course.field_semester
     - paragraphs.paragraphs_type.certificate_course
-  module:
-    - options
 id: paragraph.certificate_course.default
 targetEntityType: paragraph
 bundle: certificate_course
@@ -22,7 +20,7 @@ content:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
-      placeholder: 'Search by course title or number'
+      placeholder: 'GDES-245 …'
     third_party_settings: {  }
   field_credits:
     type: string_textfield
@@ -30,13 +28,14 @@ content:
     region: content
     settings:
       size: 8
-      placeholder: 'e.g. 3 or 3-5'
+      placeholder: '3 or 3-5'
     third_party_settings: {  }
   field_semester:
-    type: options_select
+    type: number
     weight: 1
     region: content
-    settings: {  }
+    settings:
+      placeholder: 1–4
     third_party_settings: {  }
 hidden:
   created: true

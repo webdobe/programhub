@@ -1,0 +1,19 @@
+uuid: adf7a4ae-d5cd-4ced-9447-9134576f63d5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.field_path
+    - group.type.division
+id: group.division.field_path
+field_name: field_path
+entity_type: group
+bundle: division
+label: 'Front-end path'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

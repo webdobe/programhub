@@ -13,16 +13,131 @@ dependencies:
     - field.field.node.project.field_project_gallery
     - field.field.node.project.field_project_tags
     - field.field.node.project.field_project_url
-    - field.field.node.project.og_audience
     - image.style.thumbnail
     - node.type.project
+    - workflows.workflow.community_content
   module:
-    - fieldable_path
+    - content_moderation
+    - field_group
     - image
     - link
     - paragraphs
     - path
     - text
+third_party_settings:
+  field_group:
+    group_main:
+      children:
+        - group_project
+        - group_story
+        - group_visuals
+        - group_discovery
+        - group_publishing
+      label: ''
+      region: content
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        classes: ph-form-tabs
+        id: project-tabs
+        direction: horizontal
+        width_breakpoint: 640
+    group_project:
+      children:
+        - field_graduate
+        - field_course
+      label: Project
+      region: content
+      parent_name: group_main
+      weight: 0
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        id: project-tab-project
+        formatter: open
+        description: 'Who made it and what course it was for.'
+        required_fields: true
+    group_story:
+      children:
+        - field_description
+        - field_process
+      label: Story
+      region: content
+      parent_name: group_main
+      weight: 1
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        id: project-tab-story
+        formatter: closed
+        description: 'The narrative: what the project is and how it came together.'
+        required_fields: false
+    group_visuals:
+      children:
+        - group_visuals_row
+      label: Visuals
+      region: content
+      parent_name: group_main
+      weight: 2
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        id: project-tab-visuals
+        formatter: closed
+        description: 'Hero image and supporting gallery.'
+        required_fields: false
+    group_visuals_row:
+      children:
+        - field_main_image
+        - field_project_gallery
+      label: ''
+      region: content
+      parent_name: group_visuals
+      weight: 0
+      format_type: html_element
+      format_settings:
+        classes: 'ph-form-row ph-form-row--two-col'
+        id: ''
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+    group_discovery:
+      children:
+        - field_project_category
+        - field_project_tags
+        - field_project_url
+      label: Discovery
+      region: content
+      parent_name: group_main
+      weight: 3
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        id: project-tab-discovery
+        formatter: closed
+        description: 'Category, tags, and external project URL.'
+        required_fields: false
+    group_publishing:
+      children:
+        - og_audience
+        - moderation_state
+        - status
+      label: Publishing
+      region: content
+      parent_name: group_main
+      weight: 4
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        id: project-tab-publishing
+        formatter: closed
+        description: 'Program scope and review state.'
+        required_fields: true
 id: node.project.default
 targetEntityType: node
 bundle: project
@@ -31,61 +146,55 @@ content:
   created:
     type: datetime_timestamp
     weight: 10
-    region: content
+    region: advanced
     settings: {  }
     third_party_settings: {  }
   field_course:
     type: entity_reference_autocomplete
-    weight: 128
+    weight: 1
     region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
-      placeholder: ''
+      placeholder: 'e.g. GDES 245'
     third_party_settings: {  }
   field_description:
     type: text_textarea
-    weight: 122
+    weight: 0
     region: content
     settings:
-      rows: 5
+      rows: 10
       placeholder: ''
     third_party_settings: {  }
   field_graduate:
     type: entity_reference_autocomplete
-    weight: 123
+    weight: 0
     region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
-      placeholder: ''
+      placeholder: 'Start typing a name…'
     third_party_settings: {  }
   field_main_image:
     type: image_image
-    weight: 121
+    weight: 0
     region: content
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
     third_party_settings: {  }
-  field_path:
-    type: fieldable_path_widget
-    weight: 129
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   field_process:
     type: paragraphs
-    weight: 125
+    weight: 1
     region: content
     settings:
-      title: 'Process Step'
-      title_plural: 'Process Steps'
+      title: 'Process step'
+      title_plural: 'Process steps'
       edit_mode: closed
       closed_mode: summary
-      autocollapse: all
+      autocollapse: none
       closed_mode_threshold: 0
       add_mode: button
       form_display_mode: default
@@ -97,21 +206,21 @@ content:
     third_party_settings: {  }
   field_project_category:
     type: options_select
-    weight: 119
+    weight: 0
     region: content
     settings: {  }
     third_party_settings: {  }
   field_project_gallery:
     type: image_image
-    weight: 124
+    weight: 1
     region: content
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
     third_party_settings: {  }
   field_project_tags:
-    type: entity_reference_autocomplete
-    weight: 120
+    type: entity_reference_autocomplete_tags
+    weight: 1
     region: content
     settings:
       match_operator: CONTAINS
@@ -121,34 +230,34 @@ content:
     third_party_settings: {  }
   field_project_url:
     type: link_default
-    weight: 127
+    weight: 2
     region: content
     settings:
-      placeholder_url: ''
+      placeholder_url: 'https://'
       placeholder_title: ''
     third_party_settings: {  }
-  og_audience:
-    type: options_select
-    weight: 130
+  moderation_state:
+    type: moderation_state_default
+    weight: 1
     region: content
     settings: {  }
     third_party_settings: {  }
   path:
     type: path
     weight: 30
-    region: content
+    region: advanced
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
     weight: 15
-    region: content
+    region: advanced
     settings:
       display_label: true
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 120
+    weight: 2
     region: content
     settings:
       display_label: true
@@ -156,26 +265,27 @@ content:
   sticky:
     type: boolean_checkbox
     weight: 16
-    region: content
+    region: advanced
     settings:
       display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: -5
+    weight: -10
     region: content
     settings:
       size: 60
-      placeholder: ''
+      placeholder: 'Give the project a name'
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
     weight: 5
-    region: content
+    region: advanced
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_path: true

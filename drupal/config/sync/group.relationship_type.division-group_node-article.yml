@@ -1,0 +1,17 @@
+uuid: 9e9bdb23-d19f-4686-84a5-801de653ce5e
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.division
+    - node.type.article
+  module:
+    - gnode
+    - node
+id: division-group_node-article
+group_type: division
+content_plugin: 'group_node:article'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

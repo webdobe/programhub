@@ -1,0 +1,17 @@
+uuid: 8270ea7c-8825-4968-8092-443fba4d732e
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program_design
+    - node.type.article
+  module:
+    - gnode
+    - node
+id: program_design-1d0c5c8d1860c12da
+group_type: program_design
+content_plugin: 'group_node:article'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

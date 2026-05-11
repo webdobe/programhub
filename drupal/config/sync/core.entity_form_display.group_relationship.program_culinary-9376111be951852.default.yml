@@ -1,0 +1,38 @@
+uuid: defecee8-fa23-4feb-98ce-74b2840d701f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.group_relationship.program_culinary-9376111be951852.group_roles
+    - group.relationship_type.program_culinary-9376111be951852
+  module:
+    - path
+id: group_relationship.program_culinary-9376111be951852.default
+targetEntityType: group_relationship
+bundle: program_culinary-9376111be951852
+mode: default
+content:
+  entity_id:
+    type: entity_reference_autocomplete
+    weight: 5
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  group_roles:
+    type: options_buttons
+    weight: 31
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  uid: true

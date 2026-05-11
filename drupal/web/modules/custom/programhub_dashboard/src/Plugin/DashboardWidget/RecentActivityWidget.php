@@ -12,9 +12,8 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
-use Drupal\og\MembershipManagerInterface;
-use Drupal\og\OgMembershipInterface;
 use Drupal\programhub_dashboard\DashboardWidgetBase;
+use Drupal\programhub_dashboard\Service\GroupContext;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -49,7 +48,7 @@ final class RecentActivityWidget extends DashboardWidgetBase implements Containe
     array $configuration,
     string $plugin_id,
     array $plugin_definition,
-    private readonly MembershipManagerInterface $membershipManager,
+    private readonly GroupContext $groupContext,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly DateFormatterInterface $dateFormatter,
   ) {
@@ -61,40 +60,41 @@ final class RecentActivityWidget extends DashboardWidgetBase implements Containe
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('og.membership_manager'),
+      $container->get('programhub_dashboard.group_context'),
       $container->get('entity_type.manager'),
       $container->get('date.formatter'),
     );
   }
 
   public function access(AccountInterface $user): AccessResultInterface {
-    return AccessResult::allowedIf(!empty($this->programIds($user)))
+    return AccessResult::allowedIf(!empty($this->groupContext->userProgramGroupIds($user)))
       ->addCacheContexts(['user'])
-      ->addCacheTags(["og_user_membership:{$user->id()}"]);
+      ->addCacheTags(['group_relationship_list:group_membership']);
   }
 
   public function build(AccountInterface $user): array {
-    $programIds = $this->programIds($user);
-    if (empty($programIds)) {
+    $gids = $this->groupContext->userProgramGroupIds($user);
+    if (empty($gids)) {
       return [];
     }
 
-    $nodeStorage = $this->entityTypeManager->getStorage('node');
-
-    $nids = $nodeStorage->getQuery()
-      ->accessCheck(TRUE)
-      ->condition('type', self::COMMUNITY_TYPES, 'IN')
-      ->condition('og_audience', $programIds, 'IN')
-      ->sort('changed', 'DESC')
-      ->range(0, 10)
-      ->execute();
-
+    $nids = $this->groupContext->nidsInGroups($gids, self::COMMUNITY_TYPES);
     if (empty($nids)) {
       return [];
     }
 
+    // Sort by changed desc; cap at 10. Use entity query for the sort —
+    // group_relationship doesn't carry node.changed.
+    $nodeStorage = $this->entityTypeManager->getStorage('node');
+    $sortedNids = $nodeStorage->getQuery()
+      ->accessCheck(TRUE)
+      ->condition('nid', $nids, 'IN')
+      ->sort('changed', 'DESC')
+      ->range(0, 10)
+      ->execute();
+
     $items = [];
-    foreach ($nodeStorage->loadMultiple($nids) as $node) {
+    foreach ($nodeStorage->loadMultiple($sortedNids) as $node) {
       if (!$node instanceof NodeInterface) {
         continue;
       }
@@ -118,24 +118,6 @@ final class RecentActivityWidget extends DashboardWidgetBase implements Containe
         'tags' => array_map(static fn(string $t): string => "node_list:$t", self::COMMUNITY_TYPES),
       ],
     ];
-  }
-
-  /**
-   * @return int[]
-   */
-  private function programIds(AccountInterface $user): array {
-    $memberships = $this->membershipManager->getMemberships(
-      (int) $user->id(),
-      [OgMembershipInterface::STATE_ACTIVE],
-    );
-    $ids = [];
-    foreach ($memberships as $membership) {
-      $group = $membership->getGroup();
-      if ($group instanceof NodeInterface && $group->bundle() === 'program') {
-        $ids[(int) $group->id()] = (int) $group->id();
-      }
-    }
-    return array_values($ids);
   }
 
 }

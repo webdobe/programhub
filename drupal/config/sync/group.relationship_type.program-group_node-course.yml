@@ -1,0 +1,17 @@
+uuid: 6b3e09a4-eafb-454a-90fb-d3e715424792
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program
+    - node.type.course
+  module:
+    - gnode
+    - node
+id: program-group_node-course
+group_type: program
+content_plugin: 'group_node:course'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

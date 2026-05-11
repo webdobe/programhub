@@ -4,3 +4,31 @@ services:
   plugin.manager.programhub_dashboard_widget:
     class: Drupal\programhub_dashboard\DashboardWidgetPluginManager
     parent: default_plugin_manager
+
+  # Shared helper for "which groups is this user in / which nodes are in
+  # those groups?" — used by every Group-aware dashboard widget.
+  programhub_dashboard.group_context:
+    class: Drupal\programhub_dashboard\Service\GroupContext
+    arguments:
+      - '@database'
+
+  # Moves a Group entity from one group_type to another. Drupal has no
+  # native bundle-change mechanism; this service handles relationship
+  # re-pointing + role translation. Used by both the
+  # `programhub:group:retype` drush command and the `_002_retype_*`
+  # deploy hook that runs in prod.
+  programhub_dashboard.group_type_mover:
+    class: Drupal\programhub_dashboard\Migration\GroupTypeMover
+    arguments:
+      - '@entity_type.manager'
+      - '@database'
+
+  # One-shot migrator from Organic Groups → Group module. Used by both
+  # the `drush phmog` command and the `programhub_dashboard.deploy.php`
+  # hook that runs in prod. Idempotent — see service docblock.
+  programhub_dashboard.og_to_group_migrator:
+    class: Drupal\programhub_dashboard\Migration\OgToGroupMigrator
+    arguments:
+      - '@entity_type.manager'
+      - '@state'
+      - '@database'

@@ -1,0 +1,17 @@
+uuid: b77d04cc-b022-4f0d-b9a0-ef83d249bc58
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program
+    - node.type.portfolio_show
+  module:
+    - gnode
+    - node
+id: program-6317fe5bbf1b8e76d25fa0d7
+group_type: program
+content_plugin: 'group_node:portfolio_show'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

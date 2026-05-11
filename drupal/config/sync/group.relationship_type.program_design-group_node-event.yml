@@ -1,0 +1,17 @@
+uuid: 6217e60c-209d-4330-8b70-cae51e059a10
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program_design
+    - node.type.event
+  module:
+    - gnode
+    - node
+id: program_design-group_node-event
+group_type: program_design
+content_plugin: 'group_node:event'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

@@ -1,0 +1,29 @@
+{#
+/**
+ * @file
+ * Menu (CULA culinary) node view template.
+ */
+#}
+<article{{ attributes.addClass(['ph-node', 'ph-node--menu']) }}>
+  <div class="ph-node__layout">
+    <div class="ph-node__main">
+      {% if content.field_description|render %}
+        <div class="ph-node__body">{{ content.field_description }}</div>
+      {% endif %}
+      {% if content.field_menu_items|render %}
+        <section class="ph-node__section">
+          <h2 class="ph-node__section-heading">{{ 'Menu items'|t }}</h2>
+          {{ content.field_menu_items }}
+        </section>
+      {% endif %}
+    </div>
+    <aside class="ph-node__sidebar">
+      <div class="ph-node__meta">
+        {{ content.field_venue }}
+        {{ content.field_menu_dates }}
+        {{ content.field_set_price }}
+      </div>
+    </aside>
+  </div>
+  {{ content.links }}
+</article>

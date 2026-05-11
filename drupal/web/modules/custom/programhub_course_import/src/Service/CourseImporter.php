@@ -7,6 +7,9 @@ namespace Drupal\programhub_course_import\Service;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\GroupRelationship;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 
@@ -14,7 +17,7 @@ use Drupal\node\NodeInterface;
  * Imports catalog-scraped courses into Drupal as `course` nodes.
  *
  * Behavior:
- *  - Existing course (matched by field_course_number + og_audience=program):
+ *  - Existing course (matched by field_course_number + group_relationship to program):
  *    saved as a NEW REVISION with updated fields.
  *  - Missing course: a new published `course` node is created.
  *  - Course in Drupal but NOT in the scraped list: unpublished + revisioned
@@ -73,11 +76,11 @@ final class CourseImporter {
     $missing = [];
 
     // ensureCourseByNumber needs a "primary program" for context; we don't
-    // have one in this entry point, so synthesize a sentinel that isn't used
-    // beyond identity.
-    $sentinel = $this->entityTypeManager->getStorage('node')->create([
+    // have one in this entry point, so synthesize a sentinel Group entity
+    // that isn't used beyond identity (never saved).
+    $sentinel = $this->entityTypeManager->getStorage('group')->create([
       'type' => 'program',
-      'title' => '__spider_sentinel__',
+      'label' => '__spider_sentinel__',
     ]);
 
     $resolved = [];
@@ -107,7 +110,7 @@ final class CourseImporter {
     ];
   }
 
-  public function importForProgram(NodeInterface $program, bool $dryRun = FALSE): array {
+  public function importForProgram(GroupInterface $program, bool $dryRun = FALSE): array {
     $logger = $this->loggerFactory->get('programhub_course_import');
     $result = [
       'created' => 0,
@@ -121,8 +124,8 @@ final class CourseImporter {
       'url' => '',
     ];
 
-    if ($program->bundle() !== 'program') {
-      $result['errors'][] = sprintf('Node %d is not a program (bundle: %s)', $program->id(), $program->bundle());
+    if (!in_array($program->bundle(), \Drupal\programhub_dashboard\Service\GroupContext::PROGRAM_GROUP_TYPES, TRUE)) {
+      $result['errors'][] = sprintf('Group %d is not a program (bundle: %s)', $program->id(), $program->bundle());
       return $result;
     }
 
@@ -216,7 +219,7 @@ final class CourseImporter {
 
   private function upsertWithoutRefs(
     array $row,
-    NodeInterface $program,
+    GroupInterface $program,
     array &$courseCache,
     array &$result,
     array &$rowCache,
@@ -260,7 +263,7 @@ final class CourseImporter {
   private function setReferences(
     NodeInterface $node,
     array $row,
-    NodeInterface $program,
+    GroupInterface $program,
     array &$courseCache,
     array &$rowCache,
     array &$result,
@@ -399,22 +402,13 @@ final class CourseImporter {
   // Loaders / lookups.
   // ---------------------------------------------------------------------------
 
-  private function loadCourseByNumber(string $number, NodeInterface $program): ?NodeInterface {
-    $storage = $this->entityTypeManager->getStorage('node');
-    $ids = $storage->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('type', 'course')
-      ->condition('og_audience', $program->id())
-      ->condition('field_course_number', $number)
-      ->range(0, 1)
-      ->execute();
-    if (!$ids) {
-      return NULL;
+  private function loadCourseByNumber(string $number, GroupInterface $program): ?NodeInterface {
+    foreach ($this->loadExistingCourses($program) as $num => $node) {
+      if ($num === $number) {
+        return $node;
+      }
     }
-    $id = (int) reset($ids);
-    /** @var NodeInterface|null $n */
-    $n = $storage->load($id);
-    return $n;
+    return NULL;
   }
 
   /**
@@ -439,18 +433,17 @@ final class CourseImporter {
   /**
    * @return array<string, NodeInterface>
    */
-  private function loadExistingCourses(NodeInterface $program): array {
-    $storage = $this->entityTypeManager->getStorage('node');
-    $ids = $storage->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('type', 'course')
-      ->condition('og_audience', $program->id())
-      ->execute();
-    if (!$ids) {
+  private function loadExistingCourses(GroupInterface $program): array {
+    if ($program->isNew()) {
       return [];
     }
     $byNumber = [];
-    foreach ($storage->loadMultiple($ids) as $node) {
+    foreach ($program->getRelationships('group_node:course') as $relationship) {
+      /** @var \Drupal\node\NodeInterface|null $node */
+      $node = $relationship->getEntity();
+      if (!$node instanceof NodeInterface) {
+        continue;
+      }
       $num = $node->hasField('field_course_number')
         ? trim((string) $node->get('field_course_number')->value)
         : '';
@@ -461,20 +454,18 @@ final class CourseImporter {
     return $byNumber;
   }
 
-  private function findProgramByPrefix(string $prefix): ?NodeInterface {
-    $storage = $this->entityTypeManager->getStorage('node');
+  private function findProgramByPrefix(string $prefix): ?GroupInterface {
+    $storage = $this->entityTypeManager->getStorage('group');
     $ids = $storage->getQuery()
       ->accessCheck(FALSE)
-      ->condition('type', 'program')
+      ->condition('type', \Drupal\programhub_dashboard\Service\GroupContext::PROGRAM_GROUP_TYPES, 'IN')
       ->condition('field_abbreviation', strtoupper($prefix))
       ->range(0, 1)
       ->execute();
     if (!$ids) {
       return NULL;
     }
-    /** @var NodeInterface|null $n */
-    $n = $storage->load((int) reset($ids));
-    return $n;
+    return Group::load((int) reset($ids));
   }
 
   /**
@@ -500,15 +491,12 @@ final class CourseImporter {
     return NULL;
   }
 
-  private function prefixForProgram(NodeInterface $program): ?string {
-    if (!$program->hasField('field_abbreviation')) {
+  private function prefixForProgram(GroupInterface $program): ?string {
+    if (!$program->hasField('field_abbreviation') || $program->get('field_abbreviation')->isEmpty()) {
       return NULL;
     }
     $value = trim((string) $program->get('field_abbreviation')->value);
-    if ($value === '') {
-      return NULL;
-    }
-    return strtolower($value);
+    return $value === '' ? NULL : strtolower($value);
   }
 
   private function prefixFromCourseNumber(string $number): ?string {
@@ -522,17 +510,14 @@ final class CourseImporter {
   // Mutators.
   // ---------------------------------------------------------------------------
 
-  private function createCourse(?NodeInterface $owningProgram, array $row, bool $dryRun): ?NodeInterface {
+  private function createCourse(?GroupInterface $owningProgram, array $row, bool $dryRun): ?NodeInterface {
     if ($dryRun) {
       return NULL;
     }
     $semesterTids = $this->ensureSemesterTerms($row['semesters'] ?? []);
+    $hasOwner = $owningProgram !== NULL && !$owningProgram->isNew();
     $values = [
       'type' => 'course',
-      // Title is the descriptive name only; the catalog number lives in
-      // field_course_number. The path-alias builder concatenates them when
-      // generating /courses/<num>-<title-slug>, so we don't duplicate the
-      // number into the title field.
       'title' => $row['title'],
       'status' => 1,
       'uid' => $this->currentUser->id() ?: 1,
@@ -544,19 +529,20 @@ final class CourseImporter {
       'field_course_credits' => $row['credits'],
       'field_course_offering' => array_map(fn(int $tid) => ['target_id' => $tid], $semesterTids),
       'field_course_year_cycle' => ($row['yearCycle'] ?? NULL) ?: NULL,
-      'revision_log' => $owningProgram
+      'revision_log' => $hasOwner
         ? 'Imported from NIC catalog'
         : 'Spidered from NIC catalog (no matching program for ' . substr($row['number'], 0, 5) . ')',
     ];
-    if ($owningProgram !== NULL) {
-      $values['og_audience'] = [['target_id' => $owningProgram->id()]];
-    }
 
     $node = Node::create($values);
     $node->setNewRevision(TRUE);
     $node->setRevisionUserId((int) ($this->currentUser->id() ?: 1));
     $node->setRevisionCreationTime(\Drupal::time()->getRequestTime());
     $node->save();
+
+    if ($hasOwner) {
+      $owningProgram->addRelationship($node, 'group_node:course');
+    }
     return $node;
   }
 

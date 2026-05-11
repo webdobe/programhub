@@ -10,3 +10,11 @@ dashboard:
     # asset chain attached (admin route mismatches, route-specific theme
     # negotiation, etc.).
     - gin/gin_base
+
+# Icons for the Programs + Create dropdowns we inject into Gin's toolbar.
+# Attached via the navigation render array in programhub_dashboard.module.
+toolbar_icons:
+  version: 1.x
+  css:
+    theme:
+      css/toolbar-icons.css: {}

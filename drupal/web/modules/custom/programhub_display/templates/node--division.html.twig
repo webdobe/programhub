@@ -1,0 +1,22 @@
+{#
+/**
+ * @file
+ * Division node view template — compact admin view.
+ */
+#}
+<article{{ attributes.addClass(['ph-node', 'ph-node--division']) }}>
+  <div class="ph-node__layout">
+    <div class="ph-node__main">
+      {% if content.body|render %}
+        <div class="ph-node__body">{{ content.body }}</div>
+      {% endif %}
+    </div>
+    <aside class="ph-node__sidebar">
+      <div class="ph-node__meta">
+        {{ content.field_abbreviation }}
+        {{ content.field_website }}
+      </div>
+    </aside>
+  </div>
+  {{ content.links }}
+</article>

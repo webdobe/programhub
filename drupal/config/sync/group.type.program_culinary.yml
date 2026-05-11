@@ -1,0 +1,11 @@
+uuid: 0e6ffc98-8357-4be4-a0d7-5e5ad24f6e77
+langcode: en
+status: true
+dependencies: {  }
+id: program_culinary
+label: 'Program (culinary)'
+description: 'Food-service programs (future CULA). Adds menu + venue on top of the program baseline.'
+new_revision: true
+creator_membership: true
+creator_wizard: false
+creator_roles: {  }

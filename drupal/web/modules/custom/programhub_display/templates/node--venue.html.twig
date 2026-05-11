@@ -1,0 +1,33 @@
+{#
+/**
+ * @file
+ * Venue (CULA training venue) node view template.
+ */
+#}
+<article{{ attributes.addClass(['ph-node', 'ph-node--venue']) }}>
+  {% if content.field_hero_image|render %}
+    <div class="ph-node__hero">{{ content.field_hero_image }}</div>
+  {% endif %}
+  <div class="ph-node__layout">
+    <div class="ph-node__main">
+      {% if content.field_description|render %}
+        <div class="ph-node__body">{{ content.field_description }}</div>
+      {% endif %}
+      {% if content.field_hours|render %}
+        <section class="ph-node__section">
+          <h2 class="ph-node__section-heading">{{ 'Hours'|t }}</h2>
+          {{ content.field_hours }}
+        </section>
+      {% endif %}
+    </div>
+    <aside class="ph-node__sidebar">
+      <div class="ph-node__meta">
+        {{ content.field_venue_type }}
+        {{ content.field_location }}
+        {{ content.field_phone }}
+        {{ content.field_reservation_url }}
+      </div>
+    </aside>
+  </div>
+  {{ content.links }}
+</article>

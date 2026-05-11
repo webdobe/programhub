@@ -1,0 +1,17 @@
+uuid: 80c729e7-c77c-4d18-9c56-bf79b5e59c16
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program_culinary
+    - node.type.certificate
+  module:
+    - gnode
+    - node
+id: program_culinary-f198fe90edf92bd
+group_type: program_culinary
+content_plugin: 'group_node:certificate'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

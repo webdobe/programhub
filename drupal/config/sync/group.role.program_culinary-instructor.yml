@@ -1,0 +1,45 @@
+uuid: f19919d2-606f-4265-b2e7-a034c1d91c6d
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program_culinary
+id: program_culinary-instructor
+label: Instructor
+weight: 24
+admin: false
+scope: individual
+global_role: null
+group_type: program_culinary
+permissions:
+  - 'create group_node:article entity'
+  - 'create group_node:award entity'
+  - 'create group_node:event entity'
+  - 'create group_node:portfolio_show entity'
+  - 'create group_node:project entity'
+  - 'create group_node:student_spotlight entity'
+  - 'delete own group_node:article entity'
+  - 'delete own group_node:award entity'
+  - 'delete own group_node:event entity'
+  - 'delete own group_node:portfolio_show entity'
+  - 'delete own group_node:project entity'
+  - 'delete own group_node:student_spotlight entity'
+  - 'update any group_node:article entity'
+  - 'update any group_node:award entity'
+  - 'update any group_node:event entity'
+  - 'update any group_node:portfolio_show entity'
+  - 'update any group_node:project entity'
+  - 'update any group_node:student_spotlight entity'
+  - 'update own group_node:article entity'
+  - 'update own group_node:award entity'
+  - 'update own group_node:event entity'
+  - 'update own group_node:portfolio_show entity'
+  - 'update own group_node:project entity'
+  - 'update own group_node:student_spotlight entity'
+  - 'view group'
+  - 'view group_node:article entity'
+  - 'view group_node:award entity'
+  - 'view group_node:event entity'
+  - 'view group_node:portfolio_show entity'
+  - 'view group_node:project entity'
+  - 'view group_node:student_spotlight entity'

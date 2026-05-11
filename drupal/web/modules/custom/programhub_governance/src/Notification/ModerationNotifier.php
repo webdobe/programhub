@@ -8,15 +8,15 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Mail\MailManagerInterface;
+use Drupal\group\Entity\GroupRelationship;
 use Drupal\node\NodeInterface;
-use Drupal\og\OgMembershipInterface;
 
 /**
  * Sends moderation-transition emails.
  *
  * Three transitions trigger notifications:
  *   - `* → pending_review`  → reviewers in the node's program (instructor,
- *     manager, administrator OG roles)
+ *     manager, administrator Group roles)
  *   - `pending_review → published` → the node's author
  *   - `pending_review → rejected`  → the node's author
  *
@@ -26,15 +26,11 @@ use Drupal\og\OgMembershipInterface;
 final class ModerationNotifier {
 
   /**
-   * OG roles that grant reviewer authority. Holding any of these in the
-   * group means the user receives "ready for review" emails for that
-   * group's submissions.
+   * Group role-name suffixes that grant reviewer authority. Expanded to
+   * full IDs (program-instructor, program_design-instructor, …) at
+   * lookup time so a notification fires for any program subtype.
    */
-  private const REVIEWER_OG_ROLES = [
-    'node-program-instructor',
-    'node-program-manager',
-    'node-program-administrator',
-  ];
+  private const REVIEWER_ROLE_SUFFIXES = ['instructor', 'manager', 'administrator'];
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
@@ -45,12 +41,10 @@ final class ModerationNotifier {
 
   public function notify(NodeInterface $node, string $from, string $to): void {
     try {
-      // Submission → reviewers
       if ($to === 'pending_review') {
         $this->emailReviewers($node);
         return;
       }
-      // Approved / rejected → author
       if ($from === 'pending_review' && $to === 'published') {
         $this->emailAuthor($node, 'submission_approved');
         return;
@@ -59,7 +53,6 @@ final class ModerationNotifier {
         $this->emailAuthor($node, 'submission_rejected');
         return;
       }
-      // archive / restore / draft↔draft — silent.
     }
     catch (\Throwable $e) {
       // Never block a content save because email failed. Log + carry on.
@@ -81,12 +74,11 @@ final class ModerationNotifier {
    * gets one message.
    */
   private function emailReviewers(NodeInterface $node): void {
-    $programIds = $this->nodeProgramIds($node);
-    if (empty($programIds)) {
+    $groups = $this->groupsForNode($node);
+    if (empty($groups)) {
       return;
     }
-
-    $recipients = $this->reviewerEmailsForPrograms($programIds);
+    $recipients = $this->reviewerEmailsForGroups($groups);
     if (empty($recipients)) {
       return;
     }
@@ -110,15 +102,11 @@ final class ModerationNotifier {
     }
   }
 
-  /**
-   * Email the author with an approved/rejected message.
-   */
   private function emailAuthor(NodeInterface $node, string $mailKey): void {
     $author = $node->getOwner();
     if (!$author || $author->isAnonymous() || !$author->getEmail()) {
       return;
     }
-
     $params = [
       'title' => $node->label(),
       'bundle' => $node->bundle(),
@@ -126,7 +114,6 @@ final class ModerationNotifier {
       'reason' => '',
       'url' => $node->toUrl('canonical', ['absolute' => TRUE])->toString(),
     ];
-
     $this->mailManager->mail(
       'programhub_governance',
       $mailKey,
@@ -137,59 +124,41 @@ final class ModerationNotifier {
   }
 
   /**
-   * Programs (node IDs) the given content node is scoped to via
-   * og_audience.
+   * Program groups owning this content node, via group_relationship.
    *
-   * @return int[]
+   * @return \Drupal\group\Entity\GroupInterface[]
    */
-  private function nodeProgramIds(NodeInterface $node): array {
-    if (!$node->hasField('og_audience')) {
-      return [];
-    }
-    $ids = [];
-    foreach ($node->get('og_audience')->referencedEntities() as $group) {
-      if ($group instanceof NodeInterface && $group->bundle() === 'program') {
-        $ids[(int) $group->id()] = (int) $group->id();
+  private function groupsForNode(NodeInterface $node): array {
+    $groups = [];
+    foreach (GroupRelationship::loadByEntity($node) as $relationship) {
+      $group = $relationship->getGroup();
+      if ($group && in_array($group->bundle(), \Drupal\programhub_dashboard\Service\GroupContext::PROGRAM_GROUP_TYPES, TRUE)) {
+        $groups[(int) $group->id()] = $group;
       }
     }
-    return array_values($ids);
+    return array_values($groups);
   }
 
   /**
-   * Look up unique reviewer email addresses across all given programs.
+   * Look up unique reviewer email addresses across all given groups.
    *
-   * @param int[] $programIds
+   * @param \Drupal\group\Entity\GroupInterface[] $groups
    * @return string[]
    */
-  private function reviewerEmailsForPrograms(array $programIds): array {
-    $membershipStorage = $this->entityTypeManager->getStorage('og_membership');
-    $userStorage = $this->entityTypeManager->getStorage('user');
-
-    $membershipIds = $membershipStorage->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('entity_type', 'node')
-      ->condition('entity_id', $programIds, 'IN')
-      ->condition('state', OgMembershipInterface::STATE_ACTIVE)
-      ->execute();
-    if (empty($membershipIds)) {
-      return [];
-    }
-
+  private function reviewerEmailsForGroups(array $groups): array {
     $emails = [];
-    foreach ($membershipStorage->loadMultiple($membershipIds) as $membership) {
-      $hasReviewerRole = FALSE;
-      foreach ($membership->getRoles() as $role) {
-        if (in_array($role->id(), self::REVIEWER_OG_ROLES, TRUE)) {
-          $hasReviewerRole = TRUE;
-          break;
+    foreach ($groups as $group) {
+      // Expand the role-suffix list into the full role IDs that exist
+      // on THIS group's bundle. `$group->getMembers()` needs full IDs.
+      $roles = array_map(
+        static fn(string $suffix): string => $group->bundle() . '-' . $suffix,
+        self::REVIEWER_ROLE_SUFFIXES,
+      );
+      foreach ($group->getMembers($roles) as $membership) {
+        $user = $membership->getUser();
+        if ($user && $user->getEmail()) {
+          $emails[$user->getEmail()] = $user->getEmail();
         }
-      }
-      if (!$hasReviewerRole) {
-        continue;
-      }
-      $user = $userStorage->load($membership->getOwnerId());
-      if ($user && $user->getEmail()) {
-        $emails[$user->getEmail()] = $user->getEmail();
       }
     }
     return array_values($emails);

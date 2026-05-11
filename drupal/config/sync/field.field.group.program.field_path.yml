@@ -1,0 +1,19 @@
+uuid: c09aa1fe-c1ec-4bf5-87ad-15b432797045
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.field_path
+    - group.type.program
+id: group.program.field_path
+field_name: field_path
+entity_type: group
+bundle: program
+label: 'Front-end path'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

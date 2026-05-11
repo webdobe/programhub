@@ -11,14 +11,12 @@ dependencies:
     - field.field.node.venue.field_phone
     - field.field.node.venue.field_reservation_url
     - field.field.node.venue.field_venue_type
-    - field.field.node.venue.og_audience
     - node.type.venue
   module:
     - address
     - entity_reference_revisions
     - fieldable_path
     - link
-    - telephone
     - text
     - user
 id: node.venue.default
@@ -96,13 +94,5 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 100
-    region: content
-  og_audience:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 8
     region: content
 hidden: {  }

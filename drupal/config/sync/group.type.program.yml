@@ -1,0 +1,11 @@
+uuid: eee00952-df3a-4bd5-b6a8-9a304386076c
+langcode: en
+status: true
+dependencies: {  }
+id: program
+label: Program
+description: 'Program group — scopes content and membership.'
+new_revision: true
+creator_membership: true
+creator_wizard: false
+creator_roles: {  }

@@ -13,13 +13,97 @@ dependencies:
     - field.field.node.course.field_course_year_cycle
     - field.field.node.course.field_description
     - field.field.node.course.field_path
-    - field.field.node.course.og_audience
     - node.type.course
-    - taxonomy.vocabulary.course_offering
   module:
+    - content_moderation
+    - field_group
     - path
-    - taxonomy
     - text
+third_party_settings:
+  field_group:
+    group_main:
+      children:
+        - group_overview
+        - group_description
+        - group_prereqs
+        - group_instructors
+        - group_publishing
+      label: ''
+      region: content
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        classes: ph-form-tabs
+        id: course-tabs
+        direction: horizontal
+        width_breakpoint: 640
+    group_overview:
+      children:
+        - field_course_number
+        - field_course_credits
+        - field_course_semester
+        - field_course_year_cycle
+        - field_course_offering
+      label: Overview
+      region: content
+      parent_name: group_main
+      weight: 0
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: open
+        description: 'Course number, credits, when it runs.'
+    group_description:
+      children:
+        - field_description
+      label: Description
+      region: content
+      parent_name: group_main
+      weight: 1
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'What the course covers.'
+    group_prereqs:
+      children:
+        - field_course_prereqs
+        - field_course_rec_prereqs
+      label: Prerequisites
+      region: content
+      parent_name: group_main
+      weight: 2
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Required and recommended prerequisites.'
+    group_instructors:
+      children:
+        - field_course_instructors
+      label: Instructors
+      region: content
+      parent_name: group_main
+      weight: 3
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Who teaches it.'
+    group_publishing:
+      children:
+        - og_audience
+        - status
+      label: Publishing
+      region: content
+      parent_name: group_main
+      weight: 4
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Program scope. Admin-managed — no moderation workflow.'
 id: node.course.default
 targetEntityType: node
 bundle: course
@@ -28,19 +112,19 @@ content:
   created:
     type: datetime_timestamp
     weight: 10
-    region: content
+    region: advanced
     settings: {  }
     third_party_settings: {  }
   field_course_credits:
     type: number
-    weight: 123
+    weight: 1
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_course_instructors:
     type: entity_reference_autocomplete
-    weight: 125
+    weight: 0
     region: content
     settings:
       match_operator: CONTAINS
@@ -50,21 +134,21 @@ content:
     third_party_settings: {  }
   field_course_number:
     type: string_textfield
-    weight: 121
+    weight: 0
     region: content
     settings:
-      size: 60
-      placeholder: ''
+      size: 20
+      placeholder: GDES-245
     third_party_settings: {  }
   field_course_offering:
     type: options_select
-    weight: 127
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
   field_course_prereqs:
-    type: entity_reference_autocomplete_tags
-    weight: 128
+    type: entity_reference_autocomplete
+    weight: 0
     region: content
     settings:
       match_operator: CONTAINS
@@ -73,8 +157,8 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_course_rec_prereqs:
-    type: entity_reference_autocomplete_tags
-    weight: 129
+    type: entity_reference_autocomplete
+    weight: 1
     region: content
     settings:
       match_operator: CONTAINS
@@ -83,55 +167,48 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_course_semester:
-    type: options_select
-    weight: 124
+    type: number
+    weight: 2
     region: content
-    settings: {  }
+    settings:
+      placeholder: ''
     third_party_settings: {  }
   field_course_year_cycle:
     type: options_select
-    weight: 130
+    weight: 3
     region: content
     settings: {  }
     third_party_settings: {  }
   field_description:
     type: text_textarea
-    weight: 122
+    weight: 0
     region: content
     settings:
-      rows: 5
+      rows: 8
       placeholder: ''
     third_party_settings: {  }
-  field_path:
-    type: string_textfield
-    weight: 30
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  og_audience:
-    type: options_select
-    weight: 126
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
     region: content
     settings: {  }
     third_party_settings: {  }
   path:
     type: path
     weight: 30
-    region: content
+    region: advanced
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
     weight: 15
-    region: content
+    region: advanced
     settings:
       display_label: true
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 120
+    weight: 1
     region: content
     settings:
       display_label: true
@@ -139,26 +216,27 @@ content:
   sticky:
     type: boolean_checkbox
     weight: 16
-    region: content
+    region: advanced
     settings:
       display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: -5
+    weight: -10
     region: content
     settings:
       size: 60
-      placeholder: ''
+      placeholder: 'Course title'
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
     weight: 5
-    region: content
+    region: advanced
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_path: true

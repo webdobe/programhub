@@ -13,10 +13,10 @@ dependencies:
     - field.field.node.project.field_project_gallery
     - field.field.node.project.field_project_tags
     - field.field.node.project.field_project_url
-    - field.field.node.project.og_audience
+    - image.style.medium
     - node.type.project
   module:
-    - fieldable_path
+    - entity_reference_revisions
     - image
     - link
     - text
@@ -26,81 +26,97 @@ targetEntityType: node
 bundle: project
 mode: default
 content:
-  field_description:
-    type: text_default
-    label: above
+  content_moderation_control:
     settings: {  }
     third_party_settings: {  }
-    weight: 102
+    weight: -20
+    region: content
+  field_course:
+    type: entity_reference_label
+    label: inline
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
     region: content
   field_graduate:
     type: entity_reference_label
-    label: above
+    label: inline
     settings:
       link: true
     third_party_settings: {  }
-    weight: 103
+    weight: 1
     region: content
   field_main_image:
     type: image
-    label: above
+    label: hidden
     settings:
       image_link: ''
-      image_style: ''
+      image_style: large
       image_loading:
         attribute: lazy
     third_party_settings: {  }
-    weight: 101
+    weight: -10
     region: content
-  field_path:
-    type: fieldable_path_formatter
-    label: above
-    settings: {  }
+  field_process:
+    type: entity_reference_revisions_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
     third_party_settings: {  }
-    weight: 106
+    weight: 6
     region: content
   field_project_category:
     type: entity_reference_label
-    label: above
+    label: inline
     settings:
       link: true
     third_party_settings: {  }
-    weight: 104
+    weight: 3
+    region: content
+  field_project_gallery:
+    type: image
+    label: hidden
+    settings:
+      image_link: ''
+      image_style: medium
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 7
     region: content
   field_project_tags:
     type: entity_reference_label
-    label: above
+    label: hidden
     settings:
       link: true
     third_party_settings: {  }
-    weight: 105
+    weight: 4
     region: content
   field_project_url:
     type: link
-    label: above
+    label: inline
     settings:
       trim_length: 80
       url_only: false
       url_plain: false
       rel: ''
-      target: ''
+      target: _blank
     third_party_settings: {  }
-    weight: 107
+    weight: 5
     region: content
   links:
     settings: {  }
     third_party_settings: {  }
     weight: 100
     region: content
-  og_audience:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 108
-    region: content
 hidden:
-  field_course: true
-  field_process: true
-  field_project_gallery: true
+  field_path: true

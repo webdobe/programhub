@@ -1,0 +1,23 @@
+/**
+ * Icons for the custom toolbar dropdowns we inject into Gin's navigation.
+ *
+ * Gin renders each top-level tray as a `<button class="toolbar-link
+ * toolbar-link--has-icon toolbar-link--{class}">`, where `{class}` is the
+ * `class` field of the tray's first item. The icon is drawn by a
+ * `::before` pseudo-element that masks `var(--icon)` as a 20×20 swatch
+ * in the current foreground color, so we only need to set `--icon` to
+ * a URL pointing at a monochrome SVG.
+ *
+ * SVGs are inlined as data URLs to keep this self-contained — no asset
+ * fingerprinting or path-resolution gotchas inside the toolbar render.
+ */
+
+/* Programs — graduation cap (mortarboard). Represents "academic programs". */
+.toolbar-link--programs::before {
+  --icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'><path d='M12 3 1 9l11 6 9-4.91V17h2V9z M5 13.18v4L12 21l7-3.82v-4L12 17z'/></svg>");
+}
+
+/* Create — pencil-with-plus glyph. Suggests "make new content here". */
+.toolbar-link--create::before {
+  --icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'><path d='M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75z'/></svg>");
+}

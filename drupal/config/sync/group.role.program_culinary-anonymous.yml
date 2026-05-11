@@ -1,0 +1,28 @@
+uuid: e529d2bb-6738-465e-8f82-63fb21d4e4c2
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program_culinary
+    - user.role.anonymous
+id: program_culinary-anonymous
+label: Anonymous
+weight: 30
+admin: false
+scope: outsider
+global_role: anonymous
+group_type: program_culinary
+permissions:
+  - 'view group'
+  - 'view group_node:article entity'
+  - 'view group_node:award entity'
+  - 'view group_node:career_outcome entity'
+  - 'view group_node:certificate entity'
+  - 'view group_node:course entity'
+  - 'view group_node:event entity'
+  - 'view group_node:menu entity'
+  - 'view group_node:portfolio_show entity'
+  - 'view group_node:project entity'
+  - 'view group_node:simplenews_issue entity'
+  - 'view group_node:student_spotlight entity'
+  - 'view group_node:venue entity'

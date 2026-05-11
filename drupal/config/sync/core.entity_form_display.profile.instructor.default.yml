@@ -15,14 +15,131 @@ dependencies:
     - field.field.profile.instructor.field_path
     - field.field.profile.instructor.field_pixelated_image
     - field.field.profile.instructor.field_portfolio
-    - field.field.profile.instructor.og_audience
     - image.style.thumbnail
     - profile.type.instructor
   module:
+    - field_group
     - image
     - link
     - name
     - text
+third_party_settings:
+  field_group:
+    group_main:
+      children:
+        - group_identity
+        - group_visuals
+        - group_bio
+        - group_social
+        - group_extras
+        - group_publishing
+      label: ''
+      region: content
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        classes: ph-form-tabs
+        id: instructor-tabs
+        direction: horizontal
+        width_breakpoint: 640
+    group_identity:
+      children:
+        - field_name
+        - field_email
+      label: Identity
+      region: content
+      parent_name: group_main
+      weight: 0
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: open
+        description: 'Name and contact email.'
+    group_visuals:
+      children:
+        - group_visuals_row
+      label: Visuals
+      region: content
+      parent_name: group_main
+      weight: 1
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Profile photo and pixelated variant.'
+    group_visuals_row:
+      children:
+        - field_image
+        - field_pixelated_image
+      label: ''
+      region: content
+      parent_name: group_visuals
+      weight: 0
+      format_type: html_element
+      format_settings:
+        classes: 'ph-form-row ph-form-row--two-col'
+        id: ''
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+    group_bio:
+      children:
+        - field_biography
+      label: Bio
+      region: content
+      parent_name: group_main
+      weight: 2
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Short bio.'
+    group_social:
+      children:
+        - field_portfolio
+        - field_linkedin
+        - field_instagram
+        - field_github
+      label: Social
+      region: content
+      parent_name: group_main
+      weight: 3
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Portfolio and social links.'
+    group_extras:
+      children:
+        - field_game
+        - field_boss_phase
+      label: Extras
+      region: content
+      parent_name: group_main
+      weight: 4
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Optional game artifact and boss phase.'
+    group_publishing:
+      children:
+        - og_audience
+        - status
+      label: Publishing
+      region: content
+      parent_name: group_main
+      weight: 5
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Program scope.'
 id: profile.instructor.default
 targetEntityType: profile
 bundle: instructor
@@ -30,21 +147,23 @@ mode: default
 content:
   field_biography:
     type: text_textarea
-    weight: 27
+    weight: 0
     region: content
     settings:
-      rows: 5
+      rows: 6
       placeholder: ''
     third_party_settings: {  }
   field_boss_phase:
-    type: options_select
-    weight: 38
+    type: string_textfield
+    weight: 1
     region: content
-    settings: {  }
+    settings:
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_email:
     type: email_default
-    weight: 26
+    weight: 1
     region: content
     settings:
       placeholder: ''
@@ -52,7 +171,7 @@ content:
     third_party_settings: {  }
   field_game:
     type: entity_reference_autocomplete
-    weight: 28
+    weight: 0
     region: content
     settings:
       match_operator: CONTAINS
@@ -62,15 +181,15 @@ content:
     third_party_settings: {  }
   field_github:
     type: link_default
-    weight: 30
+    weight: 3
     region: content
     settings:
-      placeholder_url: ''
+      placeholder_url: 'https://github.com/…'
       placeholder_title: ''
     third_party_settings: {  }
   field_image:
     type: image_image
-    weight: 34
+    weight: 0
     region: content
     settings:
       progress_indicator: throbber
@@ -78,56 +197,29 @@ content:
     third_party_settings: {  }
   field_instagram:
     type: link_default
-    weight: 32
+    weight: 2
     region: content
     settings:
-      placeholder_url: ''
+      placeholder_url: 'https://www.instagram.com/…'
       placeholder_title: ''
     third_party_settings: {  }
   field_linkedin:
     type: link_default
-    weight: 29
+    weight: 1
     region: content
     settings:
-      placeholder_url: ''
+      placeholder_url: 'https://www.linkedin.com/in/…'
       placeholder_title: ''
     third_party_settings: {  }
   field_name:
     type: name_default
-    weight: 37
+    weight: 0
     region: content
-    settings:
-      override_field_settings: false
-      labels:
-        title: Title
-        given: Given
-        middle: 'Middle name(s)'
-        family: Family
-        generational: Generational
-        credentials: Credentials
-      widget_layout: stacked
-      show_component_required_marker: false
-      flag_required_input: false
-      credentials_inline: false
-      size:
-        title: 6
-        given: 20
-        middle: 20
-        family: 20
-        generational: 5
-        credentials: 35
-      title_display:
-        title: description
-        given: description
-        middle: description
-        family: description
-        generational: description
-        credentials: description
-      field_title_display: before
+    settings: {  }
     third_party_settings: {  }
   field_pixelated_image:
     type: image_image
-    weight: 33
+    weight: 1
     region: content
     settings:
       progress_indicator: throbber
@@ -135,17 +227,18 @@ content:
     third_party_settings: {  }
   field_portfolio:
     type: link_default
-    weight: 31
+    weight: 0
     region: content
     settings:
-      placeholder_url: ''
+      placeholder_url: 'https://'
       placeholder_title: ''
     third_party_settings: {  }
-  og_audience:
-    type: options_select
-    weight: 39
+  status:
+    type: boolean_checkbox
+    weight: 1
     region: content
-    settings: {  }
+    settings:
+      display_label: true
     third_party_settings: {  }
 hidden:
   field_path: true

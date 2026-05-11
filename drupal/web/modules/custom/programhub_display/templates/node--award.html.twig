@@ -1,0 +1,28 @@
+{#
+/**
+ * @file
+ * Award node view template.
+ */
+#}
+<article{{ attributes.addClass(['ph-node', 'ph-node--award']) }}>
+  <div class="ph-node__layout">
+    <div class="ph-node__main">
+      {% if content.field_description|render %}
+        <div class="ph-node__body">{{ content.field_description }}</div>
+      {% endif %}
+      {% if content.field_project|render %}
+        <section class="ph-node__section">
+          <h2 class="ph-node__section-heading">{{ 'Project'|t }}</h2>
+          {{ content.field_project }}
+        </section>
+      {% endif %}
+    </div>
+    <aside class="ph-node__sidebar">
+      <div class="ph-node__meta">
+        {{ content.field_award_type }}
+        {{ content.field_profiles }}
+      </div>
+    </aside>
+  </div>
+  {{ content.links }}
+</article>

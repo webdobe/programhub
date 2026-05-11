@@ -1,0 +1,14 @@
+uuid: 570d7491-cb3c-443e-9e1a-90a5c12c1cf5
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program_culinary
+id: program_culinary-administrator
+label: Administrator
+weight: 22
+admin: true
+scope: individual
+global_role: null
+group_type: program_culinary
+permissions: {  }

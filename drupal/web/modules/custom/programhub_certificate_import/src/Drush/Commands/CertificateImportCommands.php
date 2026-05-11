@@ -34,16 +34,31 @@ final class CertificateImportCommands extends DrushCommands {
       $query->condition('nid', (int) $options['cert']);
     }
     elseif (!empty($options['program'])) {
-      $programIds = $storage->getQuery()
+      $groupIds = $etm->getStorage('group')->getQuery()
         ->accessCheck(FALSE)
-        ->condition('type', 'program')
+        ->condition('type', \Drupal\programhub_dashboard\Service\GroupContext::PROGRAM_GROUP_TYPES, 'IN')
         ->condition('field_abbreviation', $options['program'])
         ->execute();
-      if (!$programIds) {
+      if (!$groupIds) {
         $this->io()->warning(sprintf('No program with abbreviation "%s".', $options['program']));
         return;
       }
-      $query->condition('og_audience', array_values($programIds), 'IN');
+      // Find every certificate node related to those groups via gnode.
+      $relStorage = $etm->getStorage('group_relationship');
+      $relIds = $relStorage->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('gid', array_values($groupIds), 'IN')
+        ->condition('plugin_id', 'group_node:certificate')
+        ->execute();
+      $certIds = [];
+      foreach ($relStorage->loadMultiple($relIds) as $rel) {
+        $certIds[] = (int) $rel->getEntityId();
+      }
+      if (!$certIds) {
+        $this->io()->warning(sprintf('No certificates in program "%s".', $options['program']));
+        return;
+      }
+      $query->condition('nid', $certIds, 'IN');
     }
 
     $ids = $query->execute();

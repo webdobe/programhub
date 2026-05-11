@@ -1,0 +1,23 @@
+{#
+/**
+ * @file
+ * Menu item paragraph — CULA menu entry with image, name, description,
+ * price.
+ */
+#}
+<div{{ attributes.addClass(['ph-paragraph', 'ph-paragraph--menu-item']) }}>
+  {% if content.field_image|render %}
+    <div class="ph-paragraph--menu-item__image">{{ content.field_image }}</div>
+  {% endif %}
+  <div class="ph-paragraph--menu-item__body">
+    <div class="ph-paragraph--menu-item__head">
+      <h4 class="ph-paragraph--menu-item__label">{{ content.field_label }}</h4>
+      {% if content.field_price|render %}
+        <span class="ph-paragraph--menu-item__price">{{ content.field_price }}</span>
+      {% endif %}
+    </div>
+    {% if content.field_description|render %}
+      <p class="ph-paragraph--menu-item__desc">{{ content.field_description }}</p>
+    {% endif %}
+  </div>
+</div>

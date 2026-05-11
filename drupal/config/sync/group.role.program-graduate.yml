@@ -1,0 +1,27 @@
+uuid: e878e4fd-3aed-449e-827b-1df6dcfff0ff
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program
+id: program-graduate
+label: Graduate
+weight: 4
+admin: false
+scope: individual
+global_role: null
+group_type: program
+permissions:
+  - 'create group_node:award entity'
+  - 'create group_node:project entity'
+  - 'create group_node:student_spotlight entity'
+  - 'delete own group_node:award entity'
+  - 'delete own group_node:project entity'
+  - 'delete own group_node:student_spotlight entity'
+  - 'update own group_node:award entity'
+  - 'update own group_node:project entity'
+  - 'update own group_node:student_spotlight entity'
+  - 'view group'
+  - 'view group_node:award entity'
+  - 'view group_node:project entity'
+  - 'view group_node:student_spotlight entity'

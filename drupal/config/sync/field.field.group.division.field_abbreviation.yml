@@ -1,0 +1,19 @@
+uuid: 62b39f81-00ae-4f0c-89a1-d8fe1fb0eebf
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.field_abbreviation
+    - group.type.division
+id: group.division.field_abbreviation
+field_name: field_abbreviation
+entity_type: group
+bundle: division
+label: Abbreviation
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

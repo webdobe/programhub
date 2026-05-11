@@ -1,0 +1,12 @@
+{#
+/**
+ * @file
+ * Venue hours paragraph — a single day's open/close window.
+ */
+#}
+<div{{ attributes.addClass(['ph-paragraph', 'ph-paragraph--hours']) }}>
+  <span class="ph-paragraph--hours__day">{{ content.field_day }}</span>
+  <span class="ph-paragraph--hours__range">
+    {{ content.field_start_time }}<span class="ph-paragraph--hours__sep">–</span>{{ content.field_end_time }}
+  </span>
+</div>

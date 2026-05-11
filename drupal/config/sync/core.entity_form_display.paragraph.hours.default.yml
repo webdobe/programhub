@@ -8,7 +8,6 @@ dependencies:
     - field.field.paragraph.hours.field_start_time
     - paragraphs.paragraphs_type.hours
   module:
-    - options
     - time_field
 id: paragraph.hours.default
 targetEntityType: paragraph
@@ -16,7 +15,7 @@ bundle: hours
 mode: default
 content:
   field_day:
-    type: options_buttons
+    type: options_select
     weight: 0
     region: content
     settings: {  }
@@ -25,17 +24,13 @@ content:
     type: time_widget
     weight: 2
     region: content
-    settings:
-      enabled: false
-      step: 1
+    settings: {  }
     third_party_settings: {  }
   field_start_time:
     type: time_widget
     weight: 1
     region: content
-    settings:
-      enabled: false
-      step: 1
+    settings: {  }
     third_party_settings: {  }
 hidden:
   created: true

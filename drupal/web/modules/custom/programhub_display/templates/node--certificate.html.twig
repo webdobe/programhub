@@ -1,0 +1,53 @@
+{#
+/**
+ * @file
+ * Certificate node view template.
+ *
+ * Admin-managed catalog item. Logo (if industry cert), overview,
+ * course ladder, outcomes — sidebar carries type + credits + catalog
+ * URL.
+ */
+#}
+<article{{ attributes.addClass(['ph-node', 'ph-node--certificate']) }}>
+  {% if content.field_logo|render %}
+    <div class="ph-node__hero">{{ content.field_logo }}</div>
+  {% endif %}
+  <div class="ph-node__layout">
+    <div class="ph-node__main">
+      {% if content.field_overview|render %}
+        <div class="ph-node__body">{{ content.field_overview }}</div>
+      {% endif %}
+      {% if content.field_courses|render %}
+        <section class="ph-node__section ph-node__ladder">
+          <h2 class="ph-node__section-heading">{{ 'Plan of study'|t }}</h2>
+          {{ content.field_courses }}
+        </section>
+      {% endif %}
+      {% if content.field_prep_courses|render %}
+        <section class="ph-node__section ph-node__ladder">
+          <h2 class="ph-node__section-heading">{{ 'Prep courses'|t }}</h2>
+          {{ content.field_prep_courses }}
+        </section>
+      {% endif %}
+      {% if content.field_outcomes|render %}
+        <section class="ph-node__section">
+          <h2 class="ph-node__section-heading">{{ 'Outcomes'|t }}</h2>
+          {{ content.field_outcomes }}
+        </section>
+      {% endif %}
+    </div>
+    <aside class="ph-node__sidebar">
+      {% if content.field_total_credits|render %}
+        <div class="ph-node__stat">
+          <span class="ph-node__stat-label">{{ 'Credits'|t }}</span>
+          <span class="ph-node__stat-value">{{ content.field_total_credits }}</span>
+        </div>
+      {% endif %}
+      <div class="ph-node__meta">
+        {{ content.field_certificate_type }}
+        {{ content.field_certificate_url }}
+      </div>
+    </aside>
+  </div>
+  {{ content.links }}
+</article>

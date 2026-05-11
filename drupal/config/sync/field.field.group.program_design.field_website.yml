@@ -1,0 +1,23 @@
+uuid: 6136634e-e65b-4427-9603-9a104a11f824
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.field_website
+    - group.type.program_design
+  module:
+    - link
+id: group.program_design.field_website
+field_name: field_website
+entity_type: group
+bundle: program_design
+label: Website
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 1
+  link_type: 17
+field_type: link

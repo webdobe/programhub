@@ -1,0 +1,17 @@
+uuid: 887979a8-a339-4f33-86ce-41bd1624b136
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program_design
+    - node.type.student_spotlight
+  module:
+    - gnode
+    - node
+id: program_design-6db4eb9ab3dc03706
+group_type: program_design
+content_plugin: 'group_node:student_spotlight'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

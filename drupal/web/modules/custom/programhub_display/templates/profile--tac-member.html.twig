@@ -1,0 +1,26 @@
+{#
+/**
+ * @file
+ * TAC member profile view template.
+ */
+#}
+<article{{ attributes.addClass(['ph-node', 'ph-node--profile', 'ph-node--tac-member']) }}>
+  {% if content.field_image|render %}
+    <div class="ph-node__hero">{{ content.field_image }}</div>
+  {% endif %}
+  <div class="ph-node__layout">
+    <div class="ph-node__main">
+      {% if content.field_biography|render %}
+        <div class="ph-node__body">{{ content.field_biography }}</div>
+      {% endif %}
+    </div>
+    <aside class="ph-node__sidebar">
+      <div class="ph-node__meta">
+        {{ content.field_name }}
+        {{ content.field_job_title }}
+        {{ content.field_company }}
+        {{ content.field_company_url }}
+      </div>
+    </aside>
+  </div>
+</article>

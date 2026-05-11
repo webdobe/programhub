@@ -6,7 +6,6 @@ dependencies:
     - core.entity_view_mode.node.email_plain
     - field.field.node.simplenews_issue.body
     - field.field.node.simplenews_issue.field_path
-    - field.field.node.simplenews_issue.og_audience
     - field.field.node.simplenews_issue.simplenews_issue
     - node.type.simplenews_issue
   module:
@@ -26,8 +25,12 @@ content:
     third_party_settings: {  }
     weight: 0
     region: content
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
 hidden:
   field_path: true
   links: true
-  og_audience: true
   simplenews_issue: true

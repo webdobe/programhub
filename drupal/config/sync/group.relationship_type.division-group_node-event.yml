@@ -1,0 +1,17 @@
+uuid: 2a498ebd-87a6-4b1d-893d-e644389eacc6
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.division
+    - node.type.event
+  module:
+    - gnode
+    - node
+id: division-group_node-event
+group_type: division
+content_plugin: 'group_node:event'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

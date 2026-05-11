@@ -1,0 +1,19 @@
+uuid: c21366c2-e2dc-48a1-a2b4-9aaf284298fe
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program
+id: program-tac_member
+label: 'TAC Member'
+weight: 5
+admin: false
+scope: individual
+global_role: null
+group_type: program
+permissions:
+  - 'create group_node:article entity'
+  - 'delete own group_node:article entity'
+  - 'update own group_node:article entity'
+  - 'view group'
+  - 'view group_node:article entity'

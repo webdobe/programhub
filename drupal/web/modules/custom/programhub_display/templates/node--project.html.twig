@@ -1,0 +1,55 @@
+{#
+/**
+ * @file
+ * Project node view template.
+ *
+ * Uses the shared `.ph-node__*` layout (see node-display.css). Each
+ * bundle template just composes which fields go in main vs sidebar.
+ */
+#}
+{%
+  set classes = [
+    'ph-node',
+    'ph-node--project',
+    not node.isPublished() ? 'ph-node--unpublished',
+  ]
+%}
+<article{{ attributes.addClass(classes) }}>
+  {% if content.field_main_image|render %}
+    <div class="ph-node__hero">{{ content.field_main_image }}</div>
+  {% endif %}
+
+  <div class="ph-node__layout">
+    <div class="ph-node__main">
+      {% if content.field_description|render %}
+        <div class="ph-node__body">{{ content.field_description }}</div>
+      {% endif %}
+
+      {% if content.field_process|render %}
+        <section class="ph-node__section">
+          <h2 class="ph-node__section-heading">{{ 'Process'|t }}</h2>
+          {{ content.field_process }}
+        </section>
+      {% endif %}
+
+      {% if content.field_project_gallery|render %}
+        <section class="ph-node__section ph-node__gallery">
+          <h2 class="ph-node__section-heading">{{ 'Gallery'|t }}</h2>
+          {{ content.field_project_gallery }}
+        </section>
+      {% endif %}
+    </div>
+
+    <aside class="ph-node__sidebar">
+      <div class="ph-node__meta">
+        {{ content.field_graduate }}
+        {{ content.field_course }}
+        {{ content.field_project_category }}
+        {{ content.field_project_tags }}
+        {{ content.field_project_url }}
+      </div>
+    </aside>
+  </div>
+
+  {{ content.links }}
+</article>

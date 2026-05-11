@@ -9,7 +9,6 @@ dependencies:
     - field.field.node.event.field_event_url
     - field.field.node.event.field_location
     - field.field.node.event.field_path
-    - field.field.node.event.og_audience
     - node.type.event
   module:
     - address
@@ -23,6 +22,11 @@ targetEntityType: node
 bundle: event
 mode: default
 content:
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
   field_description:
     type: text_default
     label: above
@@ -79,13 +83,5 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 100
-    region: content
-  og_audience:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 111
     region: content
 hidden: {  }

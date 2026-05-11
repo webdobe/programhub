@@ -6,11 +6,12 @@ namespace Drupal\programhub_certificate_import\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\node\NodeInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
- * - certificatesTab(): renders the "Certificates" local task on a program node.
+ * - certificatesTab(): renders the "Certificates" local task on a program group.
  * - importOne(): runs the catalog import for a single certificate, redirects.
  */
 final class CertificateController extends ControllerBase {
@@ -59,9 +60,9 @@ final class CertificateController extends ControllerBase {
   }
 
   /**
-   * Render the Certificates tab on a program node.
+   * Render the Certificates tab on a program group.
    */
-  public function certificatesTab(NodeInterface $node): array {
+  public function certificatesTab(GroupInterface $group): array {
     $build = [];
 
     $build['header'] = [
@@ -69,14 +70,17 @@ final class CertificateController extends ControllerBase {
       '#attributes' => ['class' => ['programhub-certificates-header']],
     ];
 
-    if ($node->access('update')) {
+    if ($group->access('update')) {
       $build['header']['actions'] = [
         '#type' => 'actions',
         'add' => [
           '#type' => 'link',
           '#title' => $this->t('Add Certificate'),
-          '#url' => Url::fromRoute('node.add', ['node_type' => 'certificate'], [
-            'query' => ['og_audience' => $node->id()],
+          // Group's "create new content for this group" route — handles
+          // attaching the new cert to the group automatically.
+          '#url' => Url::fromRoute('entity.group_relationship.create_form', [
+            'group' => $group->id(),
+            'plugin_id' => 'group_node:certificate',
           ]),
           '#attributes' => [
             'class' => ['button', 'button--primary'],
@@ -85,7 +89,7 @@ final class CertificateController extends ControllerBase {
       ];
     }
 
-    $certificates = $this->loadCertificates($node);
+    $certificates = $this->loadCertificates($group);
 
     $rows = [];
     foreach ($certificates as $cert) {
@@ -145,7 +149,7 @@ final class CertificateController extends ControllerBase {
 
     $build['#cache'] = [
       'tags' => array_merge(
-        $node->getCacheTags(),
+        $group->getCacheTags(),
         ['node_list:certificate'],
       ),
       'contexts' => ['user.permissions'],
@@ -155,21 +159,26 @@ final class CertificateController extends ControllerBase {
   }
 
   /**
+   * Load every certificate node related to a program group via gnode.
+   *
    * @return \Drupal\node\NodeInterface[]
    */
-  private function loadCertificates(NodeInterface $program): array {
-    $storage = $this->entityTypeManager()->getStorage('node');
-    $ids = $storage->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('type', 'certificate')
-      ->condition('og_audience', $program->id())
-      ->sort('title', 'ASC')
-      ->execute();
-    if (!$ids) {
+  private function loadCertificates(GroupInterface $group): array {
+    $nids = [];
+    foreach ($group->getRelationships('group_node:certificate') as $relationship) {
+      $nids[] = (int) $relationship->getEntityId();
+    }
+    if (!$nids) {
       return [];
     }
+    $storage = $this->entityTypeManager()->getStorage('node');
+    $sorted = $storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('nid', $nids, 'IN')
+      ->sort('title', 'ASC')
+      ->execute();
     /** @var \Drupal\node\NodeInterface[] $nodes */
-    $nodes = $storage->loadMultiple($ids);
+    $nodes = $storage->loadMultiple($sorted);
     return $nodes;
   }
 

@@ -1,0 +1,73 @@
+uuid: 4bc7073f-2b5f-465c-b048-e9abcc7d0d56
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.group.program_design.field_abbreviation
+    - field.field.group.program_design.field_path
+    - field.field.group.program_design.field_soc_codes
+    - field.field.group.program_design.field_website
+    - group.type.program_design
+  module:
+    - link
+    - path
+id: group.program_design.default
+targetEntityType: group
+bundle: program_design
+mode: default
+content:
+  field_abbreviation:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_path:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_soc_codes:
+    type: string_textfield
+    weight: 3
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_website:
+    type: link_default
+    weight: 2
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+  label:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 120
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+hidden:
+  uid: true

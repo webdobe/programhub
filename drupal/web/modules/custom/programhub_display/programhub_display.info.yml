@@ -1,0 +1,9 @@
+name: 'ProgramHub display'
+type: module
+description: 'Custom view templates for node, profile, and paragraph bundles, plus the shared Gin-themed CSS. Pure presentation — governance hooks live in programhub_governance.'
+core_version_requirement: ^10 || ^11
+package: 'ProgramHub'
+dependencies:
+  - drupal:node
+  - drupal:profile
+  - drupal:paragraphs

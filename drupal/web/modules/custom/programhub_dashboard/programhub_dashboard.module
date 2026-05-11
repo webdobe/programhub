@@ -26,6 +26,173 @@ declare(strict_types=1);
  *   - `programhub_dashboard_widget` — chrome around one widget's body
  *     (heading, container, category data attribute for CSS hooks).
  */
+/**
+ * Implements hook_form_FORM_ID_alter() for views_exposed_form.
+ *
+ * Narrows the "Type" filter dropdown on the per-group Nodes /
+ * Moderation views to the node bundles that are actually enabled as
+ * gnode plugins on the CURRENT group's group_type — instead of every
+ * node type in the database.
+ *
+ * Effective permission model: enable `group_node:{bundle}` at
+ * `/admin/group/types/manage/{type}/content` to expose that bundle
+ * in the dropdown for groups of that type. Disabling it hides the
+ * bundle everywhere (filter, Create dropdown, gnode pages).
+ */
+function programhub_dashboard_form_views_exposed_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface $form_state, string $form_id): void {
+  $view = $form_state->getStorage()['view'] ?? NULL;
+  if (!$view || !in_array($view->id(), ['group_nodes', 'group_moderation'], TRUE)) {
+    return;
+  }
+  if (!isset($form['type']['#options'])) {
+    return;
+  }
+  // The view takes the group as its first contextual arg.
+  $args = $view->args ?? [];
+  $gid = isset($args[0]) ? (int) $args[0] : 0;
+  if ($gid === 0) {
+    return;
+  }
+  $group = \Drupal::entityTypeManager()->getStorage('group')->load($gid);
+  if (!$group) {
+    return;
+  }
+
+  // Allowed bundles = those with a `group_node:{bundle}` plugin enabled
+  // on this group's group_type.
+  $allowed = [];
+  $rels = \Drupal::entityTypeManager()->getStorage('group_relationship_type')
+    ->loadByProperties(['group_type' => $group->bundle()]);
+  foreach ($rels as $rel) {
+    $pid = $rel->getPluginId();
+    if (str_starts_with($pid, 'group_node:')) {
+      $allowed[substr($pid, strlen('group_node:'))] = TRUE;
+    }
+  }
+
+  // Keep the "- Any -" sentinel (key 'All' or ''), drop anything else
+  // that's not on the allow list.
+  $options = $form['type']['#options'];
+  foreach ($options as $key => $label) {
+    if ($key === 'All' || $key === '') {
+      continue;
+    }
+    if (!isset($allowed[$key])) {
+      unset($options[$key]);
+    }
+  }
+  $form['type']['#options'] = $options;
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ *
+ * Forces our preprocess_html to run AFTER `gin_preprocess_html`. Without
+ * this, Gin's preprocess fires last and rebuilds `#menu_middle` from
+ * scratch, dropping any tray we'd injected. Modeled on the pattern in
+ * `gsl_theme_registry_alter()`.
+ */
+function programhub_dashboard_theme_registry_alter(array &$theme_registry): void {
+  if (empty($theme_registry['html']['preprocess functions'])) {
+    return;
+  }
+  $list = &$theme_registry['html']['preprocess functions'];
+  $ours = 'programhub_dashboard_preprocess_html';
+  $after = 'gin_preprocess_html';
+
+  // Remove if already present so we can re-insert at the right spot.
+  if (($i = array_search($ours, $list, TRUE)) !== FALSE) {
+    unset($list[$i]);
+    $list = array_values($list);
+  }
+  if (($pos = array_search($after, $list, TRUE)) !== FALSE) {
+    array_splice($list, $pos + 1, 0, [$ours]);
+  }
+  else {
+    $list[] = $ours;
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for html.
+ *
+ * Two trays get injected into Gin's `#menu_middle`:
+ *
+ *   1. "Programs" — programs + divisions the current user belongs to,
+ *      each expanding into per-bundle deep-links into that group's
+ *      content listing (`/group/{gid}/nodes?type=…`).
+ *   2. "Create" — REPLACES Gin's default flat Create tray with a
+ *      program-scoped picker. Every leaf link calls gnode's
+ *      `create-form` route, so the resulting node is attached to a
+ *      group on save instead of orphaned.
+ *
+ * Runs only when Gin's toolbar is active. Idempotent and cache-aware —
+ * the cache contexts/tags on each tray invalidate when memberships
+ * or group permissions change.
+ */
+function programhub_dashboard_preprocess_html(array &$variables): void {
+  if (!function_exists('_gin_toolbar_gin_is_active') || !_gin_toolbar_gin_is_active()) {
+    return;
+  }
+
+  /** @var \Drupal\programhub_dashboard\Navigation\GroupsNavigation $programsNav */
+  $programsNav = \Drupal::classResolver(\Drupal\programhub_dashboard\Navigation\GroupsNavigation::class);
+  /** @var \Drupal\programhub_dashboard\Navigation\CreateNavigation $createNav */
+  $createNav = \Drupal::classResolver(\Drupal\programhub_dashboard\Navigation\CreateNavigation::class);
+
+  $programsTray = $programsNav->build();
+  $createTray = $createNav->build();
+
+  $hasPrograms = !(isset($programsTray['#access']) && $programsTray['#access'] === FALSE);
+  $hasCreate = !(isset($createTray['#access']) && $createTray['#access'] === FALSE);
+  if (!$hasPrograms && !$hasCreate) {
+    return;
+  }
+
+  if (!isset($variables['page_top']['navigation']) || !is_array($variables['page_top']['navigation'])) {
+    $variables['page_top']['navigation'] = [
+      '#theme' => 'navigation',
+      '#menu_top' => [],
+      '#menu_middle' => [],
+      '#menu_bottom' => [],
+      '#attached' => ['library' => ['gin/navigation']],
+    ];
+  }
+  if (!isset($variables['page_top']['navigation']['#menu_middle']) || !is_array($variables['page_top']['navigation']['#menu_middle'])) {
+    $variables['page_top']['navigation']['#menu_middle'] = [];
+  }
+  if (!isset($variables['page_top']['navigation']['#menu_top']) || !is_array($variables['page_top']['navigation']['#menu_top'])) {
+    $variables['page_top']['navigation']['#menu_top'] = [];
+  }
+
+  $top = &$variables['page_top']['navigation']['#menu_top'];
+  $middle = &$variables['page_top']['navigation']['#menu_middle'];
+
+  // Replace Gin's flat "Create" with our 3-level group-scoped Create.
+  // Gin builds it from admin_toolbar's "Create" menu and places it in
+  // `#menu_top` (NOT middle) — overwriting the same key keeps render
+  // order intact.
+  if ($hasCreate) {
+    $top['create'] = $createTray;
+  }
+
+  // Site admins keep Gin's "Content" block (Content + Blocks + Files +
+  // Media) — they cross-cut the platform and need the global views.
+  // For everyone else, all content is group-scoped, so we drop the
+  // block to avoid the orphan-content / lost-in-cross-program confusion.
+  if (!\Drupal::currentUser()->hasPermission('administer site configuration')) {
+    unset($middle['content']);
+  }
+
+  // Inject "Programs" tray at the top of the middle region.
+  if ($hasPrograms) {
+    $middle = ['programs' => $programsTray] + $middle;
+  }
+
+  // Attach the CSS that gives Programs (and Create) toolbar icons.
+  $variables['page_top']['navigation']['#attached']['library'][] = 'programhub_dashboard/toolbar_icons';
+}
+
 function programhub_dashboard_theme(): array {
   return [
     'programhub_dashboard' => [

@@ -1,0 +1,17 @@
+uuid: c46be803-1b5e-41ff-8300-ef98da4007df
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program_culinary
+    - node.type.project
+  module:
+    - gnode
+    - node
+id: program_culinary-ee728a9f80dddf6
+group_type: program_culinary
+content_plugin: 'group_node:project'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

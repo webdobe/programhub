@@ -13,12 +13,9 @@ dependencies:
     - field.field.node.course.field_course_year_cycle
     - field.field.node.course.field_description
     - field.field.node.course.field_path
-    - field.field.node.course.og_audience
     - node.type.course
-    - taxonomy.vocabulary.course_offering
   module:
     - options
-    - taxonomy
     - text
     - user
 id: node.course.default
@@ -100,14 +97,6 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 100
-    region: content
-  og_audience:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 106
     region: content
 hidden:
   field_path: true

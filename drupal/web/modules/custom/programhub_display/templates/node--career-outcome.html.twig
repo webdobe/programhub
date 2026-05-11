@@ -1,0 +1,41 @@
+{#
+/**
+ * @file
+ * Career outcome node view template.
+ *
+ * BLS-imported. Pay range is the loudest sidebar stat. SOC code +
+ * source citation pinned alongside. Tasks list is the main content.
+ */
+#}
+<article{{ attributes.addClass(['ph-node', 'ph-node--career-outcome']) }}>
+  <div class="ph-node__layout">
+    <div class="ph-node__main">
+      {% if content.field_description|render %}
+        <div class="ph-node__body">{{ content.field_description }}</div>
+      {% endif %}
+      {% if content.field_tasks|render %}
+        <section class="ph-node__section ph-node__tasks">
+          <h2 class="ph-node__section-heading">{{ 'Day-to-day'|t }}</h2>
+          {{ content.field_tasks }}
+        </section>
+      {% endif %}
+    </div>
+    <aside class="ph-node__sidebar">
+      {% if content.field_pay_range|render %}
+        <div class="ph-node__stat">
+          <span class="ph-node__stat-label">{{ 'Pay range'|t }}</span>
+          <span class="ph-node__stat-value">{{ content.field_pay_range }}</span>
+        </div>
+      {% endif %}
+      <div class="ph-node__meta">
+        {{ content.field_soc_code }}
+        {{ content.field_pay_low }}
+        {{ content.field_pay_median }}
+        {{ content.field_pay_high }}
+        {{ content.field_pay_source }}
+        {{ content.field_career_track }}
+      </div>
+    </aside>
+  </div>
+  {{ content.links }}
+</article>

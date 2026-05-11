@@ -1,0 +1,17 @@
+uuid: 04deb847-74a7-4e61-ac58-95522a0b9af1
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program
+    - node.type.event
+  module:
+    - gnode
+    - node
+id: program-group_node-event
+group_type: program
+content_plugin: 'group_node:event'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

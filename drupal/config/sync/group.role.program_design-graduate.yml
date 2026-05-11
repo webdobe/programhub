@@ -1,0 +1,27 @@
+uuid: 5d77b41e-f32a-469f-b31c-78d7a5a32e60
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program_design
+id: program_design-graduate
+label: Graduate
+weight: 17
+admin: false
+scope: individual
+global_role: null
+group_type: program_design
+permissions:
+  - 'create group_node:award entity'
+  - 'create group_node:project entity'
+  - 'create group_node:student_spotlight entity'
+  - 'delete own group_node:award entity'
+  - 'delete own group_node:project entity'
+  - 'delete own group_node:student_spotlight entity'
+  - 'update own group_node:award entity'
+  - 'update own group_node:project entity'
+  - 'update own group_node:student_spotlight entity'
+  - 'view group'
+  - 'view group_node:award entity'
+  - 'view group_node:project entity'
+  - 'view group_node:student_spotlight entity'

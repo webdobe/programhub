@@ -1,0 +1,23 @@
+uuid: 0732df03-5132-46e5-ac78-3abb05d40afc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.group_relationship.program_culinary-9376111be951852.group_roles
+    - group.relationship_type.program_culinary-9376111be951852
+id: group_relationship.program_culinary-9376111be951852.default
+targetEntityType: group_relationship
+bundle: program_culinary-9376111be951852
+mode: default
+content:
+  group_roles:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: false
+    third_party_settings: {  }
+    weight: -4
+    region: content
+hidden:
+  entity_id: true
+  uid: true

@@ -1,0 +1,23 @@
+uuid: efa88198-e89e-4132-ab94-f2156858b7f7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.field_website
+    - group.type.division
+  module:
+    - link
+id: group.division.field_website
+field_name: field_website
+entity_type: group
+bundle: division
+label: Website
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 1
+  link_type: 17
+field_type: link

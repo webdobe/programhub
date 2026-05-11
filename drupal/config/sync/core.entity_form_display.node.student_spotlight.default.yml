@@ -8,12 +8,72 @@ dependencies:
     - field.field.node.student_spotlight.field_main_image
     - field.field.node.student_spotlight.field_path
     - field.field.node.student_spotlight.field_quote
-    - field.field.node.student_spotlight.og_audience
+    - image.style.thumbnail
     - node.type.student_spotlight
+    - workflows.workflow.community_content
   module:
+    - content_moderation
+    - field_group
     - image
     - path
     - text
+third_party_settings:
+  field_group:
+    group_main:
+      children:
+        - group_about
+        - group_visual
+        - group_publishing
+      label: ''
+      region: content
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        classes: ph-form-tabs
+        id: student_spotlight-tabs
+        direction: horizontal
+        width_breakpoint: 640
+    group_about:
+      children:
+        - field_graduate
+        - field_quote
+        - field_description
+      label: About
+      region: content
+      parent_name: group_main
+      weight: 0
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: open
+        description: 'Who the spotlight is about, their pull-quote, and the longer story.'
+    group_visual:
+      children:
+        - field_main_image
+      label: Visual
+      region: content
+      parent_name: group_main
+      weight: 1
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Lead photo for the spotlight.'
+    group_publishing:
+      children:
+        - og_audience
+        - moderation_state
+        - status
+      label: Publishing
+      region: content
+      parent_name: group_main
+      weight: 2
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Program scope and review state.'
 id: node.student_spotlight.default
 targetEntityType: node
 bundle: student_spotlight
@@ -22,15 +82,15 @@ content:
   created:
     type: datetime_timestamp
     weight: 10
-    region: content
+    region: advanced
     settings: {  }
     third_party_settings: {  }
   field_description:
     type: text_textarea
-    weight: 3
+    weight: 2
     region: content
     settings:
-      rows: 8
+      rows: 10
       placeholder: ''
     third_party_settings: {  }
   field_graduate:
@@ -41,23 +101,15 @@ content:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
-      placeholder: ''
+      placeholder: 'Start typing a name…'
     third_party_settings: {  }
   field_main_image:
     type: image_image
-    weight: 4
+    weight: 0
     region: content
     settings:
       progress_indicator: throbber
-      preview_image_style: medium
-    third_party_settings: {  }
-  field_path:
-    type: string_textfield
-    weight: 30
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
+      preview_image_style: thumbnail
     third_party_settings: {  }
   field_quote:
     type: string_textarea
@@ -65,30 +117,30 @@ content:
     region: content
     settings:
       rows: 3
-      placeholder: ''
+      placeholder: 'Pull-quote in their own words'
     third_party_settings: {  }
-  og_audience:
-    type: options_select
-    weight: 5
+  moderation_state:
+    type: moderation_state_default
+    weight: 1
     region: content
     settings: {  }
     third_party_settings: {  }
   path:
     type: path
     weight: 30
-    region: content
+    region: advanced
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
     weight: 15
-    region: content
+    region: advanced
     settings:
       display_label: true
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 120
+    weight: 2
     region: content
     settings:
       display_label: true
@@ -96,26 +148,27 @@ content:
   sticky:
     type: boolean_checkbox
     weight: 16
-    region: content
+    region: advanced
     settings:
       display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: -5
+    weight: -10
     region: content
     settings:
       size: 60
-      placeholder: ''
+      placeholder: 'Spotlight headline'
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
     weight: 5
-    region: content
+    region: advanced
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_path: true

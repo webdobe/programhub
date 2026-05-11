@@ -17,14 +17,14 @@ content:
     region: content
     settings:
       size: 60
-      placeholder: ''
+      placeholder: 'Skill name'
     third_party_settings: {  }
   field_percent:
     type: number
     weight: 1
     region: content
     settings:
-      placeholder: ''
+      placeholder: 0–100
     third_party_settings: {  }
 hidden:
   created: true

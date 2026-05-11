@@ -15,7 +15,6 @@ dependencies:
     - field.field.profile.instructor.field_path
     - field.field.profile.instructor.field_pixelated_image
     - field.field.profile.instructor.field_portfolio
-    - field.field.profile.instructor.og_audience
     - profile.type.instructor
   module:
     - image
@@ -141,14 +140,6 @@ content:
       target: ''
     third_party_settings: {  }
     weight: 5
-    region: content
-  og_audience:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 13
     region: content
 hidden:
   field_path: true

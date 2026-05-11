@@ -8,7 +8,6 @@ dependencies:
     - field.field.node.award.field_path
     - field.field.node.award.field_profiles
     - field.field.node.award.field_project
-    - field.field.node.award.og_audience
     - node.type.award
   module:
     - fieldable_path
@@ -19,6 +18,11 @@ targetEntityType: node
 bundle: award
 mode: default
 content:
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
   field_award_type:
     type: entity_reference_label
     label: above
@@ -61,13 +65,5 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 100
-    region: content
-  og_audience:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 110
     region: content
 hidden: {  }

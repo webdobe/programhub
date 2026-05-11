@@ -1,0 +1,56 @@
+uuid: 7ca3b542-c5b8-42fb-af38-b8f36e22ed3d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.group.division.field_abbreviation
+    - field.field.group.division.field_path
+    - field.field.group.division.field_website
+    - group.type.division
+  module:
+    - link
+id: group.division.default
+targetEntityType: group
+bundle: division
+mode: default
+content:
+  field_abbreviation:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_path:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_website:
+    type: link
+    label: inline
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  label:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: -5
+    region: content
+hidden:
+  changed: true
+  created: true
+  uid: true

@@ -1,0 +1,15 @@
+uuid: be57070e-7d1d-48f8-a63e-df9af02f117c
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program
+  module:
+    - user
+id: program-group_membership
+group_type: program
+content_plugin: group_membership
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

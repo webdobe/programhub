@@ -1,0 +1,19 @@
+uuid: cf02b6b6-c3da-4dbc-b8d9-f98d1e3668b3
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program_culinary
+id: program_culinary-tac_member
+label: 'TAC Member'
+weight: 27
+admin: false
+scope: individual
+global_role: null
+group_type: program_culinary
+permissions:
+  - 'create group_node:article entity'
+  - 'delete own group_node:article entity'
+  - 'update own group_node:article entity'
+  - 'view group'
+  - 'view group_node:article entity'

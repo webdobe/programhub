@@ -1,0 +1,17 @@
+uuid: 3e9ebc08-09e6-4bd8-b935-d2fdeace1ef7
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program
+    - node.type.venue
+  module:
+    - gnode
+    - node
+id: program-group_node-venue
+group_type: program
+content_plugin: 'group_node:venue'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

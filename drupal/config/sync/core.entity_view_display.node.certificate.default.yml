@@ -12,9 +12,7 @@ dependencies:
     - field.field.node.certificate.field_path
     - field.field.node.certificate.field_prep_courses
     - field.field.node.certificate.field_total_credits
-    - field.field.node.certificate.og_audience
     - node.type.certificate
-    - taxonomy.vocabulary.certificate_type
   module:
     - entity_reference_revisions
     - link
@@ -98,14 +96,6 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 100
-    region: content
-  og_audience:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 120
     region: content
 hidden:
   field_path: true

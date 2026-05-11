@@ -1,0 +1,17 @@
+uuid: 65c30cba-5230-4060-b654-323315369fda
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program
+    - node.type.article
+  module:
+    - gnode
+    - node
+id: program-group_node-article
+group_type: program
+content_plugin: 'group_node:article'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

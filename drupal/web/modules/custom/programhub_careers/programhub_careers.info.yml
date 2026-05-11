@@ -6,4 +6,6 @@ core_version_requirement: ^10 || ^11
 dependencies:
   - drupal:node
   - drupal:system
-  - og:og
+  - group:group
+  - group:gnode
+  - programhub_dashboard:programhub_dashboard

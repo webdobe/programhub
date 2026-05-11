@@ -1,0 +1,27 @@
+{#
+/**
+ * @file
+ * Program node view template.
+ *
+ * Program nodes are OG groups; most of their substance lives in
+ * RELATED content (courses, certificates, projects) rather than on
+ * the program itself. Template stays compact.
+ */
+#}
+<article{{ attributes.addClass(['ph-node', 'ph-node--program']) }}>
+  <div class="ph-node__layout">
+    <div class="ph-node__main">
+      {% if content.body|render %}
+        <div class="ph-node__body">{{ content.body }}</div>
+      {% endif %}
+    </div>
+    <aside class="ph-node__sidebar">
+      <div class="ph-node__meta">
+        {{ content.field_abbreviation }}
+        {{ content.field_website }}
+        {{ content.field_soc_codes }}
+      </div>
+    </aside>
+  </div>
+  {{ content.links }}
+</article>

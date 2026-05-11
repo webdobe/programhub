@@ -1,0 +1,17 @@
+uuid: 73bc1a62-e8b5-477a-8d08-b33892214b56
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program_culinary
+    - node.type.student_spotlight
+  module:
+    - gnode
+    - node
+id: program_culinary-6db4eb9ab3dc037
+group_type: program_culinary
+content_plugin: 'group_node:student_spotlight'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

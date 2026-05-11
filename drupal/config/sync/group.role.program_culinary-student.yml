@@ -1,0 +1,27 @@
+uuid: a62b4cc2-41ce-4c9d-bad9-c22515a2e459
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program_culinary
+id: program_culinary-student
+label: Student
+weight: 25
+admin: false
+scope: individual
+global_role: null
+group_type: program_culinary
+permissions:
+  - 'create group_node:award entity'
+  - 'create group_node:project entity'
+  - 'create group_node:student_spotlight entity'
+  - 'delete own group_node:award entity'
+  - 'delete own group_node:project entity'
+  - 'delete own group_node:student_spotlight entity'
+  - 'update own group_node:award entity'
+  - 'update own group_node:project entity'
+  - 'update own group_node:student_spotlight entity'
+  - 'view group'
+  - 'view group_node:award entity'
+  - 'view group_node:project entity'
+  - 'view group_node:student_spotlight entity'

@@ -7,18 +7,19 @@ dependencies:
     - field.field.paragraph.menu_item.field_image
     - field.field.paragraph.menu_item.field_label
     - field.field.paragraph.menu_item.field_price
+    - image.style.thumbnail
     - paragraphs.paragraphs_type.menu_item
   module:
-    - commerce_price
     - image
+    - text
 id: paragraph.menu_item.default
 targetEntityType: paragraph
 bundle: menu_item
 mode: default
 content:
   field_description:
-    type: string_textarea
-    weight: 1
+    type: text_textarea
+    weight: 3
     region: content
     settings:
       rows: 3
@@ -26,7 +27,7 @@ content:
     third_party_settings: {  }
   field_image:
     type: image_image
-    weight: 3
+    weight: 0
     region: content
     settings:
       progress_indicator: throbber
@@ -34,17 +35,18 @@ content:
     third_party_settings: {  }
   field_label:
     type: string_textfield
-    weight: 0
+    weight: 1
     region: content
     settings:
       size: 60
-      placeholder: ''
+      placeholder: 'Dish name'
     third_party_settings: {  }
   field_price:
-    type: commerce_price_default
+    type: number
     weight: 2
     region: content
-    settings: {  }
+    settings:
+      placeholder: ''
     third_party_settings: {  }
 hidden:
   created: true

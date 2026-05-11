@@ -10,14 +10,84 @@ dependencies:
     - field.field.profile.tac_member.field_job_title
     - field.field.profile.tac_member.field_name
     - field.field.profile.tac_member.field_path
-    - field.field.profile.tac_member.og_audience
     - image.style.thumbnail
     - profile.type.tac_member
   module:
+    - field_group
     - image
     - link
     - name
     - text
+third_party_settings:
+  field_group:
+    group_main:
+      children:
+        - group_identity
+        - group_visual
+        - group_bio
+        - group_publishing
+      label: ''
+      region: content
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        classes: ph-form-tabs
+        id: tac_member-tabs
+        direction: horizontal
+        width_breakpoint: 640
+    group_identity:
+      children:
+        - field_name
+        - field_job_title
+        - field_company
+        - field_company_url
+      label: Identity
+      region: content
+      parent_name: group_main
+      weight: 0
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: open
+        description: 'Name, role, and company.'
+    group_visual:
+      children:
+        - field_image
+      label: Visual
+      region: content
+      parent_name: group_main
+      weight: 1
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Profile photo.'
+    group_bio:
+      children:
+        - field_biography
+      label: Bio
+      region: content
+      parent_name: group_main
+      weight: 2
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Industry bio.'
+    group_publishing:
+      children:
+        - og_audience
+        - status
+      label: Publishing
+      region: content
+      parent_name: group_main
+      weight: 3
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Program scope.'
 id: profile.tac_member.default
 targetEntityType: profile
 bundle: tac_member
@@ -25,15 +95,15 @@ mode: default
 content:
   field_biography:
     type: text_textarea
-    weight: 27
+    weight: 0
     region: content
     settings:
-      rows: 5
+      rows: 6
       placeholder: ''
     third_party_settings: {  }
   field_company:
     type: string_textfield
-    weight: 42
+    weight: 2
     region: content
     settings:
       size: 60
@@ -41,15 +111,15 @@ content:
     third_party_settings: {  }
   field_company_url:
     type: link_default
-    weight: 43
+    weight: 3
     region: content
     settings:
-      placeholder_url: ''
+      placeholder_url: 'https://'
       placeholder_title: ''
     third_party_settings: {  }
   field_image:
     type: image_image
-    weight: 34
+    weight: 0
     region: content
     settings:
       progress_indicator: throbber
@@ -57,7 +127,7 @@ content:
     third_party_settings: {  }
   field_job_title:
     type: string_textfield
-    weight: 41
+    weight: 1
     region: content
     settings:
       size: 60
@@ -65,42 +135,16 @@ content:
     third_party_settings: {  }
   field_name:
     type: name_default
-    weight: 37
-    region: content
-    settings:
-      override_field_settings: false
-      labels:
-        title: Title
-        given: Given
-        middle: 'Middle name(s)'
-        family: Family
-        generational: Generational
-        credentials: Credentials
-      widget_layout: stacked
-      show_component_required_marker: false
-      flag_required_input: false
-      credentials_inline: false
-      size:
-        title: 6
-        given: 20
-        middle: 20
-        family: 20
-        generational: 5
-        credentials: 35
-      title_display:
-        title: description
-        given: description
-        middle: description
-        family: description
-        generational: description
-        credentials: description
-      field_title_display: before
-    third_party_settings: {  }
-  og_audience:
-    type: options_select
-    weight: 44
+    weight: 0
     region: content
     settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 1
+    region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
 hidden:
   field_path: true

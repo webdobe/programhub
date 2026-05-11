@@ -12,15 +12,88 @@ dependencies:
     - field.field.node.certificate.field_path
     - field.field.node.certificate.field_prep_courses
     - field.field.node.certificate.field_total_credits
-    - field.field.node.certificate.og_audience
+    - image.style.thumbnail
     - node.type.certificate
-    - taxonomy.vocabulary.certificate_type
   module:
+    - content_moderation
+    - field_group
+    - image
     - link
-    - media_library
     - paragraphs
     - path
     - text
+third_party_settings:
+  field_group:
+    group_main:
+      children:
+        - group_overview
+        - group_curriculum
+        - group_outcomes
+        - group_publishing
+      label: ''
+      region: content
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        classes: ph-form-tabs
+        id: certificate-tabs
+        direction: horizontal
+        width_breakpoint: 640
+    group_overview:
+      children:
+        - field_certificate_type
+        - field_total_credits
+        - field_certificate_url
+        - field_logo
+        - field_overview
+      label: Overview
+      region: content
+      parent_name: group_main
+      weight: 0
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: open
+        description: 'Type, credits, catalog link, logo, and the overview text.'
+    group_curriculum:
+      children:
+        - field_courses
+        - field_prep_courses
+      label: Curriculum
+      region: content
+      parent_name: group_main
+      weight: 1
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Plan of study and prep courses.'
+    group_outcomes:
+      children:
+        - field_outcomes
+      label: Outcomes
+      region: content
+      parent_name: group_main
+      weight: 2
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'What students can do with this credential.'
+    group_publishing:
+      children:
+        - og_audience
+        - status
+      label: Publishing
+      region: content
+      parent_name: group_main
+      weight: 3
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Program scope. Admin-managed — no moderation workflow.'
 id: node.certificate.default
 targetEntityType: node
 bundle: certificate
@@ -29,78 +102,68 @@ content:
   created:
     type: datetime_timestamp
     weight: 10
-    region: content
+    region: advanced
     settings: {  }
     third_party_settings: {  }
   field_certificate_type:
     type: options_select
-    weight: 101
+    weight: 0
     region: content
     settings: {  }
     third_party_settings: {  }
   field_certificate_url:
     type: link_default
-    weight: 102
+    weight: 2
     region: content
     settings:
-      placeholder_url: ''
+      placeholder_url: 'https://'
       placeholder_title: ''
     third_party_settings: {  }
   field_courses:
     type: paragraphs
-    weight: 110
+    weight: 0
     region: content
     settings:
       title: Course
       title_plural: Courses
-      edit_mode: open
+      edit_mode: closed
       closed_mode: summary
       autocollapse: none
-      closed_mode_threshold: 0
-      add_mode: dropdown
+      add_mode: button
       form_display_mode: default
       default_paragraph_type: certificate_course
       features:
         add_above: '0'
         collapse_edit_all: collapse_edit_all
         duplicate: duplicate
-      default_paragraph_count: 0
     third_party_settings: {  }
   field_logo:
-    type: media_library_widget
-    weight: 50
+    type: image_image
+    weight: 3
     region: content
     settings:
-      media_types:
-        - image
+      progress_indicator: throbber
+      preview_image_style: thumbnail
     third_party_settings: {  }
   field_outcomes:
     type: text_textarea
-    weight: 105
-    region: content
-    settings:
-      rows: 8
-      placeholder: ''
-    third_party_settings: {  }
-  field_overview:
-    type: text_textarea
-    weight: 103
+    weight: 0
     region: content
     settings:
       rows: 6
       placeholder: ''
     third_party_settings: {  }
-  field_path:
-    type: string_textfield
-    weight: 30
+  field_overview:
+    type: text_textarea
+    weight: 4
     region: content
     settings:
-      size: 60
+      rows: 8
       placeholder: ''
     third_party_settings: {  }
   field_prep_courses:
-    type: entity_reference_autocomplete_tags
-    weight: 108
+    type: entity_reference_autocomplete
+    weight: 1
     region: content
     settings:
       match_operator: CONTAINS
@@ -110,33 +173,33 @@ content:
     third_party_settings: {  }
   field_total_credits:
     type: number
-    weight: 106
+    weight: 1
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
-  og_audience:
-    type: options_select
-    weight: 120
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
     region: content
     settings: {  }
     third_party_settings: {  }
   path:
     type: path
     weight: 30
-    region: content
+    region: advanced
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
     weight: 15
-    region: content
+    region: advanced
     settings:
       display_label: true
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 121
+    weight: 1
     region: content
     settings:
       display_label: true
@@ -144,26 +207,27 @@ content:
   sticky:
     type: boolean_checkbox
     weight: 16
-    region: content
+    region: advanced
     settings:
       display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: -5
+    weight: -10
     region: content
     settings:
       size: 60
-      placeholder: ''
+      placeholder: 'Certificate name'
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
     weight: 5
-    region: content
+    region: advanced
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_path: true

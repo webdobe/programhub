@@ -1,0 +1,628 @@
+/**
+ * Shared node display layout.
+ *
+ * One set of classes used by every per-bundle template:
+ *   .ph-node              outer article
+ *   .ph-node__hero        wide image area
+ *   .ph-node__layout      grid: main + sidebar on >=960px
+ *   .ph-node__main        wider column
+ *   .ph-node__sidebar     narrower column
+ *   .ph-node__section     section grouping in main
+ *   .ph-node__section-heading
+ *   .ph-node__meta        sidebar metadata card
+ *   .ph-node__gallery     responsive image grid (gallery fields)
+ *
+ * Bundle-specific overrides go below this file or in their own
+ * file — but most bundles will need none, since the structure is the
+ * same. Gin tokens only, no fallbacks.
+ */
+
+.ph-node {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gin-spacing-xl);
+}
+
+.ph-node__hero img {
+  display: block;
+  width: 100%;
+  max-height: 60vh;
+  object-fit: contain;
+  border-radius: var(--gin-border-m);
+  background: var(--gin-bg-layer);
+}
+
+.ph-node__layout {
+  display: grid;
+  gap: var(--gin-spacing-xl);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 960px) {
+  .ph-node__layout {
+    grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  }
+}
+
+.ph-node__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gin-spacing-xl);
+  min-width: 0;
+}
+
+.ph-node__body {
+  font-size: var(--gin-font-size-l);
+  line-height: 1.6;
+  color: var(--gin-color-text);
+  max-width: var(--gin-max-line-length, 70ch);
+}
+
+.ph-node__section {
+  padding-top: var(--gin-spacing-l);
+  border-top: var(--gin-border-xs) solid var(--gin-border-color-layer);
+}
+
+.ph-node__section:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.ph-node__section-heading {
+  margin: 0 0 var(--gin-spacing-m);
+  font-size: var(--gin-font-size-h3);
+  font-weight: var(--gin-font-weight-semibold);
+  color: var(--gin-color-title);
+}
+
+/* Sidebar */
+
+.ph-node__sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gin-spacing-m);
+}
+
+.ph-node__meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gin-spacing-s);
+  padding: var(--gin-spacing-l);
+  background: var(--gin-bg-layer);
+  border: var(--gin-border-xs) solid var(--gin-border-color-layer);
+  border-radius: var(--gin-border-m);
+}
+
+.ph-node__meta .field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.ph-node__meta .field__label {
+  font-size: var(--gin-font-size-xs);
+  font-weight: var(--gin-font-weight-semibold);
+  color: var(--gin-color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ph-node__meta .field__item {
+  font-size: var(--gin-font-size);
+  color: var(--gin-color-text);
+}
+
+.ph-node__meta .field__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gin-spacing-xs);
+}
+
+.ph-node__meta a {
+  color: var(--gin-color-primary);
+}
+
+/* Galleries — image grid */
+
+.ph-node__gallery .field__items,
+.ph-node__gallery .field {
+  display: grid;
+  gap: var(--gin-spacing-m);
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+.ph-node__gallery .field__item {
+  display: block;
+  border-radius: var(--gin-border-s);
+  overflow: hidden;
+  background: var(--gin-bg-layer);
+}
+
+.ph-node__gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+/* Tasks — multi-value short-text field rendered as a checklist.
+ * Used by career_outcome.field_tasks (O*NET day-to-day items). */
+
+.ph-node__tasks .field__items {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ph-node__tasks .field__item {
+  position: relative;
+  padding: var(--gin-spacing-s) var(--gin-spacing-s) var(--gin-spacing-s) calc(var(--gin-spacing-l) + var(--gin-spacing-xs));
+  border-bottom: var(--gin-border-xs) solid var(--gin-border-color-layer);
+  font-size: var(--gin-font-size);
+  line-height: 1.5;
+  color: var(--gin-color-text);
+}
+
+.ph-node__tasks .field__item:last-child {
+  border-bottom: 0;
+}
+
+.ph-node__tasks .field__item::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: var(--gin-spacing-xs);
+  inset-block-start: calc(var(--gin-spacing-s) + 0.4em);
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: var(--gin-color-primary);
+  opacity: 0.7;
+}
+
+/* Inline rich-text bullet lists (`<ul>` inside body markup) get the
+ * same checklist treatment so e.g. a description with a bulleted list
+ * looks consistent. */
+.ph-node__tasks ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ph-node__tasks ul li {
+  position: relative;
+  padding: var(--gin-spacing-s) 0 var(--gin-spacing-s) calc(var(--gin-spacing-l) + var(--gin-spacing-xs));
+  border-bottom: var(--gin-border-xs) solid var(--gin-border-color-layer);
+}
+
+.ph-node__tasks ul li:last-child {
+  border-bottom: 0;
+}
+
+.ph-node__tasks ul li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: var(--gin-spacing-xs);
+  inset-block-start: calc(var(--gin-spacing-s) + 0.4em);
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: var(--gin-color-primary);
+  opacity: 0.7;
+}
+
+/* ─── Default field rendering inside ph-node main content ──────────
+ *
+ * Drupal renders multi-value fields as:
+ *   <div class="field field--name-…">
+ *     <div class="field__label">Label</div>
+ *     <div class="field__items">
+ *       <div class="field__item">value 1</div>
+ *       <div class="field__item">value 2</div>
+ *     </div>
+ *   </div>
+ *
+ * Without explicit CSS, those `field__item`s stack as block elements
+ * with no spacing. These rules give a sensible default in the main
+ * content area:
+ *   - field label (above) → small uppercase muted heading
+ *   - field label (inline) → bold muted prefix
+ *   - field__items → flex row with small gap (good for chips/tags)
+ *   - long-text / paragraph-revision fields → vertical stack with
+ *     more breathing room (chips look wrong for body content)
+ *   - entity_reference items → chip styling
+ *
+ * Sidebar (.ph-node__meta) has its own tighter rules; these don't
+ * fight them because the selectors are scoped under .ph-node__main.
+ */
+
+.ph-node__main .field {
+  margin-bottom: var(--gin-spacing-m);
+}
+
+.ph-node__main .field:last-child {
+  margin-bottom: 0;
+}
+
+.ph-node__main .field--label-above .field__label {
+  font-size: var(--gin-font-size-xs);
+  font-weight: var(--gin-font-weight-semibold);
+  color: var(--gin-color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: var(--gin-spacing-xs);
+}
+
+.ph-node__main .field--label-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gin-spacing-s);
+}
+
+.ph-node__main .field--label-inline .field__label {
+  font-weight: var(--gin-font-weight-semibold);
+  color: var(--gin-color-text-light);
+}
+
+.ph-node__main .field__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gin-spacing-xs);
+}
+
+/* Block-style content stacks vertically with breathing room instead
+ * of chips. */
+.ph-node__main .field--type-text-long .field__items,
+.ph-node__main .field--type-text-with-summary .field__items,
+.ph-node__main .field--type-entity-reference-revisions .field__items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gin-spacing-m);
+}
+
+/* Chip styling for entity-reference label fields (tags, categories,
+ * profile refs rendered as labels). */
+.ph-node__main .field--type-entity-reference .field__item {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem var(--gin-spacing-s);
+  border-radius: var(--gin-border-s);
+  background: var(--gin-bg-layer2);
+  font-size: var(--gin-font-size-s);
+  color: var(--gin-color-text);
+}
+
+.ph-node__main .field--type-entity-reference .field__item a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.ph-node__main .field--type-entity-reference .field__item:hover {
+  background: var(--gin-bg-layer3);
+}
+
+/* Course ladder for certificates — multi-step listing.
+ * Paragraph rows own their own divider; .field__item is just a wrapper. */
+
+.ph-node__ladder .field__items {
+  display: flex;
+  flex-direction: column;
+}
+.ph-node__ladder .field__item {
+  padding: 0;
+  border: 0;
+}
+
+/* Big numeric stat — used by career_outcome pay range, certificate
+   total_credits, course credits, etc. */
+
+.ph-node__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: var(--gin-spacing-m) var(--gin-spacing-l);
+  background: var(--gin-bg-layer2);
+  border-radius: var(--gin-border-s);
+}
+
+.ph-node__stat-label {
+  font-size: var(--gin-font-size-xs);
+  font-weight: var(--gin-font-weight-semibold);
+  color: var(--gin-color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ph-node__stat-value {
+  font-size: var(--gin-font-size-h2);
+  font-weight: var(--gin-font-weight-bold);
+  color: var(--gin-color-title);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Paragraph types — small composable cards rendered inside parent
+ * entity content (graduate profile, project, certificate, menu, etc.)
+ * ═══════════════════════════════════════════════════════════════════ */
+
+.ph-paragraph {
+  font-family: var(--gin-font);
+  color: var(--gin-color-text);
+}
+
+/* ── experience ──────────────────────────────────────────────────── */
+
+.ph-paragraph--experience {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gin-spacing-xs);
+  padding: var(--gin-spacing-m) 0;
+  border-bottom: var(--gin-border-xs) solid var(--gin-border-color-layer);
+}
+.ph-paragraph--experience:last-child {
+  border-bottom: 0;
+}
+
+.ph-paragraph--experience__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--gin-spacing-s);
+}
+
+.ph-paragraph--experience__title {
+  margin: 0;
+  font-size: var(--gin-font-size-l);
+  font-weight: var(--gin-font-weight-semibold);
+  color: var(--gin-color-title);
+}
+
+.ph-paragraph--experience__type {
+  font-size: var(--gin-font-size-xs);
+  font-weight: var(--gin-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gin-color-text-light);
+}
+
+.ph-paragraph--experience__meta {
+  margin: 0;
+  font-size: var(--gin-font-size-s);
+  color: var(--gin-color-text-light);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gin-spacing-xs);
+}
+
+.ph-paragraph--experience__body {
+  font-size: var(--gin-font-size);
+  line-height: 1.55;
+}
+
+.ph-paragraph--experience__link {
+  margin: 0;
+  font-size: var(--gin-font-size-s);
+}
+
+/* ── skill ───────────────────────────────────────────────────────── */
+
+.ph-paragraph--skill {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gin-spacing-xxs);
+  padding: var(--gin-spacing-xs) 0;
+}
+
+.ph-paragraph--skill__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.ph-paragraph--skill__label {
+  font-size: var(--gin-font-size);
+  font-weight: var(--gin-font-weight-semibold);
+  color: var(--gin-color-text);
+}
+
+.ph-paragraph--skill__percent {
+  font-size: var(--gin-font-size-s);
+  color: var(--gin-color-text-light);
+  font-variant-numeric: tabular-nums;
+}
+
+.ph-paragraph--skill__bar {
+  height: 6px;
+  background: var(--gin-bg-layer2);
+  border-radius: var(--gin-border-s);
+  overflow: hidden;
+}
+
+.ph-paragraph--skill__bar-fill {
+  height: 100%;
+  background: var(--gin-color-primary);
+  border-radius: inherit;
+  transition: width 0.3s var(--gin-easing, ease);
+}
+
+/* ── certificate_course ──────────────────────────────────────────── */
+
+.ph-paragraph--certificate-course {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--gin-spacing-m);
+  padding: var(--gin-spacing-xs) 0;
+  border-bottom: var(--gin-border-xs) solid var(--gin-border-color-layer);
+  min-height: 0;
+}
+.ph-node__ladder .field__item:last-child .ph-paragraph--certificate-course {
+  border-bottom: 0;
+}
+
+.ph-paragraph--certificate-course__main {
+  font-size: var(--gin-font-size);
+  font-weight: var(--gin-font-weight-semibold);
+}
+
+/* Course link inside the ladder row stays a plain link — not a chip. */
+.ph-paragraph--certificate-course__main .field--type-entity-reference .field__item {
+  display: inline;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+}
+.ph-paragraph--certificate-course__main .field--type-entity-reference .field__item:hover {
+  background: transparent;
+}
+
+.ph-paragraph--certificate-course__meta {
+  display: flex;
+  gap: var(--gin-spacing-s);
+  font-size: var(--gin-font-size-xs);
+  color: var(--gin-color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── hours ───────────────────────────────────────────────────────── */
+
+.ph-paragraph--hours {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--gin-spacing-m);
+  padding: var(--gin-spacing-xs) 0;
+  font-size: var(--gin-font-size);
+}
+
+.ph-paragraph--hours__day {
+  font-weight: var(--gin-font-weight-semibold);
+  color: var(--gin-color-text);
+}
+
+.ph-paragraph--hours__range {
+  color: var(--gin-color-text-light);
+  font-variant-numeric: tabular-nums;
+}
+
+.ph-paragraph--hours__sep {
+  display: inline-block;
+  margin: 0 0.25rem;
+}
+
+/* ── menu_item ───────────────────────────────────────────────────── */
+
+.ph-paragraph--menu-item {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gin-spacing-m);
+  padding: var(--gin-spacing-m) 0;
+  border-bottom: var(--gin-border-xs) solid var(--gin-border-color-layer);
+}
+.ph-paragraph--menu-item:last-child {
+  border-bottom: 0;
+}
+
+@media (min-width: 600px) {
+  .ph-paragraph--menu-item {
+    grid-template-columns: 120px 1fr;
+  }
+}
+
+.ph-paragraph--menu-item__image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--gin-border-s);
+}
+
+.ph-paragraph--menu-item__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--gin-spacing-m);
+  margin-bottom: var(--gin-spacing-xs);
+}
+
+.ph-paragraph--menu-item__label {
+  margin: 0;
+  font-size: var(--gin-font-size-l);
+  font-weight: var(--gin-font-weight-semibold);
+  color: var(--gin-color-title);
+}
+
+.ph-paragraph--menu-item__price {
+  font-size: var(--gin-font-size);
+  color: var(--gin-color-text-light);
+  font-variant-numeric: tabular-nums;
+}
+
+.ph-paragraph--menu-item__desc {
+  margin: 0;
+  font-size: var(--gin-font-size);
+  line-height: 1.5;
+  color: var(--gin-color-text);
+}
+
+/* ── process_step ────────────────────────────────────────────────── */
+
+.ph-paragraph--process-step {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gin-spacing-m);
+  padding: var(--gin-spacing-l) 0;
+  border-bottom: var(--gin-border-xs) solid var(--gin-border-color-layer);
+}
+.ph-paragraph--process-step:last-child {
+  border-bottom: 0;
+}
+
+@media (min-width: 600px) {
+  .ph-paragraph--process-step {
+    grid-template-columns: 200px 1fr;
+  }
+}
+
+.ph-paragraph--process-step__image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--gin-border-s);
+  background: var(--gin-bg-layer);
+}
+
+.ph-paragraph--process-step__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--gin-spacing-s);
+  margin-bottom: var(--gin-spacing-xs);
+}
+
+.ph-paragraph--process-step__label {
+  margin: 0;
+  font-size: var(--gin-font-size-l);
+  font-weight: var(--gin-font-weight-semibold);
+  color: var(--gin-color-title);
+}
+
+.ph-paragraph--process-step__type {
+  font-size: var(--gin-font-size-xs);
+  font-weight: var(--gin-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gin-color-text-light);
+}
+
+.ph-paragraph--process-step__desc {
+  font-size: var(--gin-font-size);
+  line-height: 1.55;
+  color: var(--gin-color-text);
+}

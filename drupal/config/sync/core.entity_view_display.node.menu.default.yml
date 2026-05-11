@@ -9,7 +9,6 @@ dependencies:
     - field.field.node.menu.field_path
     - field.field.node.menu.field_set_price
     - field.field.node.menu.field_venue
-    - field.field.node.menu.og_audience
     - node.type.menu
   module:
     - commerce_price
@@ -22,6 +21,11 @@ targetEntityType: node
 bundle: menu
 mode: default
 content:
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
   field_description:
     type: text_default
     label: above
@@ -70,14 +74,6 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 100
-    region: content
-  og_audience:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 5
     region: content
 hidden:
   field_path: true

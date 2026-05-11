@@ -12,9 +12,8 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
-use Drupal\og\MembershipManagerInterface;
-use Drupal\og\OgMembershipInterface;
 use Drupal\programhub_dashboard\DashboardWidgetBase;
+use Drupal\programhub_dashboard\Service\GroupContext;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -32,7 +31,7 @@ final class UpcomingEventsWidget extends DashboardWidgetBase implements Containe
     array $configuration,
     string $plugin_id,
     array $plugin_definition,
-    private readonly MembershipManagerInterface $membershipManager,
+    private readonly GroupContext $groupContext,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly DateFormatterInterface $dateFormatter,
   ) {
@@ -44,53 +43,33 @@ final class UpcomingEventsWidget extends DashboardWidgetBase implements Containe
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('og.membership_manager'),
+      $container->get('programhub_dashboard.group_context'),
       $container->get('entity_type.manager'),
       $container->get('date.formatter'),
     );
   }
 
-  /**
-   * {@inheritdoc}
-   *
-   * Only show if the user belongs to at least one program. Otherwise
-   * "upcoming events" is meaningless noise.
-   */
   public function access(AccountInterface $user): AccessResultInterface {
-    $programIds = $this->programIds($user);
-    return AccessResult::allowedIf(!empty($programIds))
+    return AccessResult::allowedIf(!empty($this->groupContext->userProgramGroupIds($user)))
       ->addCacheContexts(['user'])
-      ->addCacheTags(["og_user_membership:{$user->id()}"]);
+      ->addCacheTags(['group_relationship_list:group_membership']);
   }
 
   public function build(AccountInterface $user): array {
-    $programIds = $this->programIds($user);
-    if (empty($programIds)) {
+    $gids = $this->groupContext->userProgramGroupIds($user);
+    if (empty($gids)) {
       return [];
     }
-
-    $nodeStorage = $this->entityTypeManager->getStorage('node');
-
-    // Pull recent events in user's programs; filter to published +
-    // future-dated in PHP. Event date field name varies in practice
-    // (`field_date`, `field_event_date`, etc.) — defensive lookup.
-    $nids = $nodeStorage->getQuery()
-      ->accessCheck(TRUE)
-      ->condition('type', 'event')
-      ->condition('status', 1)
-      ->condition('og_audience', $programIds, 'IN')
-      ->sort('created', 'DESC')
-      ->range(0, 50)
-      ->execute();
-
+    $nids = $this->groupContext->nidsInGroups($gids, ['event']);
     if (empty($nids)) {
       return [];
     }
 
+    $nodeStorage = $this->entityTypeManager->getStorage('node');
     $now = time();
     $items = [];
     foreach ($nodeStorage->loadMultiple($nids) as $node) {
-      if (!$node instanceof NodeInterface) {
+      if (!$node instanceof NodeInterface || !$node->isPublished()) {
         continue;
       }
       if ($node->hasField('moderation_state')
@@ -113,14 +92,12 @@ final class UpcomingEventsWidget extends DashboardWidgetBase implements Containe
           ],
         ],
       ];
-      if (count($items) >= 5) {
-        break;
-      }
     }
     if (empty($items)) {
       return [];
     }
     usort($items, static fn(array $a, array $b): int => $a['ts'] <=> $b['ts']);
+    $items = array_slice($items, 0, 5);
 
     return [
       '#theme' => 'item_list',
@@ -133,24 +110,6 @@ final class UpcomingEventsWidget extends DashboardWidgetBase implements Containe
   }
 
   /**
-   * @return int[]
-   */
-  private function programIds(AccountInterface $user): array {
-    $memberships = $this->membershipManager->getMemberships(
-      (int) $user->id(),
-      [OgMembershipInterface::STATE_ACTIVE],
-    );
-    $ids = [];
-    foreach ($memberships as $membership) {
-      $group = $membership->getGroup();
-      if ($group instanceof NodeInterface && $group->bundle() === 'program') {
-        $ids[(int) $group->id()] = (int) $group->id();
-      }
-    }
-    return array_values($ids);
-  }
-
-  /**
    * Try a few common date field names to find the event timestamp.
    * Returns NULL if the event has no date — those get filtered out.
    */
@@ -160,7 +119,6 @@ final class UpcomingEventsWidget extends DashboardWidgetBase implements Containe
         continue;
       }
       $value = $node->get($name)->first()->getValue();
-      // Datetime fields store ISO strings; daterange stores 'value' for start.
       $raw = $value['value'] ?? NULL;
       if (!$raw) {
         continue;

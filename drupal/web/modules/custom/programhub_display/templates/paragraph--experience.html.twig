@@ -1,0 +1,32 @@
+{#
+/**
+ * @file
+ * Experience paragraph (career/job entry) view template.
+ *
+ * Used by graduate profiles' `field_experience` to render each job /
+ * internship / volunteer entry as a stacked card.
+ */
+#}
+<div{{ attributes.addClass(['ph-paragraph', 'ph-paragraph--experience']) }}>
+  <div class="ph-paragraph--experience__head">
+    {% if content.field_title|render %}
+      <h3 class="ph-paragraph--experience__title">{{ content.field_title }}</h3>
+    {% endif %}
+    {% if content.field_experience_type|render %}
+      <span class="ph-paragraph--experience__type">{{ content.field_experience_type }}</span>
+    {% endif %}
+  </div>
+  {% if content.field_location|render or content.field_start_date|render or content.field_end_date|render %}
+    <p class="ph-paragraph--experience__meta">
+      {% if content.field_location|render %}<span>{{ content.field_location }}</span>{% endif %}
+      {% if content.field_start_date|render %}<span>{{ content.field_start_date }}</span>{% endif %}
+      {% if content.field_end_date|render %}<span>— {{ content.field_end_date }}</span>{% endif %}
+    </p>
+  {% endif %}
+  {% if content.field_description|render %}
+    <div class="ph-paragraph--experience__body">{{ content.field_description }}</div>
+  {% endif %}
+  {% if content.field_website_url|render %}
+    <p class="ph-paragraph--experience__link">{{ content.field_website_url }}</p>
+  {% endif %}
+</div>

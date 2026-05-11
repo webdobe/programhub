@@ -4,9 +4,14 @@
  * @file
  * Governance hooks for ProgramHub.
  *
- * Deploy-time data migrations live in `programhub_governance.deploy.php`.
- * Runtime hooks (moderation notifications, OG enrollment side-effects)
- * live here.
+ * Scope is narrow on purpose:
+ *   - moderation state transitions (entity update hook → notifier)
+ *   - email templates for those transitions
+ *   - deploy-time data migrations (in programhub_governance.deploy.php)
+ *
+ * Display work (templates, CSS, theme registrations) lives in
+ * `programhub_display`. Permission/OG work lives in
+ * `og_permissions_override` and the global/OG role YAMLs.
  */
 
 declare(strict_types=1);
@@ -53,7 +58,6 @@ function programhub_governance_mail(string $key, array &$message, array $params)
   $url = $params['url'] ?? '';
   $bundle = $params['bundle'] ?? '';
   $author = $params['author'] ?? '';
-  $reviewer = $params['reviewer'] ?? '';
   $reason = $params['reason'] ?? '';
 
   switch ($key) {

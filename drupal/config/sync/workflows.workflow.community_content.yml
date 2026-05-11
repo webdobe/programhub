@@ -64,6 +64,7 @@ type_settings:
       from:
         - draft
         - pending_review
+        - published
         - rejected
         - archived
       to: draft

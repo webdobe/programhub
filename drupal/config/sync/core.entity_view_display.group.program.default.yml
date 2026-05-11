@@ -1,0 +1,65 @@
+uuid: f7d00ed4-db34-4432-ac83-64ef62497323
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.group.program.field_abbreviation
+    - field.field.group.program.field_path
+    - field.field.group.program.field_soc_codes
+    - field.field.group.program.field_website
+    - group.type.program
+  module:
+    - link
+id: group.program.default
+targetEntityType: group
+bundle: program
+mode: default
+content:
+  field_abbreviation:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_path:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_soc_codes:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_website:
+    type: link
+    label: inline
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  label:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: -5
+    region: content
+hidden:
+  changed: true
+  created: true
+  uid: true

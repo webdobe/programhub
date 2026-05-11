@@ -1,0 +1,27 @@
+{#
+/**
+ * @file
+ * Article node view template.
+ */
+#}
+<article{{ attributes.addClass(['ph-node', 'ph-node--article']) }}>
+  {% if content.field_main_image|render %}
+    <div class="ph-node__hero">{{ content.field_main_image }}</div>
+  {% endif %}
+  <div class="ph-node__layout">
+    <div class="ph-node__main">
+      {% if content.field_preview|render %}
+        <div class="ph-node__body"><strong>{{ content.field_preview }}</strong></div>
+      {% endif %}
+      {% if content.field_body|render %}
+        <div class="ph-node__body">{{ content.field_body }}</div>
+      {% endif %}
+    </div>
+    <aside class="ph-node__sidebar">
+      <div class="ph-node__meta">
+        {{ content.field_article_url }}
+      </div>
+    </aside>
+  </div>
+  {{ content.links }}
+</article>

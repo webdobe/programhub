@@ -1,0 +1,65 @@
+uuid: 0daee25a-3ca3-4794-ab01-46dd9352b5c2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.group.program_culinary.field_abbreviation
+    - field.field.group.program_culinary.field_path
+    - field.field.group.program_culinary.field_soc_codes
+    - field.field.group.program_culinary.field_website
+    - group.type.program_culinary
+  module:
+    - link
+id: group.program_culinary.default
+targetEntityType: group
+bundle: program_culinary
+mode: default
+content:
+  field_abbreviation:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_path:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_soc_codes:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_website:
+    type: link
+    label: inline
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  label:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: -5
+    region: content
+hidden:
+  changed: true
+  created: true
+  uid: true

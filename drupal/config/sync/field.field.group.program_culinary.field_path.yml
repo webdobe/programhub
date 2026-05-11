@@ -1,0 +1,19 @@
+uuid: de1dfe1d-4b7b-47b8-850d-d86827107c1a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.field_path
+    - group.type.program_culinary
+id: group.program_culinary.field_path
+field_name: field_path
+entity_type: group
+bundle: program_culinary
+label: 'Front-end path'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

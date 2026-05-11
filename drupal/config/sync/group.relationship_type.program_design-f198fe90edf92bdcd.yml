@@ -1,0 +1,17 @@
+uuid: 4f804ea2-59ca-4854-a9f6-a8e9675d5592
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program_design
+    - node.type.certificate
+  module:
+    - gnode
+    - node
+id: program_design-f198fe90edf92bdcd
+group_type: program_design
+content_plugin: 'group_node:certificate'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

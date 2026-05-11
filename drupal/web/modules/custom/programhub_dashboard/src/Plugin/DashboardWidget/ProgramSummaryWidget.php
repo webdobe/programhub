@@ -11,9 +11,8 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
-use Drupal\og\MembershipManagerInterface;
-use Drupal\og\OgMembershipInterface;
 use Drupal\programhub_dashboard\DashboardWidgetBase;
+use Drupal\programhub_dashboard\Service\GroupContext;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -26,21 +25,21 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  *
  * Manager-tier widget. Visible only if the user holds `manager` or
- * `administrator` OG roles on at least one program. Shows per-program
+ * `administrator` Group role on at least one program. Shows per-program
  * counts of common content types.
  */
 final class ProgramSummaryWidget extends DashboardWidgetBase implements ContainerFactoryPluginInterface {
 
-  private const MANAGER_OG_ROLES = [
-    'node-program-manager',
-    'node-program-administrator',
+  private const MANAGER_ROLES = [
+    'manager',
+    'administrator',
   ];
 
   public function __construct(
     array $configuration,
     string $plugin_id,
     array $plugin_definition,
-    private readonly MembershipManagerInterface $membershipManager,
+    private readonly GroupContext $groupContext,
     private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -51,35 +50,33 @@ final class ProgramSummaryWidget extends DashboardWidgetBase implements Containe
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('og.membership_manager'),
+      $container->get('programhub_dashboard.group_context'),
       $container->get('entity_type.manager'),
     );
   }
 
   public function access(AccountInterface $user): AccessResultInterface {
-    $programIds = $this->managedProgramIds($user);
-    return AccessResult::allowedIf(!empty($programIds))
+    $programs = $this->groupContext->userProgramsByLabel($user, self::MANAGER_ROLES);
+    return AccessResult::allowedIf(!empty($programs))
       ->addCacheContexts(['user'])
-      ->addCacheTags(["og_user_membership:{$user->id()}"]);
+      ->addCacheTags(['group_relationship_list:group_membership']);
   }
 
   public function build(AccountInterface $user): array {
-    $programs = $this->managedProgramIds($user);
+    $programs = $this->groupContext->userProgramsByLabel($user, self::MANAGER_ROLES);
     if (empty($programs)) {
       return [];
     }
 
-    $nodeStorage = $this->entityTypeManager->getStorage('node');
     $rows = [];
-
-    foreach ($programs as $programId => $programLabel) {
+    foreach ($programs as $gid => $label) {
       $rows[] = [
-        'label' => $programLabel,
-        'url' => Url::fromRoute('entity.node.canonical', ['node' => $programId])->toString(),
+        'label' => $label,
+        'url' => Url::fromRoute('entity.group.canonical', ['group' => $gid])->toString(),
         'counts' => [
-          'projects' => $this->count($nodeStorage, $programId, ['project']),
-          'pending' => $this->countPending($nodeStorage, $programId),
-          'events' => $this->count($nodeStorage, $programId, ['event']),
+          'projects' => $this->countByBundle($gid, ['project']),
+          'pending' => $this->countPending($gid),
+          'events' => $this->countByBundle($gid, ['event']),
         ],
       ];
     }
@@ -116,61 +113,32 @@ final class ProgramSummaryWidget extends DashboardWidgetBase implements Containe
     ];
   }
 
-  /**
-   * @return array<int,string> programId => label
-   */
-  private function managedProgramIds(AccountInterface $user): array {
-    $memberships = $this->membershipManager->getMemberships(
-      (int) $user->id(),
-      [OgMembershipInterface::STATE_ACTIVE],
-    );
-    $programs = [];
-    foreach ($memberships as $membership) {
-      $group = $membership->getGroup();
-      if (!$group instanceof NodeInterface || $group->bundle() !== 'program') {
-        continue;
-      }
-      foreach ($membership->getRoles() as $role) {
-        if (in_array($role->id(), self::MANAGER_OG_ROLES, TRUE)) {
-          $programs[(int) $group->id()] = (string) $group->label();
-          break;
-        }
-      }
+  private function countByBundle(int $gid, array $bundles): int {
+    $nids = $this->groupContext->nidsInGroups([$gid], $bundles);
+    if (!$nids) {
+      return 0;
     }
-    return $programs;
-  }
-
-  /**
-   * Count published nodes of given bundles in a single program.
-   */
-  private function count($nodeStorage, int $programId, array $bundles): int {
-    $count = $nodeStorage->getQuery()
+    return (int) $this->entityTypeManager->getStorage('node')
+      ->getQuery()
       ->accessCheck(FALSE)
-      ->condition('type', $bundles, 'IN')
-      ->condition('og_audience', $programId)
+      ->condition('nid', $nids, 'IN')
       ->condition('status', 1)
       ->count()
       ->execute();
-    return (int) $count;
   }
 
   /**
    * Count nodes pending review across all community types in a program.
-   * Falls back to load-then-filter since `moderation_state` isn't
-   * directly queryable on the node — but we cap the scan at 200 nodes
-   * per program; this widget is for managers, who have a finite scope.
+   * `moderation_state` isn't directly queryable, so load-then-filter;
+   * the scan is capped at 200 since managers have a finite scope.
    */
-  private function countPending($nodeStorage, int $programId): int {
-    $nids = $nodeStorage->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('og_audience', $programId)
-      ->range(0, 200)
-      ->execute();
+  private function countPending(int $gid): int {
+    $nids = array_slice($this->groupContext->nidsInGroups([$gid]), 0, 200);
     if (empty($nids)) {
       return 0;
     }
     $count = 0;
-    foreach ($nodeStorage->loadMultiple($nids) as $node) {
+    foreach ($this->entityTypeManager->getStorage('node')->loadMultiple($nids) as $node) {
       if ($node instanceof NodeInterface
         && $node->hasField('moderation_state')
         && $node->get('moderation_state')->value === 'pending_review') {

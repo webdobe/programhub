@@ -7,3 +7,4 @@ dependencies:
   - drupal:node
   - drupal:content_moderation
   - drupal:workflows
+  - programhub_dashboard:programhub_dashboard

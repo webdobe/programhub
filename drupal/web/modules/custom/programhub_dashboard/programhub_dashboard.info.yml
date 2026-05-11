@@ -6,4 +6,6 @@ package: 'ProgramHub'
 dependencies:
   - drupal:user
   - drupal:system
-  - og:og
+  - group:group
+  - group:gnode
+  - gin:gin_toolbar

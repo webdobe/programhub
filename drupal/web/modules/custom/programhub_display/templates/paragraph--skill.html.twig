@@ -1,0 +1,17 @@
+{#
+/**
+ * @file
+ * Skill paragraph (label + percent proficiency) view template.
+ */
+#}
+{% set percent = content.field_percent['#items'].value|default(0) %}
+<div{{ attributes.addClass(['ph-paragraph', 'ph-paragraph--skill']) }}>
+  <div class="ph-paragraph--skill__row">
+    <span class="ph-paragraph--skill__label">{{ content.field_label }}</span>
+    <span class="ph-paragraph--skill__percent">{{ percent }}%</span>
+  </div>
+  <div class="ph-paragraph--skill__bar" role="progressbar"
+       aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ percent }}">
+    <div class="ph-paragraph--skill__bar-fill" style="width: {{ percent }}%"></div>
+  </div>
+</div>

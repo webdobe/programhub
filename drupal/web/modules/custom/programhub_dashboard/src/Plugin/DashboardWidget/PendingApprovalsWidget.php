@@ -11,9 +11,8 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
-use Drupal\og\MembershipManagerInterface;
-use Drupal\og\OgMembershipInterface;
 use Drupal\programhub_dashboard\DashboardWidgetBase;
+use Drupal\programhub_dashboard\Service\GroupContext;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -25,17 +24,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   category = "reviewer"
  * )
  *
- * First reviewer-scoped widget. Only renders for users who have at
- * least one `approve community_content` permission grant (via an OG
- * role like instructor / manager / administrator on some program), AND
- * the listed nodes are filtered to ONLY the programs that user can
- * actually moderate.
+ * Reviewer-scoped widget. Only renders for users who hold a reviewer
+ * Group role (instructor / manager / administrator) on at least one
+ * program, AND the listed nodes are filtered to only the programs that
+ * user can actually moderate.
  */
 final class PendingApprovalsWidget extends DashboardWidgetBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The 11 community content types — same list as MyDraftsWidget. If
-   * you change one, change both. Living source of truth is ACCESS.md §2.
+   * The 11 community content types. Living source of truth is ACCESS.md §2.
    */
   private const COMMUNITY_TYPES = [
     'article',
@@ -52,20 +49,21 @@ final class PendingApprovalsWidget extends DashboardWidgetBase implements Contai
   ];
 
   /**
-   * OG roles that confer reviewer authority on a program. Holding any
-   * of these in at least one program lets the widget render.
+   * Group role name SUFFIXES that confer reviewer authority. Matched
+   * across every program subtype (program, program_design, …) via
+   * GroupContext::userProgramGroupIds().
    */
-  private const REVIEWER_OG_ROLES = [
-    'node-program-instructor',
-    'node-program-manager',
-    'node-program-administrator',
+  private const REVIEWER_ROLES = [
+    'instructor',
+    'manager',
+    'administrator',
   ];
 
   public function __construct(
     array $configuration,
     string $plugin_id,
     array $plugin_definition,
-    private readonly MembershipManagerInterface $membershipManager,
+    private readonly GroupContext $groupContext,
     private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -76,52 +74,30 @@ final class PendingApprovalsWidget extends DashboardWidgetBase implements Contai
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('og.membership_manager'),
+      $container->get('programhub_dashboard.group_context'),
       $container->get('entity_type.manager'),
     );
   }
 
-  /**
-   * {@inheritdoc}
-   *
-   * Allowed iff the user holds at least one reviewer OG role on at
-   * least one program. Site admins always pass via their global perms,
-   * but they hit this through the normal `access community_content
-   * transition approve` permission which Drupal grants from elsewhere —
-   * here we just check OG group membership.
-   */
   public function access(AccountInterface $user): AccessResultInterface {
-    $programIds = $this->reviewerProgramIds($user);
-    return AccessResult::allowedIf(!empty($programIds))
-      // Re-check when this user's OG memberships change.
-      ->addCacheTags(["og_user_membership:{$user->id()}"])
+    $gids = $this->groupContext->userProgramGroupIds($user, self::REVIEWER_ROLES);
+    return AccessResult::allowedIf(!empty($gids))
+      ->addCacheTags(['group_relationship_list:group_membership'])
       ->addCacheContexts(['user']);
   }
 
   public function build(AccountInterface $user): array {
-    $programIds = $this->reviewerProgramIds($user);
-    if (empty($programIds)) {
+    $gids = $this->groupContext->userProgramGroupIds($user, self::REVIEWER_ROLES);
+    if (empty($gids)) {
       return [];
     }
 
-    $nodeStorage = $this->entityTypeManager->getStorage('node');
-
-    // Same load-then-filter pattern as MyDraftsWidget — moderation_state
-    // isn't directly queryable on the node. We also constrain by
-    // og_audience to the user's reviewer-scope programs, so we never
-    // surface a CITE submission to a GDES reviewer.
-    $nids = $nodeStorage->getQuery()
-      ->accessCheck(TRUE)
-      ->condition('type', self::COMMUNITY_TYPES, 'IN')
-      ->condition('og_audience', $programIds, 'IN')
-      ->sort('changed', 'DESC')
-      ->range(0, 100)
-      ->execute();
-
+    $nids = $this->groupContext->nidsInGroups($gids, self::COMMUNITY_TYPES);
     if (empty($nids)) {
       return [];
     }
 
+    $nodeStorage = $this->entityTypeManager->getStorage('node');
     $items = [];
     foreach ($nodeStorage->loadMultiple($nids) as $node) {
       if (!$node instanceof NodeInterface || !$node->hasField('moderation_state')) {
@@ -161,33 +137,6 @@ final class PendingApprovalsWidget extends DashboardWidgetBase implements Contai
         ),
       ],
     ];
-  }
-
-  /**
-   * Programs (node IDs) where this user holds a reviewer OG role.
-   *
-   * @return int[]
-   */
-  private function reviewerProgramIds(AccountInterface $user): array {
-    $memberships = $this->membershipManager->getMemberships(
-      (int) $user->id(),
-      [OgMembershipInterface::STATE_ACTIVE],
-    );
-
-    $programIds = [];
-    foreach ($memberships as $membership) {
-      $group = $membership->getGroup();
-      if (!$group instanceof NodeInterface || $group->bundle() !== 'program') {
-        continue;
-      }
-      foreach ($membership->getRoles() as $role) {
-        if (in_array($role->id(), self::REVIEWER_OG_ROLES, TRUE)) {
-          $programIds[(int) $group->id()] = (int) $group->id();
-          break;
-        }
-      }
-    }
-    return array_values($programIds);
   }
 
 }

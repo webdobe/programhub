@@ -1,0 +1,17 @@
+uuid: 9b02ff7d-36ba-4867-9a88-29e42ec343d2
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program_culinary
+    - node.type.course
+  module:
+    - gnode
+    - node
+id: program_culinary-770be62b834ccc6
+group_type: program_culinary
+content_plugin: 'group_node:course'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

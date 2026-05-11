@@ -1,0 +1,22 @@
+{#
+/**
+ * @file
+ * Certificate course paragraph — one row in a certificate's plan-of-
+ * study. Course link on the left; semester + credits compact on the
+ * right. Uses raw `.value` instead of rendering the full field so the
+ * meta line stays one tidy row regardless of view-display config.
+ */
+#}
+<div{{ attributes.addClass(['ph-paragraph', 'ph-paragraph--certificate-course']) }}>
+  <div class="ph-paragraph--certificate-course__main">
+    {{ content.field_course }}
+  </div>
+  <div class="ph-paragraph--certificate-course__meta">
+    {% if paragraph.field_semester.value %}
+      <span class="ph-paragraph--certificate-course__semester">{{ 'Sem'|t }} {{ paragraph.field_semester.value }}</span>
+    {% endif %}
+    {% if paragraph.field_credits.value %}
+      <span class="ph-paragraph--certificate-course__credits">{{ paragraph.field_credits.value }} {{ 'cr'|t }}</span>
+    {% endif %}
+  </div>
+</div>

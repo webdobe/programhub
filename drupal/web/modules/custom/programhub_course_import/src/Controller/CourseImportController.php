@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\programhub_course_import\Controller;
 
-use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\node\NodeInterface;
 use Drupal\programhub_course_import\Service\CatalogScraper;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -17,17 +17,17 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 final class CourseImportController extends ControllerBase {
 
   /**
-   * Run the import for one program node, then redirect to its admin canonical.
+   * Run the import for one program group, then redirect to it.
    */
-  public function importOne(NodeInterface $node): RedirectResponse {
-    if ($node->bundle() !== 'program') {
-      $this->messenger()->addError($this->t('Only program nodes can be imported.'));
+  public function importOne(GroupInterface $group): RedirectResponse {
+    if (!in_array($group->bundle(), \Drupal\programhub_dashboard\Service\GroupContext::PROGRAM_GROUP_TYPES, TRUE)) {
+      $this->messenger()->addError($this->t('Only program groups can be imported.'));
       return new RedirectResponse(Url::fromRoute('system.admin_content')->toString());
     }
 
     /** @var \Drupal\programhub_course_import\Service\CourseImporter $importer */
     $importer = \Drupal::service('programhub_course_import.importer');
-    $result = $importer->importForProgram($node);
+    $result = $importer->importForProgram($group);
 
     if ($result['errors']) {
       foreach ($result['errors'] as $err) {
@@ -38,7 +38,7 @@ final class CourseImportController extends ControllerBase {
     $this->messenger()->addStatus($this->t(
       'Imported "@p" from @url — created: @c, updated: @u, unchanged: @x, flagged: @f.',
       [
-        '@p' => $node->label(),
+        '@p' => $group->label(),
         '@url' => $result['url'],
         '@c' => $result['created'],
         '@u' => $result['updated'],
@@ -47,15 +47,15 @@ final class CourseImportController extends ControllerBase {
       ],
     ));
 
-    return new RedirectResponse(Url::fromRoute('entity.node.canonical', ['node' => $node->id()])->toString());
+    return new RedirectResponse(Url::fromRoute('entity.group.canonical', ['group' => $group->id()])->toString());
   }
 
   /**
-   * Render the Courses tab on a program node.
+   * Render the Courses tab on a program group.
    */
-  public function coursesTab(NodeInterface $node): array {
-    $abbr = $node->hasField('field_abbreviation')
-      ? trim((string) $node->get('field_abbreviation')->value)
+  public function coursesTab(GroupInterface $group): array {
+    $abbr = $group->hasField('field_abbreviation') && !$group->get('field_abbreviation')->isEmpty()
+      ? trim((string) $group->get('field_abbreviation')->value)
       : '';
     $catalogUrl = $abbr !== '' ? CatalogScraper::urlForPrefix($abbr) : NULL;
 
@@ -85,7 +85,7 @@ final class CourseImportController extends ControllerBase {
         'import' => [
           '#type' => 'link',
           '#title' => $this->t('Import from catalog'),
-          '#url' => Url::fromRoute('programhub_course_import.import_program', ['node' => $node->id()]),
+          '#url' => Url::fromRoute('programhub_course_import.import_program', ['group' => $group->id()]),
           '#attributes' => [
             'class' => ['button', 'button--primary'],
           ],
@@ -93,7 +93,7 @@ final class CourseImportController extends ControllerBase {
       ];
     }
 
-    $courses = $this->loadCourses($node);
+    $courses = $this->loadCourses($group);
 
     $rows = [];
     foreach ($courses as $course) {
@@ -167,7 +167,7 @@ final class CourseImportController extends ControllerBase {
 
     $build['#cache'] = [
       'tags' => array_merge(
-        $node->getCacheTags(),
+        $group->getCacheTags(),
         ['node_list:course'],
       ),
       'contexts' => ['user.permissions'],
@@ -196,25 +196,26 @@ final class CourseImportController extends ControllerBase {
   }
 
   /**
-   * Load course nodes that belong to a program (via og_audience).
+   * Course nodes related to a program group via gnode, sorted by number.
    *
    * @return \Drupal\node\NodeInterface[]
    */
-  private function loadCourses(NodeInterface $program): array {
-    $storage = $this->entityTypeManager()->getStorage('node');
-    $ids = $storage->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('type', 'course')
-      ->condition('og_audience', $program->id())
-      ->sort('field_course_number.value', 'ASC')
-      ->execute();
-
-    if (!$ids) {
+  private function loadCourses(GroupInterface $program): array {
+    $nids = [];
+    foreach ($program->getRelationships('group_node:course') as $relationship) {
+      $nids[] = (int) $relationship->getEntityId();
+    }
+    if (!$nids) {
       return [];
     }
-
+    $storage = $this->entityTypeManager()->getStorage('node');
+    $sorted = $storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('nid', $nids, 'IN')
+      ->sort('field_course_number.value', 'ASC')
+      ->execute();
     /** @var \Drupal\node\NodeInterface[] $nodes */
-    $nodes = $storage->loadMultiple($ids);
+    $nodes = $storage->loadMultiple($sorted);
     return $nodes;
   }
 

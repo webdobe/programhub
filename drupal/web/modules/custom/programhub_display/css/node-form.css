@@ -1,0 +1,176 @@
+/**
+ * Node + profile edit form polish.
+ *
+ * Field-group tabs at the top, fields below. Drupal's horizontal_tabs JS
+ * renders the tab strip from the same labels that ALSO show as the
+ * pane's <details><summary>. We forcibly hide the redundant summary.
+ */
+
+/* Form title: bold anchor at the top. */
+.node-form #edit-title-wrapper input {
+  font-size: var(--gin-font-size-h2);
+  font-weight: var(--gin-font-weight-bold);
+  padding: var(--gin-spacing-s) var(--gin-spacing-m);
+  height: auto;
+}
+
+.node-form #edit-title-wrapper .form-item__label {
+  font-size: var(--gin-font-size-xs);
+  font-weight: var(--gin-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gin-color-text-light);
+}
+
+/* ═══ Hide the redundant summary inside each tab pane ═════════════
+ *
+ * Browser default + Claro adds `display: list-item` (with a disclosure
+ * marker) to `<summary>`. We nuke it with every override to be sure
+ * nothing leaks through.
+ */
+.horizontal-tabs-pane > summary,
+.horizontal-tabs-pane > .claro-details__summary,
+details.horizontal-tabs-pane > summary,
+details.horizontal-tabs-pane > .claro-details__summary,
+.field-group-tab.horizontal-tabs-pane > summary,
+.field-group-tab.horizontal-tabs-pane > .claro-details__summary {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  overflow: hidden !important;
+  list-style: none !important;
+}
+
+/* Pane wrapper styling */
+.horizontal-tabs-pane.claro-details {
+  border: 0 !important;
+  background: transparent !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.horizontal-tabs-pane > .claro-details__wrapper {
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+/* ═══ Tab strip — make it look Gin-native ═════════════════════════ */
+
+.ph-form-tabs {
+  margin-block-start: var(--gin-spacing-l);
+  border-radius: var(--gin-border-m);
+  background: var(--gin-bg-layer);
+  border: var(--gin-border-xs) solid var(--gin-border-color-layer);
+}
+
+.ph-form-tabs .horizontal-tabs-list {
+  display: flex;
+  gap: 0;
+  border-bottom: var(--gin-border-xs) solid var(--gin-border-color-layer);
+  background: var(--gin-bg-layer2);
+  border-radius: var(--gin-border-m) var(--gin-border-m) 0 0;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ph-form-tabs .horizontal-tab-button {
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: 0;
+}
+
+.ph-form-tabs .horizontal-tab-button a {
+  display: block;
+  padding: var(--gin-spacing-s) var(--gin-spacing-l);
+  font-weight: var(--gin-font-weight-semibold);
+  color: var(--gin-color-text-light);
+  text-decoration: none;
+}
+
+.ph-form-tabs .horizontal-tab-button:hover a {
+  color: var(--gin-color-text);
+  background: var(--gin-bg-layer);
+}
+
+.ph-form-tabs .horizontal-tab-button.selected a {
+  color: var(--gin-color-primary);
+  background: var(--gin-bg-layer);
+  box-shadow: inset 0 -3px 0 0 var(--gin-color-primary);
+}
+
+.ph-form-tabs .horizontal-tabs-panes {
+  padding: var(--gin-spacing-xl);
+}
+
+/* Description ribbon at the top of each pane */
+.horizontal-tabs-pane .claro-details__description {
+  margin-block-end: var(--gin-spacing-l);
+  font-size: var(--gin-font-size-s);
+  color: var(--gin-color-text-light);
+  padding: var(--gin-spacing-s) var(--gin-spacing-m);
+  background: var(--gin-bg-layer2);
+  border-radius: var(--gin-border-s);
+  border-inline-start: 3px solid var(--gin-color-primary);
+}
+
+/* Field spacing inside panes */
+.horizontal-tabs-pane > .claro-details__wrapper > .form-item,
+.horizontal-tabs-pane > .claro-details__wrapper > .field--widget-paragraphs,
+.horizontal-tabs-pane > .claro-details__wrapper > .ph-form-row {
+  margin-block-end: var(--gin-spacing-l);
+}
+
+.horizontal-tabs-pane > .claro-details__wrapper > :last-child {
+  margin-block-end: 0;
+}
+
+/* ═══ 2-col / 3-col rows (image+gallery, pay-numbers triplet) ═════ */
+
+.ph-form-row--two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gin-spacing-l);
+  align-items: start;
+}
+
+.ph-form-row--three-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--gin-spacing-l);
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .ph-form-row--two-col,
+  .ph-form-row--three-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ph-form-row--two-col > .form-item,
+.ph-form-row--two-col > .field,
+.ph-form-row--three-col > .form-item,
+.ph-form-row--three-col > .field {
+  padding: var(--gin-spacing-m);
+  background: var(--gin-bg-layer2);
+  border-radius: var(--gin-border-s);
+  border: var(--gin-border-xs) solid var(--gin-border-color-layer);
+  min-width: 0;
+}
+
+/* ═══ Paragraphs widget polish ════════════════════════════════════ */
+
+.horizontal-tabs-pane .field--widget-paragraphs .paragraphs-subform {
+  background: var(--gin-bg-layer2);
+  border-radius: var(--gin-border-s);
+  padding: var(--gin-spacing-m);
+}

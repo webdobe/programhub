@@ -1,0 +1,17 @@
+uuid: 4ba3b1d7-13de-493a-8f36-307a26d14493
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program
+    - node.type.career_outcome
+  module:
+    - gnode
+    - node
+id: program-0aad65be818a4b113195f1eb
+group_type: program
+content_plugin: 'group_node:career_outcome'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

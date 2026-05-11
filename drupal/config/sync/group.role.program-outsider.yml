@@ -1,0 +1,28 @@
+uuid: edafab4c-c5f6-4b2c-82b1-1649de4c00a9
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program
+    - user.role.authenticated
+id: program-outsider
+label: Outsider
+weight: 7
+admin: false
+scope: outsider
+global_role: authenticated
+group_type: program
+permissions:
+  - 'view group'
+  - 'view group_node:article entity'
+  - 'view group_node:award entity'
+  - 'view group_node:career_outcome entity'
+  - 'view group_node:certificate entity'
+  - 'view group_node:course entity'
+  - 'view group_node:event entity'
+  - 'view group_node:menu entity'
+  - 'view group_node:portfolio_show entity'
+  - 'view group_node:project entity'
+  - 'view group_node:simplenews_issue entity'
+  - 'view group_node:student_spotlight entity'
+  - 'view group_node:venue entity'

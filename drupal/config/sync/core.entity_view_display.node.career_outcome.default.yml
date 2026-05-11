@@ -13,7 +13,6 @@ dependencies:
     - field.field.node.career_outcome.field_pay_source
     - field.field.node.career_outcome.field_soc_code
     - field.field.node.career_outcome.field_tasks
-    - field.field.node.career_outcome.og_audience
     - node.type.career_outcome
   module:
     - text
@@ -100,14 +99,6 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 100
-    region: content
-  og_audience:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 3
     region: content
 hidden:
   field_path: true

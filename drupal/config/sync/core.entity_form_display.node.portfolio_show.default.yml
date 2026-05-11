@@ -17,15 +17,125 @@ dependencies:
     - field.field.node.portfolio_show.field_portfolio_show_date
     - field.field.node.portfolio_show.field_portfolio_show_url
     - field.field.node.portfolio_show.field_summary
-    - field.field.node.portfolio_show.og_audience
+    - image.style.thumbnail
     - node.type.portfolio_show
+    - workflows.workflow.community_content
   module:
+    - content_moderation
     - datetime_range
-    - fieldable_path
+    - field_group
+    - image
     - link
-    - media_library
     - path
     - text
+third_party_settings:
+  field_group:
+    group_main:
+      children:
+        - group_show
+        - group_story
+        - group_visuals
+        - group_graduates
+        - group_publishing
+      label: ''
+      region: content
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        classes: ph-form-tabs
+        id: portfolio_show-tabs
+        direction: horizontal
+        width_breakpoint: 640
+    group_show:
+      children:
+        - field_summary
+        - field_description
+        - field_portfolio_show_date
+        - field_current
+        - field_portfolio_show_url
+        - field_pitched_by
+      label: Show
+      region: content
+      parent_name: group_main
+      weight: 0
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: open
+        description: 'When, who pitched it, and the summary description.'
+    group_story:
+      children:
+        - field_concept_story
+        - field_brand_story
+      label: Story
+      region: content
+      parent_name: group_main
+      weight: 1
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'The concept and brand narrative.'
+    group_visuals:
+      children:
+        - group_visuals_row
+        - field_brand_images
+        - field_event_gallery
+      label: Visuals
+      region: content
+      parent_name: group_main
+      weight: 2
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Hero, logo, brand assets, and event photos.'
+    group_visuals_row:
+      children:
+        - field_hero_image
+        - field_logo
+      label: ''
+      region: content
+      parent_name: group_visuals
+      weight: 0
+      format_type: html_element
+      format_settings:
+        classes: 'ph-form-row ph-form-row--two-col'
+        id: ''
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+    group_graduates:
+      children:
+        - field_graduates
+      label: Graduates
+      region: content
+      parent_name: group_main
+      weight: 3
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Graduates in this show.'
+    group_publishing:
+      children:
+        - og_audience
+        - moderation_state
+        - status
+      label: Publishing
+      region: content
+      parent_name: group_main
+      weight: 4
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Program scope and review state.'
 id: node.portfolio_show.default
 targetEntityType: node
 bundle: portfolio_show
@@ -33,58 +143,60 @@ mode: default
 content:
   created:
     type: datetime_timestamp
-    weight: 15
-    region: content
+    weight: 10
+    region: advanced
     settings: {  }
     third_party_settings: {  }
   field_brand_images:
-    type: media_library_widget
-    weight: 11
+    type: image_image
+    weight: 1
     region: content
     settings:
-      media_types: {  }
+      progress_indicator: throbber
+      preview_image_style: thumbnail
     third_party_settings: {  }
   field_brand_story:
     type: text_textarea
-    weight: 8
+    weight: 1
     region: content
     settings:
-      rows: 5
+      rows: 8
       placeholder: ''
     third_party_settings: {  }
   field_concept_story:
     type: text_textarea
-    weight: 7
+    weight: 0
     region: content
     settings:
-      rows: 5
+      rows: 8
       placeholder: ''
     third_party_settings: {  }
   field_current:
     type: boolean_checkbox
-    weight: 9
+    weight: 3
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   field_description:
     type: text_textarea
-    weight: 5
+    weight: 1
     region: content
     settings:
-      rows: 5
+      rows: 6
       placeholder: ''
     third_party_settings: {  }
   field_event_gallery:
-    type: media_library_widget
-    weight: 12
+    type: image_image
+    weight: 2
     region: content
     settings:
-      media_types: {  }
+      progress_indicator: throbber
+      preview_image_style: thumbnail
     third_party_settings: {  }
   field_graduates:
     type: entity_reference_autocomplete
-    weight: 3
+    weight: 0
     region: content
     settings:
       match_operator: CONTAINS
@@ -93,28 +205,24 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_hero_image:
-    type: media_library_widget
-    weight: 10
+    type: image_image
+    weight: 0
     region: content
     settings:
-      media_types: {  }
+      progress_indicator: throbber
+      preview_image_style: thumbnail
     third_party_settings: {  }
   field_logo:
-    type: media_library_widget
+    type: image_image
     weight: 1
     region: content
     settings:
-      media_types: {  }
-    third_party_settings: {  }
-  field_path:
-    type: fieldable_path_widget
-    weight: 20
-    region: content
-    settings: {  }
+      progress_indicator: throbber
+      preview_image_style: thumbnail
     third_party_settings: {  }
   field_pitched_by:
     type: entity_reference_autocomplete
-    weight: 13
+    weight: 5
     region: content
     settings:
       match_operator: CONTAINS
@@ -124,75 +232,76 @@ content:
     third_party_settings: {  }
   field_portfolio_show_date:
     type: daterange_default
-    weight: 6
+    weight: 2
     region: content
     settings: {  }
     third_party_settings: {  }
   field_portfolio_show_url:
     type: link_default
-    weight: 2
-    region: content
-    settings:
-      placeholder_url: ''
-      placeholder_title: ''
-    third_party_settings: {  }
-  field_summary:
-    type: string_textfield
     weight: 4
     region: content
     settings:
-      size: 60
-      placeholder: ''
+      placeholder_url: 'https://'
+      placeholder_title: ''
     third_party_settings: {  }
-  og_audience:
-    type: options_select
-    weight: 26
+  field_summary:
+    type: string_textarea
+    weight: 0
+    region: content
+    settings:
+      rows: 2
+      placeholder: 'One-paragraph hook'
+    third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 1
     region: content
     settings: {  }
     third_party_settings: {  }
   path:
     type: path
-    weight: 18
-    region: content
+    weight: 30
+    region: advanced
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    weight: 16
-    region: content
+    weight: 15
+    region: advanced
     settings:
       display_label: true
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 19
+    weight: 2
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    weight: 17
-    region: content
+    weight: 16
+    region: advanced
     settings:
       display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 0
+    weight: -10
     region: content
     settings:
       size: 60
-      placeholder: ''
+      placeholder: 'Show name'
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 14
-    region: content
+    weight: 5
+    region: advanced
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_path: true

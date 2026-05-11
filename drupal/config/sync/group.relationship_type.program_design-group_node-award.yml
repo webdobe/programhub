@@ -1,0 +1,17 @@
+uuid: 104dc685-6bc0-49de-84fe-65a2de5ee1aa
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.program_design
+    - node.type.award
+  module:
+    - gnode
+    - node
+id: program_design-group_node-award
+group_type: program_design
+content_plugin: 'group_node:award'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

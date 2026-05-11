@@ -24,7 +24,7 @@ content:
     region: content
   field_credits:
     type: string
-    label: inline
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -32,7 +32,7 @@ content:
     region: content
   field_semester:
     type: list_default
-    label: inline
+    label: hidden
     settings: {  }
     third_party_settings: {  }
     weight: 1

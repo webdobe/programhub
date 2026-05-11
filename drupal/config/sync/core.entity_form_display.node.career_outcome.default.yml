@@ -13,11 +13,115 @@ dependencies:
     - field.field.node.career_outcome.field_pay_source
     - field.field.node.career_outcome.field_soc_code
     - field.field.node.career_outcome.field_tasks
-    - field.field.node.career_outcome.og_audience
     - node.type.career_outcome
   module:
+    - content_moderation
+    - field_group
     - path
     - text
+third_party_settings:
+  field_group:
+    group_main:
+      children:
+        - group_career
+        - group_description
+        - group_pay
+        - group_tasks
+        - group_publishing
+      label: ''
+      region: content
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        classes: ph-form-tabs
+        id: career_outcome-tabs
+        direction: horizontal
+        width_breakpoint: 640
+    group_career:
+      children:
+        - field_soc_code
+        - field_career_track
+      label: Career
+      region: content
+      parent_name: group_main
+      weight: 0
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: open
+        description: 'SOC identifier and career track. Editorial overlay on BLS data.'
+    group_description:
+      children:
+        - field_description
+      label: Description
+      region: content
+      parent_name: group_main
+      weight: 1
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Editorial description. Survives phcr refreshes.'
+    group_pay:
+      children:
+        - field_pay_range
+        - group_pay_row
+        - field_pay_source
+      label: Pay
+      region: content
+      parent_name: group_main
+      weight: 2
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Pay data. Numbers are BLS-imported (overwritten on phcr); pay_range string is editorial.'
+    group_pay_row:
+      children:
+        - field_pay_low
+        - field_pay_median
+        - field_pay_high
+      label: ''
+      region: content
+      parent_name: group_pay
+      weight: 1
+      format_type: html_element
+      format_settings:
+        classes: 'ph-form-row ph-form-row--three-col'
+        id: ''
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+    group_tasks:
+      children:
+        - field_tasks
+      label: Tasks
+      region: content
+      parent_name: group_main
+      weight: 3
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'O*NET task list. Overwritten on phcr refresh.'
+    group_publishing:
+      children:
+        - og_audience
+        - status
+      label: Publishing
+      region: content
+      parent_name: group_main
+      weight: 4
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Program scope. Admin-managed.'
 id: node.career_outcome.default
 targetEntityType: node
 bundle: career_outcome
@@ -26,128 +130,12 @@ content:
   created:
     type: datetime_timestamp
     weight: 10
-    region: content
+    region: advanced
     settings: {  }
     third_party_settings: {  }
   field_career_track:
-    type: options_select
-    weight: 0
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  field_description:
-    type: text_textarea
-    weight: 2
-    region: content
-    settings:
-      rows: 4
-      placeholder: ''
-    third_party_settings: {  }
-  field_path:
-    type: string_textfield
-    weight: 30
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_pay_high:
-    type: number
-    weight: 42
-    region: content
-    settings:
-      placeholder: ''
-    third_party_settings: {  }
-  field_pay_low:
-    type: number
-    weight: 40
-    region: content
-    settings:
-      placeholder: ''
-    third_party_settings: {  }
-  field_pay_median:
-    type: number
-    weight: 41
-    region: content
-    settings:
-      placeholder: ''
-    third_party_settings: {  }
-  field_pay_range:
-    type: string_textfield
-    weight: 1
-    region: content
-    settings:
-      size: 32
-      placeholder: 'e.g. $17–22 / hr'
-    third_party_settings: {  }
-  field_pay_source:
-    type: string_textfield
-    weight: 43
-    region: content
-    settings:
-      size: 60
-      placeholder: "BLS OEWS May 2024 · Coeur d'Alene MSA"
-    third_party_settings: {  }
-  field_soc_code:
-    type: string_textfield
-    weight: -4
-    region: content
-    settings:
-      size: 16
-      placeholder: 15-1212
-    third_party_settings: {  }
-  field_tasks:
-    type: string_textarea
-    weight: 44
-    region: content
-    settings:
-      rows: 4
-      placeholder: ''
-    third_party_settings: {  }
-  og_audience:
-    type: options_select
-    weight: 3
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  path:
-    type: path
-    weight: 30
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  promote:
-    type: boolean_checkbox
-    weight: 15
-    region: content
-    settings:
-      display_label: true
-    third_party_settings: {  }
-  status:
-    type: boolean_checkbox
-    weight: 120
-    region: content
-    settings:
-      display_label: true
-    third_party_settings: {  }
-  sticky:
-    type: boolean_checkbox
-    weight: 16
-    region: content
-    settings:
-      display_label: true
-    third_party_settings: {  }
-  title:
-    type: string_textfield
-    weight: -5
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  uid:
     type: entity_reference_autocomplete
-    weight: 5
+    weight: 1
     region: content
     settings:
       match_operator: CONTAINS
@@ -155,4 +143,117 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-hidden: {  }
+  field_description:
+    type: text_textarea
+    weight: 0
+    region: content
+    settings:
+      rows: 8
+      placeholder: ''
+    third_party_settings: {  }
+  field_pay_high:
+    type: number
+    weight: 2
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_pay_low:
+    type: number
+    weight: 0
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_pay_median:
+    type: number
+    weight: 1
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_pay_range:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: $48k–$78k
+    third_party_settings: {  }
+  field_pay_source:
+    type: string_textfield
+    weight: 2
+    region: content
+    settings:
+      size: 60
+      placeholder: 'BLS OEWS 2024'
+    third_party_settings: {  }
+  field_soc_code:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 20
+      placeholder: 27-1024
+    third_party_settings: {  }
+  field_tasks:
+    type: string_textarea
+    weight: 0
+    region: content
+    settings:
+      rows: 2
+      placeholder: ''
+    third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    region: advanced
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    weight: 15
+    region: advanced
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 1
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    weight: 16
+    region: advanced
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: -10
+    region: content
+    settings:
+      size: 60
+      placeholder: 'Occupation title'
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 5
+    region: advanced
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  field_path: true

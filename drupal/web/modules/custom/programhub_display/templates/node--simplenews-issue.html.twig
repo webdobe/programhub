@@ -1,0 +1,21 @@
+{#
+/**
+ * @file
+ * Simplenews issue (newsletter) node view template.
+ */
+#}
+<article{{ attributes.addClass(['ph-node', 'ph-node--simplenews-issue']) }}>
+  <div class="ph-node__layout">
+    <div class="ph-node__main">
+      {% if content.body|render %}
+        <div class="ph-node__body">{{ content.body }}</div>
+      {% endif %}
+    </div>
+    <aside class="ph-node__sidebar">
+      <div class="ph-node__meta">
+        {{ content.simplenews_issue }}
+      </div>
+    </aside>
+  </div>
+  {{ content.links }}
+</article>

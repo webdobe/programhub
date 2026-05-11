@@ -1,0 +1,19 @@
+uuid: 0bc180c1-1e1e-4a83-b749-a1f3e1397f44
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.field_abbreviation
+    - group.type.program
+id: group.program.field_abbreviation
+field_name: field_abbreviation
+entity_type: group
+bundle: program
+label: Abbreviation
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

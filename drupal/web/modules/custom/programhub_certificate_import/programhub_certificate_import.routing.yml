@@ -12,15 +12,15 @@ programhub_certificate_import.import_one:
         type: entity:node
 
 programhub_certificate_import.certificates_tab:
-  path: '/node/{node}/certificates'
+  path: '/group/{group}/certificates'
   defaults:
     _controller: 'Drupal\programhub_certificate_import\Controller\CertificateController::certificatesTab'
     _title: 'Certificates'
   requirements:
-    _entity_access: 'node.view'
-    _entity_bundles: 'node:program'
-    node: \d+
+    _entity_access: 'group.view'
+    _entity_bundles: 'group:program,group:program_design,group:program_culinary'
+    group: \d+
   options:
     parameters:
-      node:
-        type: entity:node
+      group:
+        type: entity:group

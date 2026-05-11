@@ -1,0 +1,11 @@
+uuid: 69983317-091f-42dd-9a97-ba64f35b937b
+langcode: en
+status: true
+dependencies: {  }
+id: division
+label: Division
+description: 'Division group — scopes content and membership.'
+new_revision: true
+creator_membership: true
+creator_wizard: false
+creator_roles: {  }

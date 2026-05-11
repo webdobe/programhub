@@ -17,7 +17,6 @@ dependencies:
     - field.field.node.portfolio_show.field_portfolio_show_date
     - field.field.node.portfolio_show.field_portfolio_show_url
     - field.field.node.portfolio_show.field_summary
-    - field.field.node.portfolio_show.og_audience
     - node.type.portfolio_show
   module:
     - datetime_range
@@ -30,6 +29,11 @@ targetEntityType: node
 bundle: portfolio_show
 mode: default
 content:
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
   field_brand_images:
     type: entity_reference_entity_view
     label: above
@@ -155,13 +159,5 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 100
-    region: content
-  og_audience:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 119
     region: content
 hidden: {  }
