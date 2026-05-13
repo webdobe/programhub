@@ -1,0 +1,9 @@
+name: 'ProgramHub webforms'
+type: module
+description: 'Per-group webform provisioning. Every group gets {abbr}_request_info and {abbr}_subscribe webforms cloned from canonical templates, categorized by the group abbreviation.'
+core_version_requirement: ^10 || ^11
+package: 'ProgramHub'
+dependencies:
+  - drupal:system
+  - group:group
+  - webform:webform

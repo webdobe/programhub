@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Per-group simplenews newsletter provisioning.
+ *
+ * On group creation we clone `simplenews.newsletter.default` into
+ * `{abbr}_newsletter`. See NewsletterProvisioner for the cloning
+ * logic.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Implements hook_ENTITY_TYPE_insert() for group entities.
+ *
+ * Fires once on first save. Newsletter creation is idempotent so
+ * subsequent saves are no-ops.
+ */
+function programhub_newsletters_group_insert(\Drupal\group\Entity\GroupInterface $group): void {
+  /** @var \Drupal\programhub_newsletters\Service\NewsletterProvisioner $provisioner */
+  $provisioner = \Drupal::service('programhub_newsletters.provisioner');
+  $provisioner->provisionForGroup($group);
+}

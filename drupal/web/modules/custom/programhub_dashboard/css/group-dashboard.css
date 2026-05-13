@@ -1,0 +1,143 @@
+/**
+ * Group canonical-page dashboard. Hung off `hook_group_view_alter()` and
+ * appended below the default group field display. Each section lives in
+ * a Gin `claro-details` card; this file only adds the layout INSIDE
+ * cards (stats strip, latest-content grid, careers/subgroups tables).
+ */
+
+.programhub-group-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gin-spacing-l);
+  margin-top: var(--gin-spacing-xl);
+}
+
+/* Stats strip — wraps to a grid on narrow viewports. */
+.programhub-group-dashboard__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--gin-spacing-m);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.programhub-group-dashboard__stat a {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gin-spacing-xxs);
+  padding: var(--gin-spacing-m);
+  border: var(--gin-border-xs) solid var(--gin-border-color-layer);
+  border-radius: var(--gin-border-m);
+  background: var(--gin-bg-layer);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease;
+}
+
+.programhub-group-dashboard__stat a:hover,
+.programhub-group-dashboard__stat a:focus {
+  border-color: var(--gin-color-primary);
+}
+
+.programhub-group-dashboard__stat-count {
+  font-size: var(--gin-font-size-xxl);
+  font-weight: var(--gin-font-weight-bold);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.programhub-group-dashboard__stat-label {
+  font-size: var(--gin-font-size-s);
+  color: var(--gin-color-text-light);
+}
+
+/* Latest content — one column per surfaced bundle. */
+.programhub-group-dashboard__latest {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--gin-spacing-l);
+}
+
+.programhub-group-dashboard__latest-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gin-spacing-s);
+}
+
+.programhub-group-dashboard__latest-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--gin-spacing-s);
+}
+
+.programhub-group-dashboard__latest-head h3 {
+  margin: 0;
+  font-size: var(--gin-font-size-m);
+  font-weight: var(--gin-font-weight-semibold);
+}
+
+.programhub-group-dashboard__latest-all {
+  font-size: var(--gin-font-size-s);
+}
+
+.programhub-group-dashboard__latest-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gin-spacing-xs);
+}
+
+.programhub-group-dashboard__latest-list li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gin-spacing-xxs);
+  padding-block: var(--gin-spacing-xs);
+  border-bottom: var(--gin-border-xs) solid var(--gin-border-color-layer);
+}
+
+.programhub-group-dashboard__latest-list li:last-child {
+  border-bottom: none;
+}
+
+.programhub-group-dashboard__latest-meta {
+  font-size: var(--gin-font-size-xs);
+  color: var(--gin-color-text-light);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tabular sections (careers, subgroups). */
+.programhub-group-dashboard__careers,
+.programhub-group-dashboard__subgroups {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.programhub-group-dashboard__careers th,
+.programhub-group-dashboard__careers td,
+.programhub-group-dashboard__subgroups th,
+.programhub-group-dashboard__subgroups td {
+  padding: var(--gin-spacing-xs) var(--gin-spacing-s);
+  text-align: start;
+  border-bottom: var(--gin-border-xs) solid var(--gin-border-color-layer);
+}
+
+.programhub-group-dashboard__careers th,
+.programhub-group-dashboard__subgroups th {
+  font-weight: var(--gin-font-weight-semibold);
+  color: var(--gin-color-text-light);
+  font-size: var(--gin-font-size-s);
+}
+
+.programhub-group-dashboard__numeric {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.programhub-group-dashboard__careers code {
+  font-size: var(--gin-font-size-s);
+  color: var(--gin-color-text-light);
+}

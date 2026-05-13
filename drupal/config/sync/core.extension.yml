@@ -52,11 +52,15 @@ module:
   programhub_dashboard: 0
   programhub_display: 0
   programhub_governance: 0
+  programhub_newsletters: 0
   programhub_profile_paths: 0
+  programhub_webform_simplenews: 0
+  programhub_webforms: 0
   rest: 0
   restui: 0
   serialization: 0
   simplenews: 0
+  subgroup: 0
   symfony_mailer: 0
   system: 0
   taxonomy: 0

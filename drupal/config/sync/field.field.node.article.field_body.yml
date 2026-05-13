@@ -4,7 +4,7 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_body
-    - filter.format.email_html
+    - filter.format.html
     - node.type.article
   module:
     - text
@@ -20,5 +20,5 @@ default_value: {  }
 default_value_callback: ''
 settings:
   allowed_formats:
-    - email_html
+    - html
 field_type: text_long

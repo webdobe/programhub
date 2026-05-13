@@ -1,0 +1,7 @@
+name: 'OG permission overrides (stub)'
+type: module
+description: 'Stub kept solely so the pre-OG-migration snapshot can boot; phupgrade uninstalls this on first run.'
+core_version_requirement: ^10 || ^11
+package: 'ProgramHub'
+dependencies:
+  - drupal:user

@@ -1,0 +1,6 @@
+services:
+  programhub_webforms.provisioner:
+    class: Drupal\programhub_webforms\Service\WebformProvisioner
+    arguments:
+      - '@entity_type.manager'
+      - '@logger.factory'

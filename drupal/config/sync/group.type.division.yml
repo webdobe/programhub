@@ -1,7 +1,15 @@
 uuid: 69983317-091f-42dd-9a97-ba64f35b937b
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - subgroup
+third_party_settings:
+  subgroup:
+    depth: 0
+    left: 1
+    right: 8
+    tree: division
 id: division
 label: Division
 description: 'Division group — scopes content and membership.'

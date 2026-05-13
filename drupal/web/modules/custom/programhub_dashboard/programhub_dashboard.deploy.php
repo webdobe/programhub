@@ -4,88 +4,72 @@
  * @file
  * Deploy hooks for ProgramHub dashboard.
  *
- * Run AFTER `drush config:import` (per CONVENTIONS.md). By then the
- * Group types, roles, and gnode plugin configs are in place, so the
- * one-shot OG → Group migration can populate them from the legacy OG
- * tables.
- *
- * Every hook MUST be idempotent — re-runs (DB restore, snapshot, fresh
- * build) re-execute every deploy hook.
+ * The big OG → Group migration moved out of this file and into
+ * `programhub_careers.post_update.php` because it has to run BEFORE
+ * `config:import` — by the time `deploy:hook` fires, og has been
+ * uninstalled and the og tables we need to read are gone. This file
+ * carries the *post-cim* tasks: anything that needs Group/Subgroup
+ * config already in place (relationship-type plugins, role inheritance,
+ * etc.) to do its work.
  */
 
 declare(strict_types=1);
 
-/**
- * Migrate Organic Groups data → Group module entities.
- *
- * Pulls the legacy OG data forward in three passes:
- *   1. `node:program` / `node:division` → matching `group:program` /
- *      `group:division` with the same title and custom field values.
- *   2. `og_membership` rows → `group_membership` relationships with the
- *      mapped Group role.
- *   3. Every node with an `og_audience` value → `group_node:{bundle}`
- *      relationship to the new group.
- *
- * Subsequent rows are skipped if a corresponding Group row already
- * exists, so re-running this deploy hook on a snapshot that's already
- * migrated is a no-op.
- *
- * Phase 4 of the migration plan deletes the OG fields/configs in a
- * later commit; that's gated behind running this hook successfully.
- */
-function programhub_dashboard_deploy_001_migrate_og_to_group(): string {
-  /** @var \Drupal\programhub_dashboard\Migration\OgToGroupMigrator $migrator */
-  $migrator = \Drupal::service('programhub_dashboard.og_to_group_migrator');
-  $result = $migrator->run(FALSE, \Drupal::logger('programhub_dashboard'));
-
-  return sprintf(
-    'OG → Group migrated: %d groups, %d memberships, %d content rows.',
-    $result['groups'],
-    $result['members'],
-    $result['content'],
-  );
-}
+use Drupal\group\Entity\Group;
+use Drupal\programhub_dashboard\Service\GroupContext;
 
 /**
- * Move known programs to their specialized group_types.
+ * Attach every program-shaped group to the CTE division as a subgroup.
  *
- * Runs after `_001` so the base `program` groups exist by the time we
- * try to retype them. Idempotent — moveByLabel() returns a no-op if the
- * group is already on the target type (or no source group with that
- * label exists, which is the steady state once it has been moved).
+ * Runs after `config:import` so the `subgroup:program`,
+ * `subgroup:program_design`, and `subgroup:program_culinary`
+ * relationship-type plugins are installed on `division`. Walks every
+ * program / program_design / program_culinary group, finds the single
+ * `division` group (CTE), and creates a subgroup relationship.
  *
- * Mapping rationale:
- *   - Graphic & Web Design → program_design (portfolio_show emphasis).
- *
- * Future programs can be appended to this map without renumbering the
- * deploy hook (the moves themselves are idempotent), or — when more
- * cleanly — a fresh `_NNN_retype_*` hook can be added.
+ * Idempotent: skips any program already related to the division via
+ * the same plugin. Safe to re-run on a snapshot or a partially-completed
+ * deploy.
  */
-function programhub_dashboard_deploy_002_retype_specialized_programs(): string {
-  $map = [
-    // [source label, current type, target type]
-    ['Graphic & Web Design', 'program', 'program_design'],
-  ];
-
-  /** @var \Drupal\programhub_dashboard\Migration\GroupTypeMover $mover */
-  $mover = \Drupal::service('programhub_dashboard.group_type_mover');
+function programhub_dashboard_deploy_001_attach_programs_to_division(): string {
+  $etm = \Drupal::entityTypeManager();
   $logger = \Drupal::logger('programhub_dashboard');
 
-  $moved = 0;
-  $skippedNotFound = 0;
-  foreach ($map as [$label, $sourceType, $targetType]) {
-    $result = $mover->moveByLabel($label, $sourceType, $targetType, FALSE, $logger);
-    if ($result['moved']) {
-      $moved++;
+  $divisionIds = $etm->getStorage('group')->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('type', 'division')
+    ->range(0, 1)
+    ->execute();
+  if (!$divisionIds) {
+    return 'No division group found; nothing to attach.';
+  }
+  $cte = Group::load((int) reset($divisionIds));
+
+  $programGids = $etm->getStorage('group')->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('type', GroupContext::PROGRAM_GROUP_TYPES, 'IN')
+    ->execute();
+
+  $attached = 0;
+  $skipped = 0;
+  foreach (Group::loadMultiple($programGids) as $program) {
+    $pluginId = 'subgroup:' . $program->bundle();
+    if ($cte->getRelationshipsByEntity($program, $pluginId)) {
+      $skipped++;
+      continue;
     }
-    elseif ($result['newGid'] === NULL) {
-      $skippedNotFound++;
-    }
+    $cte->addRelationship($program, $pluginId);
+    $attached++;
+    $logger->notice(
+      'Attached @label (gid @gid, @type) under @cte as subgroup.',
+      [
+        '@label' => $program->label(),
+        '@gid' => $program->id(),
+        '@type' => $program->bundle(),
+        '@cte' => $cte->label(),
+      ],
+    );
   }
 
-  return sprintf(
-    'Specialized program retype: %d moved, %d already-on-target / not-found.',
-    $moved,
-    count($map) - $moved,
-  );
+  return sprintf('Attached %d programs to CTE; %d already attached.', $attached, $skipped);
 }

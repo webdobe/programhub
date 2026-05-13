@@ -6,7 +6,7 @@ dependencies:
     - group.type.program
 id: program-administrator
 label: Administrator
-weight: null
+weight: 32
 admin: true
 scope: individual
 global_role: null

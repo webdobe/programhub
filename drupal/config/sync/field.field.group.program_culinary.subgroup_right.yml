@@ -1,0 +1,23 @@
+uuid: b8ae4ef7-07b8-47b6-9325-d3b9425ac6d5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.subgroup_right
+    - group.type.program_culinary
+id: group.program_culinary.subgroup_right
+field_name: subgroup_right
+entity_type: group
+bundle: program_culinary
+label: Right
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

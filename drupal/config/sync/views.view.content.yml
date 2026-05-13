@@ -760,6 +760,8 @@ display:
         type: fields
       query:
         type: views_query
+        options:
+          distinct: true
       relationships:
         uid:
           id: uid

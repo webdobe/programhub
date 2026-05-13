@@ -1,0 +1,23 @@
+uuid: 89fa150f-9a36-4837-8861-6c6009d36fa7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.subgroup_tree
+    - group.type.division
+id: group.division.subgroup_tree
+field_name: subgroup_tree
+entity_type: group
+bundle: division
+label: Tree
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

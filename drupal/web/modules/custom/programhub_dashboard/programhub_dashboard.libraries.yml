@@ -18,3 +18,13 @@ toolbar_icons:
   css:
     theme:
       css/toolbar-icons.css: {}
+
+# Layout for the content-overview cards we append to the canonical
+# group page via hook_group_view_alter(). Attached by GroupDashboard.
+group_dashboard:
+  version: 1.x
+  css:
+    theme:
+      css/group-dashboard.css: {}
+  dependencies:
+    - gin/gin_base

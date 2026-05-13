@@ -1,0 +1,11 @@
+uuid: c1fb1e09-a687-4898-9cae-a2125f0699be
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.role.division-administrator
+    - group.role.program_design-administrator
+id: division_admin_to_program_design_admin
+source: division-administrator
+target: program_design-administrator
+tree: division

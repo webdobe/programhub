@@ -1,0 +1,23 @@
+uuid: a50898e4-68e8-4fdb-8789-1fe65513c477
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.subgroup_depth
+    - group.type.program_culinary
+id: group.program_culinary.subgroup_depth
+field_name: subgroup_depth
+entity_type: group
+bundle: program_culinary
+label: Depth
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

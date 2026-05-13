@@ -27,6 +27,27 @@ declare(strict_types=1);
  *     (heading, container, category data attribute for CSS hooks).
  */
 /**
+ * Implements hook_ENTITY_TYPE_view_alter() for group entities.
+ *
+ * Appends a content-overview dashboard to the canonical group page
+ * (default view mode only). The existing field display — label,
+ * abbreviation, website, SOC codes — keeps rendering above; we add
+ * stats, latest content per bundle, career outcomes, and (on
+ * divisions) a subgroups roll-up below.
+ */
+function programhub_dashboard_group_view_alter(array &$build, \Drupal\group\Entity\GroupInterface $group, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display): void {
+  if ($display->getMode() !== 'default') {
+    return;
+  }
+  /** @var \Drupal\programhub_dashboard\Group\GroupDashboard $dashboard */
+  $dashboard = \Drupal::classResolver(\Drupal\programhub_dashboard\Group\GroupDashboard::class);
+  $sections = $dashboard->build($group);
+  if ($sections) {
+    $build['programhub_dashboard'] = $sections + ['#weight' => 100];
+  }
+}
+
+/**
  * Implements hook_form_FORM_ID_alter() for views_exposed_form.
  *
  * Narrows the "Type" filter dropdown on the per-group Nodes /
@@ -210,6 +231,17 @@ function programhub_dashboard_theme(): array {
         'body' => [],
       ],
       'template' => 'programhub-dashboard-widget',
+    ],
+    // Module-level override of Gin's middle-region template. Gin's stock
+    // template caps at 3 nested levels; ours recurses to 4 (Division >
+    // Program > Bundle). Programs and Create trays share one template.
+    'menu_region__middle__programs' => [
+      'base hook' => 'menu_region__middle',
+      'template' => 'menu-region--middle--nested',
+    ],
+    'menu_region__middle__create' => [
+      'base hook' => 'menu_region__middle',
+      'template' => 'menu-region--middle--nested',
     ],
   ];
 }

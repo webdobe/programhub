@@ -139,3 +139,45 @@ function programhub_display_form_node_form_alter(array &$form, \Drupal\Core\Form
 function programhub_display_form_profile_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface $form_state): void {
   $form['#attached']['library'][] = 'programhub_display/node_form';
 }
+
+/**
+ * Implements hook_preprocess_HOOK() for views_view_field.
+ *
+ * Drupal core's `entity_operations` field plugin auto-adds the
+ * `dropbutton--extrasmall` class to the dropbutton wrapper, which is
+ * what makes the Operations buttons on `/admin/content` render at the
+ * compact 1.75rem height. Gnode's `group_nodes` view bundles its ops
+ * via Views' generic `dropbutton` field plugin instead, which doesn't
+ * add that class — so each row's Operations button renders at default
+ * (full button) size and visibly dominates the row.
+ *
+ * Rather than duplicate Gin's `.dropbutton--extrasmall` rule set in our
+ * own CSS, inject the class on the rendered output for the relevant
+ * views (`group_nodes` + the cloned `group_moderation`). Gin's existing
+ * CSS then sizes the dropbutton correctly.
+ */
+function programhub_display_preprocess_views_view_field(array &$variables): void {
+  $view = $variables['view'] ?? NULL;
+  if (!$view || !in_array($view->id(), ['group_nodes', 'group_moderation'], TRUE)) {
+    return;
+  }
+  $field = $variables['field'] ?? NULL;
+  if (!$field || $field->field !== 'dropbutton') {
+    return;
+  }
+  // `output` is a Markup object containing the rendered `<ul.dropbutton …>`.
+  // Inject the modifier class into the wrapper. Targeting the leading
+  // `class="dropbutton ` substring is stable: Drupal core always emits
+  // `dropbutton` as the first class on this element.
+  $rendered = (string) $variables['output'];
+  if (str_contains($rendered, 'class="dropbutton ')
+    && !str_contains($rendered, 'dropbutton--extrasmall')) {
+    $variables['output'] = \Drupal\Core\Render\Markup::create(
+      str_replace(
+        'class="dropbutton ',
+        'class="dropbutton dropbutton--extrasmall ',
+        $rendered,
+      ),
+    );
+  }
+}

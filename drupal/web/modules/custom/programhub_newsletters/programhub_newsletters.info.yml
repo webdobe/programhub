@@ -1,0 +1,9 @@
+name: 'ProgramHub newsletters'
+type: module
+description: 'Per-group simplenews subscriber-list provisioning. Every group gets a `{abbr}_newsletter` cloned from a canonical template.'
+core_version_requirement: ^10 || ^11
+package: 'ProgramHub'
+dependencies:
+  - drupal:system
+  - group:group
+  - simplenews:simplenews

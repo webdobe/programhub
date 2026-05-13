@@ -7,6 +7,10 @@ dependencies:
     - field.field.group.program_design.field_path
     - field.field.group.program_design.field_soc_codes
     - field.field.group.program_design.field_website
+    - field.field.group.program_design.subgroup_depth
+    - field.field.group.program_design.subgroup_left
+    - field.field.group.program_design.subgroup_right
+    - field.field.group.program_design.subgroup_tree
     - group.type.program_design
   module:
     - link
@@ -62,4 +66,8 @@ content:
 hidden:
   changed: true
   created: true
+  subgroup_depth: true
+  subgroup_left: true
+  subgroup_right: true
+  subgroup_tree: true
   uid: true

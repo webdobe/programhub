@@ -1,0 +1,6 @@
+services:
+  programhub_newsletters.provisioner:
+    class: Drupal\programhub_newsletters\Service\NewsletterProvisioner
+    arguments:
+      - '@entity_type.manager'
+      - '@logger.factory'

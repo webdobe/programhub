@@ -165,5 +165,5 @@ jobs:
             # Run Drupal deploy commands (|| true to not fail build if DB not ready)
             sudo docker compose -p programhub -f docker-compose.production.yml exec -T php bash -c "
               cd /var/www/html
-              vendor/bin/drush deploy -y || true
+              vendor/bin/drush phupgrade -y || true
             "

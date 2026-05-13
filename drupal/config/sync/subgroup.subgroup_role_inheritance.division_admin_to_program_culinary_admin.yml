@@ -1,0 +1,11 @@
+uuid: 88330201-5174-4b35-8d84-3c17e6f8561e
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.role.division-administrator
+    - group.role.program_culinary-administrator
+id: division_admin_to_program_culinary_admin
+source: division-administrator
+target: program_culinary-administrator
+tree: division

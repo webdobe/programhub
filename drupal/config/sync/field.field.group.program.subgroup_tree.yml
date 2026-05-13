@@ -1,0 +1,23 @@
+uuid: dea1081a-d1f7-411f-9d3f-d55e16f88781
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.subgroup_tree
+    - group.type.program
+id: group.program.subgroup_tree
+field_name: subgroup_tree
+entity_type: group
+bundle: program
+label: Tree
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

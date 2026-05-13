@@ -6,6 +6,10 @@ dependencies:
     - field.field.group.division.field_abbreviation
     - field.field.group.division.field_path
     - field.field.group.division.field_website
+    - field.field.group.division.subgroup_depth
+    - field.field.group.division.subgroup_left
+    - field.field.group.division.subgroup_right
+    - field.field.group.division.subgroup_tree
     - group.type.division
   module:
     - link
@@ -61,4 +65,8 @@ content:
       display_label: true
     third_party_settings: {  }
 hidden:
+  subgroup_depth: true
+  subgroup_left: true
+  subgroup_right: true
+  subgroup_tree: true
   uid: true

@@ -1,0 +1,11 @@
+uuid: d58986d0-433e-49c5-a661-ed90ccd57c73
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.role.division-administrator
+    - group.role.program-administrator
+id: division_admin_to_program_admin
+source: division-administrator
+target: program-administrator
+tree: division

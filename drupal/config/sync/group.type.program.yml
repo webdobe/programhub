@@ -1,7 +1,15 @@
 uuid: eee00952-df3a-4bd5-b6a8-9a304386076c
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - subgroup
+third_party_settings:
+  subgroup:
+    depth: 1
+    left: 2
+    right: 3
+    tree: division
 id: program
 label: Program
 description: 'Program group — scopes content and membership.'

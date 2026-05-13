@@ -1,0 +1,15 @@
+uuid: e5539874-71d2-40d8-8cca-8edaa8a37b19
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.division
+    - group.type.program_design
+  module:
+    - subgroup
+id: division-subgroup-program_design
+group_type: division
+content_plugin: 'subgroup:program_design'
+plugin_config:
+  group_cardinality: 1
+  entity_cardinality: 1

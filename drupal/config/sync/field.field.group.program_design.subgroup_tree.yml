@@ -1,0 +1,23 @@
+uuid: c67223ca-5ffc-4a9c-8b6c-730918aa2cf1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.subgroup_tree
+    - group.type.program_design
+id: group.program_design.subgroup_tree
+field_name: subgroup_tree
+entity_type: group
+bundle: program_design
+label: Tree
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

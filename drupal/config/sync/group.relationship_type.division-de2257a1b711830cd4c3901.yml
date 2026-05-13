@@ -1,0 +1,15 @@
+uuid: f9bdbb87-9031-4bc9-bcd2-29b1c5e4ddbd
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.division
+    - group.type.program_culinary
+  module:
+    - subgroup
+id: division-de2257a1b711830cd4c3901
+group_type: division
+content_plugin: 'subgroup:program_culinary'
+plugin_config:
+  group_cardinality: 1
+  entity_cardinality: 1

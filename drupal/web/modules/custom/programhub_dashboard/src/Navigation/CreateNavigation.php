@@ -10,8 +10,9 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
-use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupMembership;
+use Drupal\programhub_dashboard\Service\GroupContext;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -23,11 +24,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * structured as:
  *
  *   Create ▾
- *     Graphic & Web Design ▸
- *       + Article
- *       + Award
- *       + Event
- *       …
+ *     CTE ▸                          (division)
+ *       Graphic & Web Design ▸       (program)
+ *         + Article
+ *         + Award
+ *         + Event
+ *         …
  *
  * Each leaf links straight to gnode's `create-form` route, which both
  * creates the node and attaches it to the chosen group in one save.
@@ -73,17 +75,15 @@ final class CreateNavigation implements ContainerInjectionInterface {
    * Build the Create tray render array, or `#access: FALSE` when empty.
    */
   public function build(): array {
-    $items = $this->buildProgramItems();
+    $items = $this->buildGroupItems();
     if (!$items) {
       return ['#access' => FALSE];
     }
 
-    // Gin renders the Create dropdown out of `#menu_top` (separate
-    // region from `#menu_middle` where Content/Programs live), so this
-    // tray uses the top-region theme. Same item shape — `title`, `url`,
-    // `below` — the template handles 3 levels regardless of region.
     return [
-      '#theme' => 'menu_region__middle',
+      // Suggestion array: prefer our 4-level template, fall back to
+      // Gin's 3-level if the module template isn't registered yet.
+      '#theme' => ['menu_region__middle__create', 'menu_region__middle'],
       '#menu_name' => 'create',
       '#title' => $this->t('Create'),
       '#items' => [
@@ -103,42 +103,127 @@ final class CreateNavigation implements ContainerInjectionInterface {
   }
 
   /**
-   * For each program the user belongs to, build a submenu of
-   * createable bundle links.
+   * Top-level entries: one per division (with nested programs), plus
+   * orphan programs (not attached to a division tree).
    */
-  private function buildProgramItems(): array {
+  private function buildGroupItems(): array {
     $memberships = GroupMembership::loadByUser($this->currentUser->getAccount());
     if (!$memberships) {
       return [];
     }
 
-    $seen = [];
-    $items = [];
+    /** @var \Drupal\group\Entity\GroupInterface[] $divisions */
+    $divisions = [];
+    /** @var \Drupal\group\Entity\GroupInterface[] $programs */
+    $programs = [];
     foreach ($memberships as $membership) {
       $group = $membership->getGroup();
-      if (!$group || isset($seen[$group->id()])) {
+      if (!$group) {
         continue;
       }
-      if (!in_array($group->bundle(), [...\Drupal\programhub_dashboard\Service\GroupContext::PROGRAM_GROUP_TYPES, 'division'], TRUE)) {
-        continue;
+      $bundle = $group->bundle();
+      if ($bundle === 'division') {
+        $divisions[(int) $group->id()] = $group;
       }
-      $seen[$group->id()] = TRUE;
+      elseif (in_array($bundle, GroupContext::PROGRAM_GROUP_TYPES, TRUE)) {
+        $programs[(int) $group->id()] = $group;
+      }
+    }
 
-      $bundleLinks = $this->buildBundleLinks($group);
-      if (!$bundleLinks) {
+    $subgroupHandler = $this->etm->getHandler('group', 'subgroup');
+
+    $divisionPrograms = [];
+    $orphanPrograms = [];
+    foreach ($divisions as $gid => $division) {
+      $divisionPrograms[$gid] = [];
+    }
+    foreach ($programs as $program) {
+      if (!$subgroupHandler->isLeaf($program) || $subgroupHandler->isRoot($program)) {
+        $orphanPrograms[] = $program;
         continue;
       }
-      $items[] = [
-        'title' => $group->label(),
-        'url' => Url::fromRoute('entity.group_relationship.group_node_create_page', ['group' => $group->id()]),
-        'attributes' => new Attribute(['class' => ['programhub-create-program']]),
-        'below' => $bundleLinks,
-        '#cache' => ['tags' => ['group:' . $group->id()]],
-      ];
+      $parent = $subgroupHandler->getParent($program);
+      if (!$parent instanceof GroupInterface) {
+        $orphanPrograms[] = $program;
+        continue;
+      }
+      $pid = (int) $parent->id();
+      if (!isset($divisions[$pid])) {
+        $divisions[$pid] = $parent;
+        $divisionPrograms[$pid] = [];
+      }
+      $divisionPrograms[$pid][] = $program;
+    }
+
+    $items = [];
+    foreach ($divisions as $gid => $division) {
+      $entry = $this->divisionItem($division, $divisionPrograms[$gid] ?? []);
+      if ($entry !== NULL) {
+        $items[] = $entry;
+      }
+    }
+    foreach ($orphanPrograms as $program) {
+      $entry = $this->programItem($program);
+      if ($entry !== NULL) {
+        $items[] = $entry;
+      }
     }
 
     usort($items, fn(array $a, array $b) => strnatcasecmp((string) $a['title'], (string) $b['title']));
     return $items;
+  }
+
+  /**
+   * Render a division as a top-level entry. The division's own
+   * createable bundles are inlined into the submenu (no wrapper),
+   * followed by one entry per program. Returns NULL if nothing under
+   * the division is reachable.
+   */
+  private function divisionItem(GroupInterface $division, array $programs): ?array {
+    $bundleLinks = $this->buildBundleLinks($division);
+
+    $programItems = [];
+    foreach ($programs as $program) {
+      $programItem = $this->programItem($program);
+      if ($programItem !== NULL) {
+        $programItems[] = $programItem;
+      }
+    }
+    usort($programItems, fn(array $a, array $b) => strnatcasecmp((string) $a['title'], (string) $b['title']));
+
+    // Bundle "+ X" links first, then programs. Both groups stay in
+    // their own deterministic orders (CREATEABLE_BUNDLES order, then
+    // alphabetical programs).
+    $below = [...$bundleLinks, ...$programItems];
+    if (!$below) {
+      return NULL;
+    }
+
+    return [
+      'title' => $division->label(),
+      'url' => Url::fromRoute('entity.group_relationship.group_node_create_page', ['group' => $division->id()]),
+      'attributes' => new Attribute(['class' => ['programhub-create-division']]),
+      'below' => $below,
+      '#cache' => ['tags' => ['group:' . $division->id()]],
+    ];
+  }
+
+  /**
+   * Render one program with its createable bundle links underneath.
+   * Returns NULL when the user can't create anything in this program.
+   */
+  private function programItem(GroupInterface $program): ?array {
+    $bundleLinks = $this->buildBundleLinks($program);
+    if (!$bundleLinks) {
+      return NULL;
+    }
+    return [
+      'title' => $program->label(),
+      'url' => Url::fromRoute('entity.group_relationship.group_node_create_page', ['group' => $program->id()]),
+      'attributes' => new Attribute(['class' => ['programhub-create-program']]),
+      'below' => $bundleLinks,
+      '#cache' => ['tags' => ['group:' . $program->id()]],
+    ];
   }
 
   /**
@@ -150,7 +235,7 @@ final class CreateNavigation implements ContainerInjectionInterface {
    * doesn't honor those globals for content-plugin perms, so we layer
    * the bypass explicitly.
    */
-  private function buildBundleLinks(\Drupal\group\Entity\GroupInterface $group): array {
+  private function buildBundleLinks(GroupInterface $group): array {
     $isAdmin = $this->currentUser->hasPermission('administer group')
       || $this->currentUser->hasPermission('bypass node access');
 

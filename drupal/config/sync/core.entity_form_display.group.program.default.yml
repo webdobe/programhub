@@ -7,6 +7,10 @@ dependencies:
     - field.field.group.program.field_path
     - field.field.group.program.field_soc_codes
     - field.field.group.program.field_website
+    - field.field.group.program.subgroup_depth
+    - field.field.group.program.subgroup_left
+    - field.field.group.program.subgroup_right
+    - field.field.group.program.subgroup_tree
     - group.type.program
   module:
     - link
@@ -70,4 +74,8 @@ content:
       display_label: true
     third_party_settings: {  }
 hidden:
+  subgroup_depth: true
+  subgroup_left: true
+  subgroup_right: true
+  subgroup_tree: true
   uid: true

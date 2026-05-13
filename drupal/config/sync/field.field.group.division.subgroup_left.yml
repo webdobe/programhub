@@ -1,0 +1,23 @@
+uuid: 2022b0e9-dfc4-43c5-adfb-734de29f66ee
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.subgroup_left
+    - group.type.division
+id: group.division.subgroup_left
+field_name: subgroup_left
+entity_type: group
+bundle: division
+label: Left
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

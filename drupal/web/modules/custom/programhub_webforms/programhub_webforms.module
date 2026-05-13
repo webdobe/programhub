@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * @file
+ * Per-group webform provisioning.
+ *
+ * Whenever a Group is created we clone two canonical templates
+ * (cite_request_info / subscribe) into `{abbr}_request_info` and
+ * `{abbr}_subscribe`, both categorized by the group's abbreviation.
+ * See WebformProvisioner for the cloning logic.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Implements hook_ENTITY_TYPE_insert() for group entities.
+ *
+ * Fires once when a group is first saved. Webform creation is
+ * idempotent so re-saves (e.g. via revisions) are no-ops.
+ */
+function programhub_webforms_group_insert(\Drupal\group\Entity\GroupInterface $group): void {
+  /** @var \Drupal\programhub_webforms\Service\WebformProvisioner $provisioner */
+  $provisioner = \Drupal::service('programhub_webforms.provisioner');
+  $provisioner->provisionForGroup($group);
+}

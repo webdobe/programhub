@@ -1,0 +1,23 @@
+uuid: 5fffcf2f-787a-4f9f-9303-c0fb446c0b6a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.subgroup_left
+    - group.type.program_design
+id: group.program_design.subgroup_left
+field_name: subgroup_left
+entity_type: group
+bundle: program_design
+label: Left
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

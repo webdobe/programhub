@@ -60,51 +60,72 @@ details.horizontal-tabs-pane > .claro-details__summary,
   background: transparent !important;
 }
 
-/* ═══ Tab strip — make it look Gin-native ═════════════════════════ */
+/* ═══ Outer card — visually distinct from Gin's form panel ════════ */
 
+/* The tabs card sits INSIDE Gin's main form panel — both default to
+ * `--gin-bg-layer`, so the inner card melts into the outer one. We
+ * use Gin's `--gin-shadow-l2` (popover elevation) + the harder
+ * `--gin-border-color-layer2` so the card actually reads as elevated
+ * content against the form. */
 .ph-form-tabs {
   margin-block-start: var(--gin-spacing-l);
   border-radius: var(--gin-border-m);
   background: var(--gin-bg-layer);
-  border: var(--gin-border-xs) solid var(--gin-border-color-layer);
+  border: var(--gin-border-xs) solid var(--gin-border-color-layer2);
+  box-shadow: var(--gin-shadow-l2);
 }
 
-.ph-form-tabs .horizontal-tabs-list {
-  display: flex;
-  gap: 0;
-  border-bottom: var(--gin-border-xs) solid var(--gin-border-color-layer);
-  background: var(--gin-bg-layer2);
-  border-radius: var(--gin-border-m) var(--gin-border-m) 0 0;
-  overflow: hidden;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+/* Gin sets `margin-block-start: calc(var(--gin-spacing-m) * -1)` on
+ * `.horizontal-tabs` to pull its child strip up tight against the
+ * parent. With our outer card, that negative margin makes the strip
+ * leak through the card's top border. Zero it out so the strip sits
+ * inside the card cleanly. We let Gin's own CSS handle everything
+ * else about the strip + tab buttons + active indicator — fighting
+ * Gin's `::after` divider + focus-within indicator + overflow hidden
+ * with custom rules was the source of all the layout weirdness. */
+.ph-form-tabs .horizontal-tabs {
+  margin-block-start: 0;
 }
 
-.ph-form-tabs .horizontal-tab-button {
-  padding: 0;
-  margin: 0;
-  background: transparent;
-  border: 0;
+/* Strip top padding — Gin defaults to `.4rem` at ≥48em, but with the
+ * outer card already providing the breathing room above the tabs, the
+ * extra padding pushes the tabs visually off-center. Match Gin's
+ * selector specificity so this override actually wins the cascade. */
+@media (min-width: 48em) {
+  .gin--edit-form .ph-form-tabs .horizontal-tabs ul.horizontal-tabs-list {
+    padding-block-start: 0;
+  }
 }
 
-.ph-form-tabs .horizontal-tab-button a {
-  display: block;
-  padding: var(--gin-spacing-s) var(--gin-spacing-l);
-  font-weight: var(--gin-font-weight-semibold);
-  color: var(--gin-color-text-light);
-  text-decoration: none;
+/* Clicking a tab puts focus on its `<a>`. Three Gin layers paint over
+ * the clicked tab and have to be peeled back:
+ *
+ *   1. `:focus`-state bg (`--gin-bg-item-hover`) — fills the tab.
+ *   2. `:focus-within::after` 4px bar — Gin's old focus indicator.
+ *   3. A GLOBAL focus `box-shadow: 0 0 0 1px …, 0 0 0 4px …` ring
+ *      shipped under a huge `:is(#extra-specificity-hack,
+ *      [data-drupal-admin-styles])` specificity-hack list.
+ *
+ * Matching that hack's specificity precisely turned out fragile in
+ * practice — the cascade kept tipping back to Gin. `!important` on the
+ * three offending properties for mouse clicks is the reliable fix.
+ * Accessibility isn't compromised: keyboard users still see a visible
+ * ring via `:focus-visible` below. */
+.ph-form-tabs .horizontal-tabs ul.horizontal-tabs-list li.horizontal-tab-button a:focus {
+  background: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
-.ph-form-tabs .horizontal-tab-button:hover a {
-  color: var(--gin-color-text);
-  background: var(--gin-bg-layer);
+.ph-form-tabs .horizontal-tabs ul.horizontal-tabs-list .horizontal-tab-button:focus-within::after {
+  display: none;
 }
 
-.ph-form-tabs .horizontal-tab-button.selected a {
-  color: var(--gin-color-primary);
-  background: var(--gin-bg-layer);
-  box-shadow: inset 0 -3px 0 0 var(--gin-color-primary);
+.ph-form-tabs .horizontal-tabs ul.horizontal-tabs-list li.horizontal-tab-button a:focus-visible {
+  outline: 2px solid var(--gin-color-focus, var(--gin-color-primary)) !important;
+  outline-offset: -2px;
+  border-radius: var(--gin-border-s);
+  box-shadow: none !important;
 }
 
 .ph-form-tabs .horizontal-tabs-panes {

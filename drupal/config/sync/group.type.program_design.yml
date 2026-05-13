@@ -1,7 +1,15 @@
 uuid: c03f18e9-346f-4c18-86cc-d5b184a73144
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - subgroup
+third_party_settings:
+  subgroup:
+    depth: 1
+    left: 4
+    right: 5
+    tree: division
 id: program_design
 label: 'Program (design)'
 description: 'Design and visual-arts programs (GDES, future Animation, Web Design). Adds portfolio_show on top of the program baseline.'

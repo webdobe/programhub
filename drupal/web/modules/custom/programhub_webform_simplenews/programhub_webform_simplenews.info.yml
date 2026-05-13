@@ -1,0 +1,9 @@
+name: 'ProgramHub webform → simplenews'
+type: module
+description: 'WebformHandler plugin that subscribes a chosen email element to a chosen simplenews newsletter on submission.'
+core_version_requirement: ^10 || ^11
+package: 'ProgramHub'
+dependencies:
+  - drupal:system
+  - webform:webform
+  - simplenews:simplenews

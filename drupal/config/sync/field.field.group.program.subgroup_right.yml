@@ -1,0 +1,23 @@
+uuid: c2a65fd4-6895-4c19-89d6-76e8b80df7df
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.subgroup_right
+    - group.type.program
+id: group.program.subgroup_right
+field_name: subgroup_right
+entity_type: group
+bundle: program
+label: Right
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

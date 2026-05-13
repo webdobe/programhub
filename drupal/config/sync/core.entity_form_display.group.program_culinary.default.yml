@@ -7,6 +7,10 @@ dependencies:
     - field.field.group.program_culinary.field_path
     - field.field.group.program_culinary.field_soc_codes
     - field.field.group.program_culinary.field_website
+    - field.field.group.program_culinary.subgroup_depth
+    - field.field.group.program_culinary.subgroup_left
+    - field.field.group.program_culinary.subgroup_right
+    - field.field.group.program_culinary.subgroup_tree
     - group.type.program_culinary
   module:
     - link
@@ -70,4 +74,8 @@ content:
       display_label: true
     third_party_settings: {  }
 hidden:
+  subgroup_depth: true
+  subgroup_left: true
+  subgroup_right: true
+  subgroup_tree: true
   uid: true

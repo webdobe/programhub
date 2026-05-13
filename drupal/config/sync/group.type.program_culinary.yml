@@ -1,7 +1,15 @@
 uuid: 0e6ffc98-8357-4be4-a0d7-5e5ad24f6e77
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - subgroup
+third_party_settings:
+  subgroup:
+    depth: 1
+    left: 6
+    right: 7
+    tree: division
 id: program_culinary
 label: 'Program (culinary)'
 description: 'Food-service programs (future CULA). Adds menu + venue on top of the program baseline.'
