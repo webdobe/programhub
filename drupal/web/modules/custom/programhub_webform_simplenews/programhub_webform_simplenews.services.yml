@@ -1,0 +1,7 @@
+services:
+  programhub_webform_simplenews.wiring:
+    class: Drupal\programhub_webform_simplenews\Service\SubscribeHandlerWiring
+    arguments:
+      - '@entity_type.manager'
+      - '@plugin.manager.webform.handler'
+      - '@logger.factory'

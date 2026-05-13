@@ -1,0 +1,23 @@
+uuid: 536c58bb-e056-4115-93cf-34a5b1d3cb65
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: wg5cCxB554rXZx4TIzUACcXRXe-VSodwqcq-_QS4Tv0
+name: 'Graphic & Web Design Newsletter'
+id: gdes_newsletter
+description: 'Subscribers for Graphic & Web Design.'
+format: html
+priority: 0
+receipt: true
+from_name: 'Graphic & Web Design'
+subject: '[node:title]'
+from_address: gdes@nic.edu
+hyperlinks: false
+allowed_handlers:
+  0: '0'
+  simplenews_all: '0'
+new_account: none
+access: default
+reason: ''
+weight: 0

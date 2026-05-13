@@ -1,7 +1,9 @@
 uuid: 114e998a-9c99-4c37-bf83-cb8e17ace493
 langcode: en
 status: open
-dependencies: {  }
+dependencies:
+  module:
+    - programhub_webform_simplenews
 weight: 0
 open: null
 close: null
@@ -202,5 +204,16 @@ access:
     roles: {  }
     users: {  }
     permissions: {  }
-handlers: {  }
+handlers:
+  simplenews_subscribe:
+    id: programhub_simplenews_subscribe
+    handler_id: simplenews_subscribe
+    label: 'Simplenews subscribe'
+    notes: ''
+    status: true
+    conditions: {  }
+    weight: 0
+    settings:
+      email_element: email
+      newsletter_id: cite_newsletter
 variants: {  }

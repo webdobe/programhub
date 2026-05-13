@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Bridges per-group `{abbr}_subscribe` webforms to their matching
+ * `{abbr}_newsletter` simplenews list by auto-attaching a
+ * `programhub_simplenews_subscribe` handler on webform insert.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Implements hook_ENTITY_TYPE_insert() for webform config entities.
+ *
+ * Fires when a new webform is saved. The wiring service inspects the
+ * id, and if it matches the `{abbr}_subscribe` convention, attaches
+ * the simplenews subscribe handler pointed at the corresponding
+ * `{abbr}_newsletter`. No-op on every other webform shape.
+ */
+function programhub_webform_simplenews_webform_insert(\Drupal\webform\WebformInterface $webform): void {
+  /** @var \Drupal\programhub_webform_simplenews\Service\SubscribeHandlerWiring $wiring */
+  $wiring = \Drupal::service('programhub_webform_simplenews.wiring');
+  $wiring->wireForWebform($webform);
+}

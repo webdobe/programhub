@@ -1,0 +1,23 @@
+uuid: f0fc76cd-20da-4cfd-92c5-68e5944ec7c0
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: wg5cCxB554rXZx4TIzUACcXRXe-VSodwqcq-_QS4Tv0
+name: 'Computer Information Technology Newsletter'
+id: cite_newsletter
+description: 'Subscribers for Computer Information Technology.'
+format: html
+priority: 0
+receipt: true
+from_name: 'Computer Information Technology'
+subject: '[node:title]'
+from_address: gdes@nic.edu
+hyperlinks: false
+allowed_handlers:
+  0: '0'
+  simplenews_all: '0'
+new_account: none
+access: default
+reason: ''
+weight: 0

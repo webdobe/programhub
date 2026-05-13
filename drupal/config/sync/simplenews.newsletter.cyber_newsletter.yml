@@ -1,0 +1,23 @@
+uuid: b1d1f583-506e-4b89-b8e5-ba61ac26eabb
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: wg5cCxB554rXZx4TIzUACcXRXe-VSodwqcq-_QS4Tv0
+name: 'Cybersecurity and Networking Newsletter'
+id: cyber_newsletter
+description: 'Subscribers for Cybersecurity and Networking.'
+format: html
+priority: 0
+receipt: true
+from_name: 'Cybersecurity and Networking'
+subject: '[node:title]'
+from_address: gdes@nic.edu
+hyperlinks: false
+allowed_handlers:
+  0: '0'
+  simplenews_all: '0'
+new_account: none
+access: default
+reason: ''
+weight: 0

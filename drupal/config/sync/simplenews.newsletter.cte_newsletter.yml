@@ -1,0 +1,23 @@
+uuid: 4038991b-fb39-49a5-b49f-2711477980af
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: wg5cCxB554rXZx4TIzUACcXRXe-VSodwqcq-_QS4Tv0
+name: 'Career & Technical Education Newsletter'
+id: cte_newsletter
+description: 'Subscribers for Career & Technical Education.'
+format: html
+priority: 0
+receipt: true
+from_name: 'Career & Technical Education'
+subject: '[node:title]'
+from_address: gdes@nic.edu
+hyperlinks: false
+allowed_handlers:
+  0: '0'
+  simplenews_all: '0'
+new_account: none
+access: default
+reason: ''
+weight: 0
