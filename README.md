@@ -116,3 +116,10 @@ in [`drupal/web/modules/custom/programhub_careers/README.md`](drupal/web/modules
 - **JSON:API consumers** — Next.js sites pull from `/jsonapi/...`. Every
   career_outcome / program / course change should propagate via Drupal's
   varnish_purge integration; see `revalidate` callback in the Next sites.
+
+## Latest OG to Groups upgrade
+drush phupgrade
+drush cim -y && drush cr
+drush deploy:hook
+drush pgesync
+drush phcert

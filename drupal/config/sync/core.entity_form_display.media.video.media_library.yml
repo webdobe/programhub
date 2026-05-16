@@ -1,0 +1,27 @@
+uuid: c30ce52c-c2cb-4c3b-b927-dfb81873acbd
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.media.media_library
+    - field.field.media.video.field_media_video_file
+    - media.type.video
+id: media.video.media_library
+targetEntityType: media
+bundle: video
+mode: media_library
+content:
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  field_media_video_file: true
+  path: true
+  status: true
+  uid: true

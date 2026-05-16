@@ -1,0 +1,9 @@
+uuid: 7b3d0a42-2f4c-4e3d-b7a1-3d9e1a5e4f01
+langcode: en
+status: true
+dependencies: {  }
+name: 'Gen Ed Category'
+vid: gen_ed_category
+description: 'Registrar-maintained general-education / institutional categories that a course can fulfill. Used by both: (a) certificate plan-of-study slots that reference a category instead of a specific course ("GEM 3 — Mathematical Ways of Knowing"), and (b) course nodes tagging which categories they fulfill.'
+weight: 0
+new_revision: false

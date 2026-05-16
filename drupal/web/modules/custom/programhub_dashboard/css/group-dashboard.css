@@ -12,6 +12,34 @@
   margin-top: var(--gin-spacing-xl);
 }
 
+/* Header strip — abbreviation chip + visit-website link. Sits above
+ * the cards as a tight one-line replacement for the labeled fields
+ * we hid (field_abbreviation, field_website). */
+.programhub-group-dashboard__header {
+  display: flex;
+  align-items: center;
+  gap: var(--gin-spacing-m);
+  flex-wrap: wrap;
+}
+
+.programhub-group-dashboard__chip {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--gin-spacing-xxs) var(--gin-spacing-s);
+  border-radius: var(--gin-border-m);
+  background: var(--gin-bg-layer);
+  border: var(--gin-border-xs) solid var(--gin-border-color-layer);
+  font-size: var(--gin-font-size-s);
+  font-weight: var(--gin-font-weight-semibold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--gin-color-text-light);
+}
+
+.programhub-group-dashboard__website {
+  font-size: var(--gin-font-size-s);
+}
+
 /* Stats strip — wraps to a grid on narrow viewports. */
 .programhub-group-dashboard__stats {
   display: grid;
@@ -109,9 +137,10 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Tabular sections (careers, subgroups). */
+/* Tabular sections (careers, subgroups, forms). */
 .programhub-group-dashboard__careers,
-.programhub-group-dashboard__subgroups {
+.programhub-group-dashboard__subgroups,
+.programhub-group-dashboard__forms {
   width: 100%;
   border-collapse: collapse;
 }
@@ -119,14 +148,17 @@
 .programhub-group-dashboard__careers th,
 .programhub-group-dashboard__careers td,
 .programhub-group-dashboard__subgroups th,
-.programhub-group-dashboard__subgroups td {
+.programhub-group-dashboard__subgroups td,
+.programhub-group-dashboard__forms th,
+.programhub-group-dashboard__forms td {
   padding: var(--gin-spacing-xs) var(--gin-spacing-s);
   text-align: start;
   border-bottom: var(--gin-border-xs) solid var(--gin-border-color-layer);
 }
 
 .programhub-group-dashboard__careers th,
-.programhub-group-dashboard__subgroups th {
+.programhub-group-dashboard__subgroups th,
+.programhub-group-dashboard__forms th {
   font-weight: var(--gin-font-weight-semibold);
   color: var(--gin-color-text-light);
   font-size: var(--gin-font-size-s);

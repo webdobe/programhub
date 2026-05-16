@@ -13,3 +13,17 @@ services:
       - '@programhub_course_import.importer'
       - '@logger.factory'
       - '@current_user'
+
+  programhub_certificate_import.gen_ed_scraper:
+    class: Drupal\programhub_certificate_import\Service\GenEdScraper
+    arguments:
+      - '@http_client'
+      - '@logger.factory'
+
+  programhub_certificate_import.gen_ed_importer:
+    class: Drupal\programhub_certificate_import\Service\GenEdImporter
+    arguments:
+      - '@entity_type.manager'
+      - '@programhub_certificate_import.gen_ed_scraper'
+      - '@programhub_course_import.importer'
+      - '@logger.factory'

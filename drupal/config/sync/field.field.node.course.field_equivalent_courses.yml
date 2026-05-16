@@ -1,0 +1,28 @@
+uuid: 7b3d0a42-2f4c-4e3d-b7a1-3d9e1a5e4f11
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_equivalent_courses
+    - node.type.course
+id: node.course.field_equivalent_courses
+field_name: field_equivalent_courses
+entity_type: node
+bundle: course
+label: 'Equivalent courses'
+description: 'Other catalog courses accepted as substitutes for this one (e.g. "BOAA-110 or ACCT-201"). Rendered inline wherever this course appears, so editing here propagates to every certificate that lists it.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      course: course
+    sort:
+      field: field_course_number
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

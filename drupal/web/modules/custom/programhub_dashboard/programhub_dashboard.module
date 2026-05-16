@@ -39,6 +39,15 @@ function programhub_dashboard_group_view_alter(array &$build, \Drupal\group\Enti
   if ($display->getMode() !== 'default') {
     return;
   }
+  // Hide the labeled field rows the dashboard re-surfaces in nicer
+  // chrome: abbreviation + website land in the dashboard header, SOC
+  // codes are covered by the Careers card, field_path is an internal
+  // slug. Done in PHP rather than via the view-display YAML so this
+  // doesn't add to the per-cim config churn surface.
+  foreach (['field_abbreviation', 'field_path', 'field_website', 'field_soc_codes'] as $hidden) {
+    unset($build[$hidden]);
+  }
+
   /** @var \Drupal\programhub_dashboard\Group\GroupDashboard $dashboard */
   $dashboard = \Drupal::classResolver(\Drupal\programhub_dashboard\Group\GroupDashboard::class);
   $sections = $dashboard->build($group);

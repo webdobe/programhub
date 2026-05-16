@@ -1,0 +1,53 @@
+{#
+/**
+ * @file
+ * User account view template.
+ *
+ * Renders the configured view-display fields (photo, bio, member_for, roles)
+ * plus three preprocess-built sections:
+ *   - authored_content     keyed by bundle (projects, articles, spotlights)
+ *   - authored_profiles    profile entities owned by this user
+ *   - group_memberships    groups + role labels
+ *
+ * Each preprocess-built var is NULL when empty, so the truthy `{% if %}`
+ * guard suppresses the section heading + wrapper entirely.
+ */
+#}
+<article{{ attributes.addClass(['ph-node', 'ph-node--user']) }}>
+  {% if content.field_photo|render %}
+    <div class="ph-node__hero">{{ content.field_photo }}</div>
+  {% endif %}
+
+  <div class="ph-node__layout">
+    <div class="ph-node__main">
+      {% if content.field_bio|render %}
+        <div class="ph-node__body">{{ content.field_bio }}</div>
+      {% endif %}
+
+      {% if authored_content %}
+        <section class="ph-node__section ph-user__authored-content">
+          <h2 class="ph-node__section-heading">{{ 'Content'|t }}</h2>
+          {% for section in authored_content %}
+            {{ section }}
+          {% endfor %}
+        </section>
+      {% endif %}
+
+      {% if authored_profiles %}
+        <section class="ph-node__section">
+          {{ authored_profiles }}
+        </section>
+      {% endif %}
+    </div>
+
+    <aside class="ph-node__sidebar">
+      <div class="ph-node__meta">
+        {{ content.member_for }}
+        {{ content.roles }}
+        {% if group_memberships %}
+          {{ group_memberships }}
+        {% endif %}
+      </div>
+    </aside>
+  </div>
+</article>

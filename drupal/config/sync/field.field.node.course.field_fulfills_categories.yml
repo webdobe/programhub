@@ -1,0 +1,29 @@
+uuid: 7b3d0a42-2f4c-4e3d-b7a1-3d9e1a5e4f13
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_fulfills_categories
+    - node.type.course
+    - taxonomy.vocabulary.gen_ed_category
+id: node.course.field_fulfills_categories
+field_name: field_fulfills_categories
+entity_type: node
+bundle: course
+label: 'Fulfills categories'
+description: 'Gen-ed / institutional categories this course satisfies (e.g. GEM 3). A certificate slot tagged with the same category will treat this course as eligible.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      gen_ed_category: gen_ed_category
+    sort:
+      field: name
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -5,12 +5,11 @@ dependencies:
   config:
     - field.field.node.student_spotlight.field_description
     - field.field.node.student_spotlight.field_graduate
-    - field.field.node.student_spotlight.field_main_image
+    - field.field.node.student_spotlight.field_featured_media
     - field.field.node.student_spotlight.field_path
     - field.field.node.student_spotlight.field_quote
     - node.type.student_spotlight
   module:
-    - image
     - text
     - user
 id: node.student_spotlight.default
@@ -30,6 +29,15 @@ content:
     third_party_settings: {  }
     weight: 3
     region: content
+  field_featured_media:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 4
+    region: content
   field_graduate:
     type: entity_reference_label
     label: above
@@ -37,17 +45,6 @@ content:
       link: true
     third_party_settings: {  }
     weight: 0
-    region: content
-  field_main_image:
-    type: image
-    label: hidden
-    settings:
-      image_link: ''
-      image_style: ''
-      image_loading:
-        attribute: lazy
-    third_party_settings: {  }
-    weight: 4
     region: content
   field_quote:
     type: basic_string
@@ -62,4 +59,5 @@ content:
     weight: 100
     region: content
 hidden:
+  field_main_image: true
   field_path: true

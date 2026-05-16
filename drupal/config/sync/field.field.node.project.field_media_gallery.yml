@@ -1,0 +1,33 @@
+uuid: 5a1c8e30-9f2b-4d1a-b6f4-1c7e9a3d2f23
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_media_gallery
+    - media.type.image
+    - media.type.remote_video
+    - media.type.video
+    - node.type.project
+id: node.project.field_media_gallery
+field_name: field_media_gallery
+entity_type: node
+bundle: project
+label: 'Media Gallery'
+description: 'Additional project images — process shots, mockups, detail views.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      image: image
+      remote_video: remote_video
+      video: video
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: image
+field_type: entity_reference

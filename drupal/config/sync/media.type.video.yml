@@ -1,0 +1,13 @@
+uuid: c651bfbb-7f2d-464c-a6b6-236f3bba40ac
+langcode: en
+status: true
+dependencies: {  }
+id: video
+label: Video
+description: ''
+source: video_file
+queue_thumbnail_downloads: false
+new_revision: false
+source_configuration:
+  source_field: field_media_video_file
+field_map: {  }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\programhub_dashboard\Group;
 
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
@@ -59,6 +60,7 @@ final class GroupDashboard implements ContainerInjectionInterface {
     private readonly EntityTypeManagerInterface $etm,
     private readonly GroupContext $groupContext,
     private readonly DateFormatterInterface $dateFormatter,
+    private readonly TimeInterface $time,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -67,6 +69,7 @@ final class GroupDashboard implements ContainerInjectionInterface {
       $container->get('entity_type.manager'),
       $container->get('programhub_dashboard.group_context'),
       $container->get('date.formatter'),
+      $container->get('datetime.time'),
     );
   }
 
@@ -85,6 +88,8 @@ final class GroupDashboard implements ContainerInjectionInterface {
 
     $sections = [];
 
+    $sections['header'] = $this->headerStrip($group);
+
     if ($surfaced) {
       $sections['stats'] = $this->statsCard($group, $surfaced);
       $sections['latest'] = $this->latestCard($group, $surfaced);
@@ -93,6 +98,8 @@ final class GroupDashboard implements ContainerInjectionInterface {
     if (isset($enabledBundles['career_outcome'])) {
       $sections['careers'] = $this->careersCard($group);
     }
+
+    $sections['forms'] = $this->formsCard($group);
 
     if ($bundle === 'division') {
       $sections['subgroups'] = $this->subgroupsCard($group);
@@ -131,6 +138,38 @@ final class GroupDashboard implements ContainerInjectionInterface {
     return $out;
   }
 
+  /**
+   * Compact strip above the cards: abbreviation chip + website link.
+   * Reskins the two pieces of info we just hid from the default field
+   * display so the page header still tells you what program you're
+   * looking at, without the labeled-row noise.
+   */
+  private function headerStrip(GroupInterface $group): array {
+    $abbr = NULL;
+    if ($group->hasField('field_abbreviation') && !$group->get('field_abbreviation')->isEmpty()) {
+      $abbr = (string) $group->get('field_abbreviation')->value;
+    }
+    $websiteUrl = NULL;
+    if ($group->hasField('field_website') && !$group->get('field_website')->isEmpty()) {
+      $websiteUrl = (string) $group->get('field_website')->first()->getUrl()->toString();
+    }
+
+    if ($abbr === NULL && $websiteUrl === NULL) {
+      return [];
+    }
+
+    return [
+      '#type' => 'inline_template',
+      '#template' => '
+        <div class="programhub-group-dashboard__header">
+          {% if abbr %}<span class="programhub-group-dashboard__chip">{{ abbr }}</span>{% endif %}
+          {% if website %}<a class="programhub-group-dashboard__website" href="{{ website }}" target="_blank" rel="noopener">{{ "Visit website ↗"|t }}</a>{% endif %}
+        </div>
+      ',
+      '#context' => ['abbr' => $abbr, 'website' => $websiteUrl],
+    ];
+  }
+
   private function statsCard(GroupInterface $group, array $surfaced): array {
     $gid = (int) $group->id();
     $items = [];
@@ -142,6 +181,37 @@ final class GroupDashboard implements ContainerInjectionInterface {
           'query' => ['type' => $bundle],
         ])->toString(),
       ];
+    }
+
+    // Per-group forms + newsletter tiles, appended to the same strip
+    // so admins see content + funnel metrics side-by-side. Each tile
+    // is only rendered when the underlying entity actually exists,
+    // so a partially-provisioned group doesn't show empty "0" tiles
+    // that imply something is missing.
+    $abbr = $this->groupAbbreviation($group);
+    if ($abbr !== NULL) {
+      foreach (['request_info' => 'Info requests', 'subscribe' => 'Subscribe submissions'] as $suffix => $label) {
+        $webformId = $abbr . '_' . $suffix;
+        if (!$this->etm->getStorage('webform')->load($webformId)) {
+          continue;
+        }
+        $items[] = [
+          'label' => $this->t($label),
+          'count' => $this->countWebformSubmissions($webformId),
+          'url' => Url::fromRoute('entity.webform.results_submissions', ['webform' => $webformId])->toString(),
+        ];
+      }
+
+      $newsletterId = $abbr . '_newsletter';
+      if ($this->etm->getStorage('simplenews_newsletter')->load($newsletterId)) {
+        $items[] = [
+          'label' => $this->t('Subscribers'),
+          'count' => $this->countActiveSubscribers($newsletterId),
+          'url' => Url::fromRoute('view.simplenews_subscribers.page_1', [], [
+            'query' => ['subscriptions_target_id' => $newsletterId],
+          ])->toString(),
+        ];
+      }
     }
 
     return $this->card($this->t('At a glance'), [
@@ -268,6 +338,91 @@ final class GroupDashboard implements ContainerInjectionInterface {
     ]);
   }
 
+  /**
+   * Submission counts for the per-group `{abbr}_request_info` /
+   * `{abbr}_subscribe` webforms, plus active subscribers on the
+   * matching `{abbr}_newsletter`. Skips silently if the group has
+   * no abbreviation or none of the expected entities exist —
+   * brand-new groups won't show this section until provisioning
+   * runs.
+   */
+  private function formsCard(GroupInterface $group): array {
+    $abbr = $this->groupAbbreviation($group);
+    if ($abbr === NULL) {
+      return [];
+    }
+    $rows = [];
+
+    foreach (['request_info', 'subscribe'] as $suffix) {
+      $webformId = $abbr . '_' . $suffix;
+      $webform = $this->etm->getStorage('webform')->load($webformId);
+      if (!$webform) {
+        continue;
+      }
+      $rows[] = [
+        'kind' => 'webform',
+        'label' => $webform->label(),
+        'url' => Url::fromRoute('entity.webform.results_submissions', ['webform' => $webformId])->toString(),
+        'total' => $this->countWebformSubmissions($webformId),
+        'recent' => $this->countWebformSubmissions($webformId, 30),
+      ];
+    }
+
+    $newsletterId = $abbr . '_newsletter';
+    $newsletter = $this->etm->getStorage('simplenews_newsletter')->load($newsletterId);
+    if ($newsletter) {
+      $rows[] = [
+        'kind' => 'newsletter',
+        'label' => $this->t('@name (subscribers)', ['@name' => $newsletter->label()]),
+        // Newsletter admin doesn't have a per-list subscribers route;
+        // link to the subscriber listing filtered by this newsletter.
+        'url' => Url::fromRoute('view.simplenews_subscribers.page_1', [], [
+          'query' => ['subscriptions_target_id' => $newsletterId],
+        ])->toString(),
+        'total' => $this->countActiveSubscribers($newsletterId),
+        'recent' => $this->countActiveSubscribers($newsletterId, 30),
+      ];
+    }
+
+    if (!$rows) {
+      return [];
+    }
+
+    return $this->card($this->t('Forms & subscribers'), [
+      '#type' => 'inline_template',
+      '#template' => '
+        <table class="programhub-group-dashboard__forms">
+          <thead>
+            <tr>
+              <th>{{ "Form / list"|t }}</th>
+              <th class="programhub-group-dashboard__numeric">{{ "Total"|t }}</th>
+              <th class="programhub-group-dashboard__numeric">{{ "Last 30 days"|t }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in rows %}
+              <tr>
+                <td><a href="{{ row.url }}">{{ row.label }}</a></td>
+                <td class="programhub-group-dashboard__numeric">{{ row.total }}</td>
+                <td class="programhub-group-dashboard__numeric">{{ row.recent }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      ',
+      '#context' => ['rows' => $rows],
+      '#cache' => [
+        'tags' => [
+          'config:webform.webform.' . $abbr . '_request_info',
+          'config:webform.webform.' . $abbr . '_subscribe',
+          'config:simplenews.newsletter.' . $abbr . '_newsletter',
+          'webform_submission_list',
+          'simplenews_subscriber_list',
+        ],
+      ],
+    ]);
+  }
+
   private function subgroupsCard(GroupInterface $division): array {
     $subgroupHandler = $this->etm->getHandler('group', 'subgroup');
     if (!$subgroupHandler->isLeaf($division)) {
@@ -386,6 +541,53 @@ final class GroupDashboard implements ContainerInjectionInterface {
     }
     $value = (int) $node->get($field)->value;
     return '$' . number_format($value);
+  }
+
+  /**
+   * Submission count for a webform, optionally bounded to the last N
+   * days. Counts only completed (non-draft) submissions.
+   */
+  private function countWebformSubmissions(string $webformId, ?int $sinceDays = NULL): int {
+    $q = $this->db->select('webform_submission', 'ws')
+      ->condition('ws.webform_id', $webformId)
+      ->condition('ws.in_draft', 0);
+    if ($sinceDays !== NULL) {
+      $q->condition('ws.created', $this->time->getRequestTime() - ($sinceDays * 86400), '>=');
+    }
+    return (int) $q->countQuery()->execute()->fetchField();
+  }
+
+  /**
+   * Active (status = 1) subscriber count for a simplenews newsletter,
+   * optionally bounded to subscribers created in the last N days.
+   * Joins the subscriptions field-data table to the subscriber base
+   * table so we filter by status without loading every row.
+   */
+  private function countActiveSubscribers(string $newsletterId, ?int $sinceDays = NULL): int {
+    $q = $this->db->select('simplenews_subscriber__subscriptions', 'subs');
+    $q->join('simplenews_subscriber', 's', 's.id = subs.entity_id');
+    $q->condition('subs.subscriptions_target_id', $newsletterId)
+      ->condition('s.status', 1);
+    if ($sinceDays !== NULL) {
+      $q->condition('s.created', $this->time->getRequestTime() - ($sinceDays * 86400), '>=');
+    }
+    return (int) $q->countQuery()->execute()->fetchField();
+  }
+
+  /**
+   * Lowercase, slugified `field_abbreviation` for the group, or NULL
+   * when the field is empty. Matches the slug rules used by the
+   * provisioners (programhub_webforms / programhub_newsletters) so
+   * the ids line up.
+   */
+  private function groupAbbreviation(GroupInterface $group): ?string {
+    if (!$group->hasField('field_abbreviation') || $group->get('field_abbreviation')->isEmpty()) {
+      return NULL;
+    }
+    $raw = (string) $group->get('field_abbreviation')->value;
+    $slug = strtolower(preg_replace('/[^a-z0-9]+/i', '_', $raw) ?? '');
+    $slug = trim($slug, '_');
+    return $slug === '' ? NULL : $slug;
   }
 
   private function payRange(NodeInterface $node): string {

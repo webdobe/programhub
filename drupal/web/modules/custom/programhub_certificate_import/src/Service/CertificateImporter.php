@@ -44,6 +44,8 @@ final class CertificateImporter {
    *   typeAbbr:?string,
    *   coursesResolved:int,
    *   coursesMissing:array<int,string>,
+   *   categoriesResolved:int,
+   *   categoriesMissing:array<int,string>,
    *   spidered:int,
    *   paragraphsBuilt:int,
    *   errors:array<int,string>,
@@ -61,6 +63,8 @@ final class CertificateImporter {
       'typeAbbr' => NULL,
       'coursesResolved' => 0,
       'coursesMissing' => [],
+      'categoriesResolved' => 0,
+      'categoriesMissing' => [],
       'spidered' => 0,
       'paragraphsBuilt' => 0,
       'errors' => [],
@@ -89,28 +93,62 @@ final class CertificateImporter {
     $result['typeAbbr'] = $scraped['typeAbbr'];
 
     // ---- Resolve course nodes (spidering missing ones) -----------------------
-    $numbers = array_values(array_unique(array_map(
+    // Only resolve rows that actually reference a course code. Category-only
+    // rows (`number === NULL`) skip the spider entirely.
+    $numbers = array_values(array_unique(array_filter(array_map(
       static fn(array $c) => $c['number'],
       $scraped['courses'],
-    )));
+    ))));
 
     $resolution = $this->courseImporter->ensureCoursesByNumbers($numbers);
     $result['spidered'] = $resolution['spidered'];
     $result['coursesMissing'] = $resolution['missing'];
 
-    // ---- Compute new paragraph plan (course node id + semester + credits) ---
-    /** @var array<int, array{nodeId:int, semester:?int, credits:string}> $plan */
+    // Pre-resolve category labels → taxonomy term ids. Unknown labels stay
+    // null and get reported back so editors can seed missing terms once.
+    $categoryLabels = array_values(array_unique(array_filter(array_map(
+      static fn(array $c) => $c['categoryLabel'] ?? NULL,
+      $scraped['courses'],
+    ))));
+    $categoryTids = $this->resolveCategoryLabels($categoryLabels);
+    foreach ($categoryLabels as $label) {
+      if (!isset($categoryTids[$label])) {
+        $result['categoriesMissing'][] = $label;
+      }
+    }
+
+    // ---- Compute new paragraph plan ------------------------------------------
+    // Each plan entry mirrors one row in the catalog. Either `nodeId` is set
+    // (course row) or `categoryTid` is set (category placeholder). Both
+    // course and category rows can carry an alternativeNote (course-only in
+    // practice, but the schema is symmetric).
+    /** @var array<int, array{nodeId:int, categoryTid:int, semester:?int, credits:string, altNote:string}> $plan */
     $plan = [];
     foreach ($scraped['courses'] as $row) {
-      $node = $resolution['nodes'][$row['number']] ?? NULL;
-      if ($node === NULL) {
+      $nodeId = 0;
+      $categoryTid = 0;
+      if ($row['number'] !== NULL) {
+        $node = $resolution['nodes'][$row['number']] ?? NULL;
+        if ($node === NULL) {
+          continue;
+        }
+        $nodeId = (int) $node->id();
+        $result['coursesResolved']++;
+      }
+      elseif ($row['categoryLabel'] !== NULL && isset($categoryTids[$row['categoryLabel']])) {
+        $categoryTid = $categoryTids[$row['categoryLabel']];
+        $result['categoriesResolved']++;
+      }
+      else {
+        // Unresolved row — neither a known course nor a known category.
         continue;
       }
-      $result['coursesResolved']++;
       $plan[] = [
-        'nodeId' => (int) $node->id(),
+        'nodeId' => $nodeId,
+        'categoryTid' => $categoryTid,
         'semester' => $row['semester'] !== NULL ? (int) $row['semester'] : NULL,
         'credits' => (string) ($row['credits'] ?? ''),
+        'altNote' => (string) ($row['alternativeNote'] ?? ''),
       ];
     }
     $result['paragraphsBuilt'] = count($plan);
@@ -119,12 +157,16 @@ final class CertificateImporter {
     $currentPlan = [];
     foreach ($certificate->get('field_courses')->referencedEntities() as $existing) {
       $courseRef = $existing->get('field_course')->target_id;
+      $categoryRef = $existing->hasField('field_category') ? $existing->get('field_category')->target_id : NULL;
       $sem = $existing->get('field_semester')->value;
       $credits = $existing->hasField('field_credits') ? (string) ($existing->get('field_credits')->value ?? '') : '';
+      $altNote = $existing->hasField('field_alternative_note') ? (string) ($existing->get('field_alternative_note')->value ?? '') : '';
       $currentPlan[] = [
         'nodeId' => $courseRef !== NULL ? (int) $courseRef : 0,
+        'categoryTid' => $categoryRef !== NULL ? (int) $categoryRef : 0,
         'semester' => $sem !== NULL ? (int) $sem : NULL,
         'credits' => $credits,
+        'altNote' => $altNote,
       ];
     }
     $paragraphsChanged = $currentPlan !== $plan;
@@ -192,9 +234,11 @@ final class CertificateImporter {
       foreach ($plan as $entry) {
         $paragraph = Paragraph::create([
           'type' => 'certificate_course',
-          'field_course' => ['target_id' => $entry['nodeId']],
+          'field_course' => $entry['nodeId'] !== 0 ? ['target_id' => $entry['nodeId']] : NULL,
+          'field_category' => $entry['categoryTid'] !== 0 ? ['target_id' => $entry['categoryTid']] : NULL,
           'field_semester' => $entry['semester'],
           'field_credits' => $entry['credits'] !== '' ? $entry['credits'] : NULL,
+          'field_alternative_note' => $entry['altNote'] !== '' ? $entry['altNote'] : NULL,
         ]);
         $paragraph->save();
         $newParagraphRefs[] = [
@@ -224,6 +268,32 @@ final class CertificateImporter {
     );
 
     return $result;
+  }
+
+  /**
+   * Resolve gen_ed_category term ids by exact name in a single batched query.
+   *
+   * Editors seed the vocabulary (the deploy hook ships GEM 1-6); unknown
+   * labels are silently omitted from the returned map so the caller can
+   * report them as missing without aborting the whole import.
+   *
+   * @param array<int,string> $labels
+   * @return array<string,int>  label → tid for every label that resolved
+   */
+  private function resolveCategoryLabels(array $labels): array {
+    if (!$labels) {
+      return [];
+    }
+    $storage = $this->entityTypeManager->getStorage('taxonomy_term');
+    $terms = $storage->loadByProperties([
+      'vid' => 'gen_ed_category',
+      'name' => $labels,
+    ]);
+    $map = [];
+    foreach ($terms as $term) {
+      $map[$term->label()] = (int) $term->id();
+    }
+    return $map;
   }
 
   /**

@@ -12,6 +12,8 @@ dependencies:
     - field.field.node.course.field_course_semester
     - field.field.node.course.field_course_year_cycle
     - field.field.node.course.field_description
+    - field.field.node.course.field_equivalent_courses
+    - field.field.node.course.field_fulfills_categories
     - field.field.node.course.field_path
     - node.type.course
   module:
@@ -92,6 +94,22 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 102
+    region: content
+  field_equivalent_courses:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 111
+    region: content
+  field_fulfills_categories:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: false
+    third_party_settings: {  }
+    weight: 112
     region: content
   links:
     settings: {  }

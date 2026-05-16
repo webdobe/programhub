@@ -6,21 +6,20 @@ dependencies:
     - field.field.node.project.field_course
     - field.field.node.project.field_description
     - field.field.node.project.field_graduate
-    - field.field.node.project.field_main_image
+    - field.field.node.project.field_featured_media
+    - field.field.node.project.field_media_gallery
     - field.field.node.project.field_path
     - field.field.node.project.field_process
     - field.field.node.project.field_project_category
-    - field.field.node.project.field_project_gallery
     - field.field.node.project.field_project_tags
     - field.field.node.project.field_project_url
-    - image.style.thumbnail
     - node.type.project
     - workflows.workflow.community_content
   module:
     - content_moderation
     - field_group
-    - image
     - link
+    - media_library
     - paragraphs
     - path
     - text
@@ -89,8 +88,8 @@ third_party_settings:
         required_fields: false
     group_visuals_row:
       children:
-        - field_main_image
-        - field_project_gallery
+        - field_featured_media
+        - field_media_gallery
       label: ''
       region: content
       parent_name: group_visuals
@@ -167,6 +166,13 @@ content:
       rows: 10
       placeholder: ''
     third_party_settings: {  }
+  field_featured_media:
+    type: media_library_widget
+    weight: 0
+    region: content
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
   field_graduate:
     type: entity_reference_autocomplete
     weight: 0
@@ -177,13 +183,12 @@ content:
       size: 60
       placeholder: 'Start typing a name…'
     third_party_settings: {  }
-  field_main_image:
-    type: image_image
-    weight: 0
+  field_media_gallery:
+    type: media_library_widget
+    weight: 1
     region: content
     settings:
-      progress_indicator: throbber
-      preview_image_style: thumbnail
+      media_types: {  }
     third_party_settings: {  }
   field_process:
     type: paragraphs
@@ -209,14 +214,6 @@ content:
     weight: 0
     region: content
     settings: {  }
-    third_party_settings: {  }
-  field_project_gallery:
-    type: image_image
-    weight: 1
-    region: content
-    settings:
-      progress_indicator: throbber
-      preview_image_style: thumbnail
     third_party_settings: {  }
   field_project_tags:
     type: entity_reference_autocomplete_tags
@@ -288,4 +285,6 @@ content:
       placeholder: ''
     third_party_settings: {  }
 hidden:
+  field_main_image: true
   field_path: true
+  field_project_gallery: true

@@ -459,6 +459,54 @@ function programhub_certificate_import_deploy_06_rebuild_certificate_aliases(arr
 }
 
 /**
+ * Seed the GEM 1-6 gen_ed_category taxonomy terms.
+ *
+ * These are the NIC general-education institutional categories ("Ways of
+ * Knowing") referenced from AAS/AS catalog plan-grids as category-slot
+ * requirements (e.g. "GEM 3 — Mathematical Ways of Knowing"). Certificate
+ * paragraphs that import as category-only rows reference one of these terms
+ * via `field_category`; courses that fulfill a category tag it via
+ * `field_fulfills_categories` on the course node.
+ *
+ * Idempotent: skips any term whose name already exists in the vocabulary.
+ * Editors can add their own categories (institution-specific designations,
+ * GEM 7+ if NIC ever adds one) without this hook clobbering them.
+ */
+function programhub_certificate_import_deploy_10_seed_gen_ed_categories(array &$sandbox): string {
+  $seed = [
+    'GEM 1' => 'Written Communication',
+    'GEM 2' => 'Oral Communication',
+    'GEM 3' => 'Mathematical Ways of Knowing',
+    'GEM 4' => 'Scientific Ways of Knowing',
+    'GEM 5' => 'Humanistic and Artistic Ways of Knowing',
+    'GEM 6' => 'Social and Behavioral Ways of Knowing',
+  ];
+
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+  $created = 0;
+  foreach ($seed as $name => $description) {
+    $existing = $storage->loadByProperties([
+      'vid' => 'gen_ed_category',
+      'name' => $name,
+    ]);
+    if ($existing) {
+      continue;
+    }
+    $term = Term::create([
+      'vid' => 'gen_ed_category',
+      'name' => $name,
+      'description' => [
+        'value' => $description,
+        'format' => 'plain_text',
+      ],
+    ]);
+    $term->save();
+    $created++;
+  }
+  return sprintf('Gen-ed categories seeded — created: %d, total in seed: %d.', $created, count($seed));
+}
+
+/**
  * Resolve a program Group entity by its field_abbreviation. Searches
  * every program subtype (program, program_design, program_culinary, …)
  * so retyping a base `program` to a specialized variant doesn't break

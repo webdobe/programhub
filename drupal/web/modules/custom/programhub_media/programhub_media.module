@@ -1,0 +1,12 @@
+<?php
+
+/**
+ * @file
+ * ProgramHub Media module.
+ *
+ * Migration shim from image fields to media reference fields. The work lives
+ * in programhub_media.deploy.php; this file exists so Drupal recognizes the
+ * module.
+ */
+
+declare(strict_types=1);

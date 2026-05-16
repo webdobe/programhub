@@ -1,0 +1,20 @@
+uuid: 8c1d4f02-9a3b-4d1e-b6f5-1c7e9a3d2f70
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_pay_hourly_low
+field_name: field_pay_hourly_low
+entity_type: node
+type: decimal
+settings:
+  precision: 6
+  scale: 2
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -11,8 +11,8 @@ field_name: field_course
 entity_type: paragraph
 bundle: certificate_course
 label: Course
-description: ''
-required: true
+description: 'The catalog course this row represents. Leave blank only when the row is a category placeholder (set Category instead).'
+required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''

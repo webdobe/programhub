@@ -28,13 +28,31 @@ final class CertificateScraper {
   /**
    * Fetch and parse the certificate page at $url.
    *
+   * Each row in `courses` is a single requirement slot. Exactly one of
+   * `number` / `categoryLabel` is set per row:
+   *
+   *   - `number` set, `categoryLabel` null:
+   *       a normal course requirement (e.g. "BOAA-110").
+   *       `alternativeNote` may carry inline "or X" text the catalog mentions
+   *       without a course code.
+   *
+   *   - `number` null, `categoryLabel` set:
+   *       a category placeholder ("GEM 3 — Mathematical Ways of Knowing").
+   *       The importer resolves this to a `gen_ed_category` taxonomy term.
+   *
    * @return array{
    *   title:string,
    *   typeAbbr:?string,
    *   overview:string,
    *   outcomesHtml:string,
    *   totalCredits:?int,
-   *   courses:array<int, array{number:string, semester:?int, credits:string}>,
+   *   courses:array<int, array{
+   *     number:?string,
+   *     semester:?int,
+   *     credits:string,
+   *     alternativeNote:?string,
+   *     categoryLabel:?string,
+   *   }>,
    * }|null
    *   NULL if fetch failed or page didn't look like a program-guidelines page.
    */
@@ -204,12 +222,34 @@ final class CertificateScraper {
   }
 
   /**
-   * Walk the Plan of Study table, capturing course rows under their semester
-   * heading and the trailing "Total Credits / Total Hours" row if present.
+   * Walk the requirements table, capturing course rows and the trailing
+   * "Total Credits / Total Hours" row if present.
+   *
+   * Two table layouts in the wild:
+   *
+   *  - `sc_plangrid` — degree programs (AAS, AS): rows are grouped by
+   *    `tr.plangridterm` semester headers, last row is `tr.plangridtotal`.
+   *  - `sc_courselist` — basic/intermediate/advanced technical certificates
+   *    (BTC/ITC/ATC): flat list, no semester groupings, total row is
+   *    `tr.listsum`.
+   *
+   * We try plangrid first, then fall back to courselist when none found.
+   * No semester is reported for courselist rows.
    *
    * @return array{0: array<int, array{number:string, semester:?int, credits:string}>, 1: ?int}
    */
   private function parseRequirements(\DOMXPath $xpath): array {
+    [$courses, $totalCredits] = $this->parsePlangrid($xpath);
+    if (!$courses) {
+      [$courses, $totalCredits] = $this->parseCourselist($xpath);
+    }
+    return [$courses, $totalCredits];
+  }
+
+  /**
+   * @return array{0: array<int, array{number:?string, semester:?int, credits:string, alternativeNote:?string, categoryLabel:?string}>, 1: ?int}
+   */
+  private function parsePlangrid(\DOMXPath $xpath): array {
     $courses = [];
     $totalCredits = NULL;
 
@@ -248,10 +288,27 @@ final class CertificateScraper {
       // row supplied the credits in $pendingCredits.
       $rowCredits = $this->extractRowCredits($xpath, $tr);
 
-      // "Select one of the following:" rows have no anchor but DO have credits
-      // (e.g. "3-5"). Stash the value so the next indented option-row uses it.
+      // Comment row: either "Select one of the following:" (no anchor, has
+      // credits to pass to the next indented row) or a category placeholder
+      // like "GEM 3 - Mathematical Ways of Knowing" (carries a category label
+      // and its own credits). Distinguishable by the comment text shape.
       $isCommentRow = $xpath->query(".//span[contains(concat(' ', normalize-space(@class), ' '), ' comment ')]", $tr)->length > 0;
       if ($isCommentRow) {
+        $commentText = $this->cleanText($tr->textContent ?? '');
+        $categoryLabel = $this->extractCategoryLabel($commentText);
+        if ($categoryLabel !== NULL) {
+          // First-class category requirement — emit a row with no course code.
+          $courses[] = [
+            'number' => NULL,
+            'semester' => $currentSemester,
+            'credits' => $rowCredits !== '' ? $rowCredits : $pendingCredits,
+            'alternativeNote' => NULL,
+            'categoryLabel' => $categoryLabel,
+          ];
+          $pendingCredits = '';
+          continue;
+        }
+        // Plain "Select one of the following:" — stash credits for next row.
         if ($rowCredits !== '') {
           $pendingCredits = $rowCredits;
         }
@@ -260,6 +317,7 @@ final class CertificateScraper {
 
       // Pull every course-number anchor found in this row.
       $anchors = $xpath->query('.//a', $tr);
+      $alternativeNote = $this->extractInlineAlternativeNote($xpath, $tr);
       $foundAnchorInRow = FALSE;
       foreach ($anchors as $a) {
         $text = trim($a->textContent ?? '');
@@ -276,7 +334,12 @@ final class CertificateScraper {
             'number' => $number,
             'semester' => $currentSemester,
             'credits' => $credits,
+            // Only attach to the first anchor in the row — subsequent anchors
+            // (rare) get the same note via their own row, not this one.
+            'alternativeNote' => $alternativeNote,
+            'categoryLabel' => NULL,
           ];
+          $alternativeNote = NULL;
         }
       }
 
@@ -288,6 +351,113 @@ final class CertificateScraper {
     }
 
     return [$courses, $totalCredits];
+  }
+
+  /**
+   * Flat-list course table (`sc_courselist`) used by BTC/ITC/ATC certs.
+   *
+   * Each `<tbody><tr>` is either:
+   *   - a course row: `td.codecol > a` carries "BLDR-132", `td.hourscol` the
+   *     credits, middle `<td>` the title (ignored — we keep the course node
+   *     as the source of truth for titles)
+   *   - a totals row (`tr.listsum`): `td.hourscol` holds the total
+   *
+   * @return array{0: array<int, array{number:?string, semester:?int, credits:string, alternativeNote:?string, categoryLabel:?string}>, 1: ?int}
+   */
+  private function parseCourselist(\DOMXPath $xpath): array {
+    $courses = [];
+    $totalCredits = NULL;
+
+    $rows = $xpath->query("//table[contains(concat(' ', normalize-space(@class), ' '), ' sc_courselist ')]/tbody/tr");
+    if ($rows === FALSE || $rows->length === 0) {
+      return [$courses, $totalCredits];
+    }
+
+    $seen = [];
+    foreach ($rows as $tr) {
+      $classAttr = $tr instanceof \DOMElement ? $tr->getAttribute('class') : '';
+
+      if (str_contains(' ' . $classAttr . ' ', ' listsum ')) {
+        $maybe = $this->parseTotalCredits($tr->textContent ?? '');
+        if ($maybe !== NULL) {
+          $totalCredits = $maybe;
+        }
+        continue;
+      }
+
+      $rowCredits = $this->extractRowCredits($xpath, $tr);
+      $alternativeNote = $this->extractInlineAlternativeNote($xpath, $tr);
+      $anchors = $xpath->query(".//td[contains(concat(' ', normalize-space(@class), ' '), ' codecol ')]//a", $tr);
+      foreach ($anchors as $a) {
+        $text = trim($a->textContent ?? '');
+        if (!preg_match('/^([A-Z]{2,5})[- ](\d+[A-Z]?)$/u', $text, $m)) {
+          continue;
+        }
+        $number = strtoupper($m[1]) . '-' . $m[2];
+        if (isset($seen[$number])) {
+          continue;
+        }
+        $seen[$number] = TRUE;
+        $courses[] = [
+          'number' => $number,
+          'semester' => NULL,
+          'credits' => $rowCredits,
+          'alternativeNote' => $alternativeNote,
+          'categoryLabel' => NULL,
+        ];
+        $alternativeNote = NULL;
+      }
+    }
+
+    return [$courses, $totalCredits];
+  }
+
+  /**
+   * Pull an inline "or X" alternative out of a row's title cell.
+   *
+   * The catalog markup looks like:
+   *   <td class="titlecol">
+   *     Small Business Accounting
+   *     <br/>
+   *     <div class="blockindent">or Principles of Accounting</div>
+   *   </td>
+   *
+   * We capture the text inside `.blockindent` (with the leading "or "
+   * stripped) so the importer can stash it as a free-text alternative note
+   * on the row — useful when the alternative course isn't linked to a code
+   * we can resolve to a course node.
+   *
+   * Returns NULL when no `.blockindent` is found in the row.
+   */
+  private function extractInlineAlternativeNote(\DOMXPath $xpath, \DOMNode $tr): ?string {
+    $nodes = $xpath->query(".//div[contains(concat(' ', normalize-space(@class), ' '), ' blockindent ')]", $tr);
+    if ($nodes === FALSE || $nodes->length === 0) {
+      return NULL;
+    }
+    $text = $this->cleanText($nodes->item(0)->textContent ?? '');
+    // Drop the literal "or " / "OR " prefix the catalog uses.
+    $text = preg_replace('/^or\s+/iu', '', $text) ?? $text;
+    return $text !== '' ? $text : NULL;
+  }
+
+  /**
+   * Pull a category label (e.g. "GEM 3") out of a comment row's text.
+   *
+   * Catalog comment-row text comes through like:
+   *   "GEM 3 - Mathematical Ways of Knowing"
+   *   "GEM 4 — Scientific Ways of Knowing"
+   *
+   * Returns the canonical short label ("GEM 3") if matched; NULL otherwise
+   * — which means the row is the other kind of comment ("Select one of the
+   * following:") and should pass through to credit-stash handling.
+   */
+  private function extractCategoryLabel(string $commentText): ?string {
+    // Match "GEM 3", "GEM 7i", "GEM 7w" — keeps the suffix letter for the
+    // institutional-designation variants on /aa-as-degree-requirements/.
+    if (preg_match('/\bGEM\s+(\d+[a-z]?)\b/iu', $commentText, $m)) {
+      return 'GEM ' . strtolower($m[1]);
+    }
+    return NULL;
   }
 
   /**

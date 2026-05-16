@@ -15,8 +15,8 @@
   ]
 %}
 <article{{ attributes.addClass(classes) }}>
-  {% if content.field_main_image|render %}
-    <div class="ph-node__hero">{{ content.field_main_image }}</div>
+  {% if content.field_featured_media|render %}
+    <div class="ph-node__hero">{{ content.field_featured_media }}</div>
   {% endif %}
 
   <div class="ph-node__layout">
@@ -32,10 +32,10 @@
         </section>
       {% endif %}
 
-      {% if content.field_project_gallery|render %}
+      {% if content.field_media_gallery|render %}
         <section class="ph-node__section ph-node__gallery">
           <h2 class="ph-node__section-heading">{{ 'Gallery'|t }}</h2>
-          {{ content.field_project_gallery }}
+          {{ content.field_media_gallery }}
         </section>
       {% endif %}
     </div>

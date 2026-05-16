@@ -16,7 +16,9 @@
 
 declare(strict_types=1);
 
+use Drupal\group\GroupMembershipLoaderInterface;
 use Drupal\node\NodeInterface;
+use Drupal\user\UserInterface;
 
 /**
  * Node bundles with custom templates.
@@ -57,6 +59,15 @@ const PROGRAMHUB_DISPLAY_PARAGRAPH_TEMPLATES = [
   'hours',
   'menu_item',
   'process_step',
+];
+
+/**
+ * Node bundles surfaced in the "authored content" section of the user page.
+ */
+const PROGRAMHUB_DISPLAY_USER_AUTHORED_BUNDLES = [
+  'project' => 'Projects',
+  'article' => 'Articles',
+  'student_spotlight' => 'Student spotlights',
 ];
 
 /**
@@ -119,6 +130,184 @@ function programhub_display_preprocess_profile(array &$variables): void {
     return;
   }
   $variables['#attached']['library'][] = 'programhub_display/node_display';
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ *
+ * Repoints the `user` theme hook (registered by user.module) at this
+ * module's `templates/user.html.twig`. `hook_theme()` can't override a
+ * base hook from another module — registering `user` there would either
+ * conflict or be ignored. Altering the registry is the supported way to
+ * swap the template path for an existing hook.
+ *
+ * The active theme can still win — if Gin (or another theme) ships its
+ * own `user.html.twig`, Drupal's theme lookup picks that first. Keep
+ * that in mind when debugging "my template isn't rendering".
+ */
+function programhub_display_theme_registry_alter(array &$theme_registry): void {
+  if (!isset($theme_registry['user'])) {
+    return;
+  }
+  $modulePath = \Drupal::service('extension.list.module')
+    ->getPath('programhub_display');
+  $theme_registry['user']['path'] = $modulePath . '/templates';
+  $theme_registry['user']['template'] = 'user';
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for user.
+ *
+ * Adds three sections to the user profile page:
+ *  - `authored_content` — grouped list of nodes the user owns (projects,
+ *    articles, student spotlights). One group per bundle, ordered by
+ *    most-recent-first within each.
+ *  - `authored_profiles` — profile entities owned by the user (graduate,
+ *    instructor, …). Most accounts won't have these.
+ *  - `group_memberships` — programs/divisions the user belongs to via the
+ *    group module, with the role label they hold inside that group.
+ *
+ * Each section is set to NULL when empty so the template can do a simple
+ * truthy check rather than count(items). Cache contexts are propagated via
+ * `#cache` on each render array.
+ */
+function programhub_display_preprocess_user(array &$variables): void {
+  $account = $variables['elements']['#user'] ?? NULL;
+  if (!$account instanceof UserInterface) {
+    return;
+  }
+  $variables['#attached']['library'][] = 'programhub_display/node_display';
+
+  $variables['authored_content'] = _programhub_display_user_authored_nodes($account);
+  $variables['authored_profiles'] = _programhub_display_user_profiles($account);
+  $variables['group_memberships'] = _programhub_display_user_groups($account);
+}
+
+/**
+ * Build a per-bundle render array of nodes owned by $account.
+ *
+ * @return array<string,array<string,mixed>>|null
+ *   Keyed by bundle machine name; each value is a Drupal render array
+ *   (item_list of entity-labelled links). NULL when the user owns nothing.
+ */
+function _programhub_display_user_authored_nodes(UserInterface $account): ?array {
+  $nodeStorage = \Drupal::entityTypeManager()->getStorage('node');
+  $sections = [];
+  foreach (PROGRAMHUB_DISPLAY_USER_AUTHORED_BUNDLES as $bundle => $label) {
+    $nids = $nodeStorage->getQuery()
+      ->accessCheck(TRUE)
+      ->condition('type', $bundle)
+      ->condition('uid', $account->id())
+      ->sort('created', 'DESC')
+      ->range(0, 20)
+      ->execute();
+    if (!$nids) {
+      continue;
+    }
+    $items = [];
+    foreach ($nodeStorage->loadMultiple($nids) as $node) {
+      $items[] = [
+        '#type' => 'link',
+        '#title' => $node->label(),
+        '#url' => $node->toUrl(),
+      ];
+    }
+    $sections[$bundle] = [
+      '#theme' => 'item_list',
+      '#title' => $label,
+      '#items' => $items,
+      '#attributes' => ['class' => ['ph-user__authored', 'ph-user__authored--' . str_replace('_', '-', $bundle)]],
+      '#cache' => [
+        'tags' => ['node_list:' . $bundle],
+        'contexts' => ['user'],
+      ],
+    ];
+  }
+  return $sections ?: NULL;
+}
+
+/**
+ * Profile entities owned by $account, rendered as a link list.
+ */
+function _programhub_display_user_profiles(UserInterface $account): ?array {
+  if (!\Drupal::moduleHandler()->moduleExists('profile')) {
+    return NULL;
+  }
+  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+  $ids = $storage->getQuery()
+    ->accessCheck(TRUE)
+    ->condition('uid', $account->id())
+    ->sort('created', 'DESC')
+    ->execute();
+  if (!$ids) {
+    return NULL;
+  }
+  $items = [];
+  foreach ($storage->loadMultiple($ids) as $profile) {
+    $items[] = [
+      '#type' => 'link',
+      '#title' => $profile->label() ?: ucfirst((string) $profile->bundle()),
+      '#url' => $profile->toUrl(),
+    ];
+  }
+  return [
+    '#theme' => 'item_list',
+    '#title' => 'Profiles',
+    '#items' => $items,
+    '#attributes' => ['class' => ['ph-user__profiles']],
+    '#cache' => [
+      'tags' => ['profile_list'],
+      'contexts' => ['user'],
+    ],
+  ];
+}
+
+/**
+ * Groups (divisions/programs) the user belongs to, with their group role.
+ *
+ * Each entry is a link to the group + the comma-joined role labels the user
+ * holds inside it. NULL when the user isn't a member of any group.
+ */
+function _programhub_display_user_groups(UserInterface $account): ?array {
+  if (!\Drupal::moduleHandler()->moduleExists('group')) {
+    return NULL;
+  }
+  /** @var GroupMembershipLoaderInterface $loader */
+  $loader = \Drupal::service('group.membership_loader');
+  $memberships = $loader->loadByUser($account);
+  if (!$memberships) {
+    return NULL;
+  }
+  $items = [];
+  foreach ($memberships as $membership) {
+    $group = $membership->getGroup();
+    $roleLabels = [];
+    foreach ($membership->getRoles() as $role) {
+      $roleLabels[] = $role->label();
+    }
+    $items[] = [
+      '#type' => 'inline_template',
+      '#template' => '{{ link }}{% if roles %} — <span class="ph-user__group-roles">{{ roles }}</span>{% endif %}',
+      '#context' => [
+        'link' => [
+          '#type' => 'link',
+          '#title' => $group->label(),
+          '#url' => $group->toUrl(),
+        ],
+        'roles' => $roleLabels ? implode(', ', $roleLabels) : '',
+      ],
+    ];
+  }
+  return [
+    '#theme' => 'item_list',
+    '#title' => 'Groups',
+    '#items' => $items,
+    '#attributes' => ['class' => ['ph-user__groups']],
+    '#cache' => [
+      'tags' => ['group_relationship_list:group_membership'],
+      'contexts' => ['user'],
+    ],
+  ];
 }
 
 /**

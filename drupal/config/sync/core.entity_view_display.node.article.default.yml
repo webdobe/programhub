@@ -5,7 +5,7 @@ dependencies:
   config:
     - field.field.node.article.field_article_url
     - field.field.node.article.field_body
-    - field.field.node.article.field_main_image
+    - field.field.node.article.field_featured_media
     - field.field.node.article.field_path
     - field.field.node.article.field_preview
     - node.type.article
@@ -44,14 +44,12 @@ content:
     third_party_settings: {  }
     weight: 107
     region: content
-  field_main_image:
-    type: image
-    label: above
+  field_featured_media:
+    type: entity_reference_entity_view
+    label: hidden
     settings:
-      image_link: ''
-      image_style: ''
-      image_loading:
-        attribute: lazy
+      view_mode: default
+      link: false
     third_party_settings: {  }
     weight: 101
     region: content
@@ -78,4 +76,5 @@ content:
     third_party_settings: {  }
     weight: 100
     region: content
-hidden: {  }
+hidden:
+  field_main_image: true

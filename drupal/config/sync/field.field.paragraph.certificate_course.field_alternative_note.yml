@@ -1,0 +1,19 @@
+uuid: 7b3d0a42-2f4c-4e3d-b7a1-3d9e1a5e4f23
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_alternative_note
+    - paragraphs.paragraphs_type.certificate_course
+id: paragraph.certificate_course.field_alternative_note
+field_name: field_alternative_note
+entity_type: paragraph
+bundle: certificate_course
+label: 'Alternative note'
+description: 'Free-text fallback for inline alternatives the catalog mentions without a course code (e.g. "or Principles of Accounting"). Use only when the alternative cannot be resolved to a course node — for resolvable substitutes, set the equivalency on the course itself.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

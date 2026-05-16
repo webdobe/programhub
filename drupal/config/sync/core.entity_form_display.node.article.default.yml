@@ -5,17 +5,16 @@ dependencies:
   config:
     - field.field.node.article.field_article_url
     - field.field.node.article.field_body
-    - field.field.node.article.field_main_image
+    - field.field.node.article.field_featured_media
     - field.field.node.article.field_path
     - field.field.node.article.field_preview
-    - image.style.thumbnail
     - node.type.article
     - workflows.workflow.community_content
   module:
     - content_moderation
     - field_group
-    - image
     - link
+    - media_library
     - path
     - text
 third_party_settings:
@@ -51,7 +50,7 @@ third_party_settings:
         description: 'A short preview hook, then the full article body.'
     group_visual:
       children:
-        - field_main_image
+        - field_featured_media
       label: Visual
       region: content
       parent_name: group_main
@@ -116,13 +115,12 @@ content:
       placeholder: ''
       show_summary: false
     third_party_settings: {  }
-  field_main_image:
-    type: image_image
+  field_featured_media:
+    type: media_library_widget
     weight: 0
     region: content
     settings:
-      progress_indicator: throbber
-      preview_image_style: thumbnail
+      media_types: {  }
     third_party_settings: {  }
   field_preview:
     type: string_textfield
@@ -184,4 +182,5 @@ content:
       placeholder: ''
     third_party_settings: {  }
 hidden:
+  field_main_image: true
   field_path: true

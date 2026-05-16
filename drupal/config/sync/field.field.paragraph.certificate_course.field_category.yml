@@ -1,0 +1,29 @@
+uuid: 7b3d0a42-2f4c-4e3d-b7a1-3d9e1a5e4f21
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_category
+    - paragraphs.paragraphs_type.certificate_course
+    - taxonomy.vocabulary.gen_ed_category
+id: paragraph.certificate_course.field_category
+field_name: field_category
+entity_type: paragraph
+bundle: certificate_course
+label: Category
+description: 'Use INSTEAD of "Course" when the catalog row is a category slot ("GEM 3 — Mathematical Ways of Knowing") rather than a specific course. Exactly one of Course or Category should be set per row.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      gen_ed_category: gen_ed_category
+    sort:
+      field: name
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

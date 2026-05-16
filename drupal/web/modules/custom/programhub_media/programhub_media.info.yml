@@ -1,0 +1,10 @@
+name: 'ProgramHub Media'
+type: module
+description: 'Owns the migration from legacy image fields (field_main_image, field_project_gallery) to media reference fields (field_featured_media, field_media_gallery). Wraps existing File entities in new Media entities; no new files are uploaded.'
+package: ProgramHub
+core_version_requirement: ^10 || ^11
+dependencies:
+  - drupal:file
+  - drupal:image
+  - drupal:media
+  - drupal:node

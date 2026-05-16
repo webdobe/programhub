@@ -5,8 +5,8 @@
  */
 #}
 <article{{ attributes.addClass(['ph-node', 'ph-node--student-spotlight']) }}>
-  {% if content.field_main_image|render %}
-    <div class="ph-node__hero">{{ content.field_main_image }}</div>
+  {% if content.field_featured_media|render %}
+    <div class="ph-node__hero">{{ content.field_featured_media }}</div>
   {% endif %}
   <div class="ph-node__layout">
     <div class="ph-node__main">

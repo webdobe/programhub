@@ -1,0 +1,47 @@
+uuid: 6a2c9f31-1e3b-4d2c-a7f5-2c8d0a4e3f50
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.user.user.field_bio
+    - field.field.user.user.field_photo
+  module:
+    - text
+    - user
+id: user.user.default
+targetEntityType: user
+bundle: user
+mode: default
+content:
+  field_bio:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: -5
+    region: content
+  field_photo:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: -10
+    region: content
+  member_for:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  roles:
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 6
+    region: content
+hidden:
+  graduate_profiles: true
+  instructor_profiles: true
+  simplenews: true
+  tac_member_profiles: true

@@ -34,10 +34,15 @@ class BlsLoader {
   /** Codes BLS uses for "data suppressed" — treat as null. */
   private const SUPPRESSED = ['*', '**', '#', ''];
 
-  /** Columns we care about — referenced by name in the header row. */
+  /** Columns we care about — referenced by name in the header row.
+   *  A_* are annual wages, H_* are hourly. OEWS always publishes both;
+   *  hourly is suppressed (* / **) for any SOC that's annually-rated only
+   *  (teachers, pilots, etc.), in which case parseDecimal returns NULL and
+   *  the hourly fields stay empty on the node. */
   private const NEEDED_COLUMNS = [
     'OCC_CODE', 'OCC_TITLE', 'AREA_TYPE', 'AREA',
     'A_PCT25', 'A_MEDIAN', 'A_PCT75',
+    'H_PCT25', 'H_MEDIAN', 'H_PCT75',
   ];
 
   public function __construct(
@@ -93,8 +98,14 @@ class BlsLoader {
   public static function chooseWage(string $soc, array $data): ?array {
     foreach (['msa', 'state', 'national'] as $source) {
       $row = $data[$source][$soc] ?? NULL;
-      if ($row && ($row['pay_low'] !== NULL || $row['pay_median'] !== NULL || $row['pay_high'] !== NULL)) {
-        return ['row' => $row, 'source' => $source];
+      if (!$row) {
+        continue;
+      }
+      // Accept the row if any of the six wage cells survived suppression.
+      foreach (['pay_low', 'pay_median', 'pay_high', 'hourly_low', 'hourly_median', 'hourly_high'] as $k) {
+        if ($row[$k] !== NULL) {
+          return ['row' => $row, 'source' => $source];
+        }
       }
     }
     return NULL;
@@ -183,6 +194,9 @@ class BlsLoader {
       'pay_low' => $this->parseInt($row[$idx['A_PCT25']] ?? NULL),
       'pay_median' => $this->parseInt($row[$idx['A_MEDIAN']] ?? NULL),
       'pay_high' => $this->parseInt($row[$idx['A_PCT75']] ?? NULL),
+      'hourly_low' => $this->parseDecimal($row[$idx['H_PCT25']] ?? NULL),
+      'hourly_median' => $this->parseDecimal($row[$idx['H_MEDIAN']] ?? NULL),
+      'hourly_high' => $this->parseDecimal($row[$idx['H_PCT75']] ?? NULL),
     ];
   }
 
@@ -195,6 +209,22 @@ class BlsLoader {
       return NULL;
     }
     return is_numeric($s) ? (int) $s : NULL;
+  }
+
+  /**
+   * Parse a decimal wage (hourly H_* columns). Same suppression rules as
+   * {@see parseInt} but preserves cents — BLS publishes hourly to two
+   * decimal places ("24.38").
+   */
+  private function parseDecimal(mixed $v): ?float {
+    if ($v === NULL) {
+      return NULL;
+    }
+    $s = trim(str_replace([',', '$'], '', (string) $v));
+    if (in_array($s, self::SUPPRESSED, TRUE)) {
+      return NULL;
+    }
+    return is_numeric($s) ? (float) $s : NULL;
   }
 
 }

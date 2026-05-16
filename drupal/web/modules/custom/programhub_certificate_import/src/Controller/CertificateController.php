@@ -37,12 +37,14 @@ final class CertificateController extends ControllerBase {
 
     if ($result['url']) {
       $missing = $result['coursesMissing'];
+      $missingCats = $result['categoriesMissing'];
       $this->messenger()->addStatus($this->t(
-        'Imported "@p" from @url — courses: @c, spidered: @s, missing: @m, total credits: @t.',
+        'Imported "@p" from @url — courses: @c, categories: @cat, spidered: @s, missing courses: @m, total credits: @t.',
         [
           '@p' => $node->label(),
           '@url' => $result['url'],
           '@c' => $result['coursesResolved'],
+          '@cat' => $result['categoriesResolved'],
           '@s' => $result['spidered'],
           '@m' => count($missing),
           '@t' => $result['totalCredits'] ?? '—',
@@ -52,6 +54,12 @@ final class CertificateController extends ControllerBase {
         $this->messenger()->addWarning($this->t(
           'Could not resolve these course numbers: @list',
           ['@list' => implode(', ', $missing)],
+        ));
+      }
+      if ($missingCats) {
+        $this->messenger()->addWarning($this->t(
+          'Could not resolve these category labels (seed them in the Gen Ed Category vocabulary): @list',
+          ['@list' => implode(', ', $missingCats)],
         ));
       }
     }

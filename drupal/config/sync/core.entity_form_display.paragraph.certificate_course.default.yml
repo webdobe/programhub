@@ -3,6 +3,8 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.certificate_course.field_alternative_note
+    - field.field.paragraph.certificate_course.field_category
     - field.field.paragraph.certificate_course.field_course
     - field.field.paragraph.certificate_course.field_credits
     - field.field.paragraph.certificate_course.field_semester
@@ -12,6 +14,20 @@ targetEntityType: paragraph
 bundle: certificate_course
 mode: default
 content:
+  field_alternative_note:
+    type: string_textfield
+    weight: 4
+    region: content
+    settings:
+      size: 60
+      placeholder: 'e.g. or Principles of Accounting'
+    third_party_settings: {  }
+  field_category:
+    type: options_select
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_course:
     type: entity_reference_autocomplete
     weight: 0
@@ -24,7 +40,7 @@ content:
     third_party_settings: {  }
   field_credits:
     type: string_textfield
-    weight: 2
+    weight: 3
     region: content
     settings:
       size: 8
@@ -32,7 +48,7 @@ content:
     third_party_settings: {  }
   field_semester:
     type: number
-    weight: 1
+    weight: 2
     region: content
     settings:
       placeholder: 1–4

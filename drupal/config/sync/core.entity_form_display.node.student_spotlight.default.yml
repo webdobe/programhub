@@ -5,16 +5,15 @@ dependencies:
   config:
     - field.field.node.student_spotlight.field_description
     - field.field.node.student_spotlight.field_graduate
-    - field.field.node.student_spotlight.field_main_image
+    - field.field.node.student_spotlight.field_featured_media
     - field.field.node.student_spotlight.field_path
     - field.field.node.student_spotlight.field_quote
-    - image.style.thumbnail
     - node.type.student_spotlight
     - workflows.workflow.community_content
   module:
     - content_moderation
     - field_group
-    - image
+    - media_library
     - path
     - text
 third_party_settings:
@@ -50,7 +49,7 @@ third_party_settings:
         description: 'Who the spotlight is about, their pull-quote, and the longer story.'
     group_visual:
       children:
-        - field_main_image
+        - field_featured_media
       label: Visual
       region: content
       parent_name: group_main
@@ -93,6 +92,13 @@ content:
       rows: 10
       placeholder: ''
     third_party_settings: {  }
+  field_featured_media:
+    type: media_library_widget
+    weight: 0
+    region: content
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
   field_graduate:
     type: entity_reference_autocomplete
     weight: 0
@@ -102,14 +108,6 @@ content:
       match_limit: 10
       size: 60
       placeholder: 'Start typing a name…'
-    third_party_settings: {  }
-  field_main_image:
-    type: image_image
-    weight: 0
-    region: content
-    settings:
-      progress_indicator: throbber
-      preview_image_style: thumbnail
     third_party_settings: {  }
   field_quote:
     type: string_textarea
@@ -171,4 +169,5 @@ content:
       placeholder: ''
     third_party_settings: {  }
 hidden:
+  field_main_image: true
   field_path: true

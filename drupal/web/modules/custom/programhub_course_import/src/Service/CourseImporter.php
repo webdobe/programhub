@@ -75,19 +75,15 @@ final class CourseImporter {
     ];
     $missing = [];
 
-    // ensureCourseByNumber needs a "primary program" for context; we don't
-    // have one in this entry point, so synthesize a sentinel Group entity
-    // that isn't used beyond identity (never saved).
-    $sentinel = $this->entityTypeManager->getStorage('group')->create([
-      'type' => 'program',
-      'label' => '__spider_sentinel__',
-    ]);
-
+    // No primary-program context at this entry point (cross-program callers
+    // like the gen-ed sync resolve a flat list of course numbers without a
+    // single owning program). ensureCourseByNumber accepts NULL and falls
+    // back to deriving the owning program from each course's catalog prefix.
     $resolved = [];
     foreach (array_unique($numbers) as $number) {
       $node = $this->ensureCourseByNumber(
         $number,
-        $sentinel,
+        NULL,
         $courseCache,
         $rowCache,
         $counters,
@@ -298,7 +294,7 @@ final class CourseImporter {
    */
   private function resolveRefs(
     array $numbers,
-    NodeInterface $primaryProgram,
+    ?GroupInterface $primaryProgram,
     array &$courseCache,
     array &$rowCache,
     array &$result,
@@ -322,7 +318,7 @@ final class CourseImporter {
    */
   private function ensureCourseByNumber(
     string $number,
-    NodeInterface $primaryProgram,
+    ?GroupInterface $primaryProgram,
     array &$courseCache,
     array &$rowCache,
     array &$result,
