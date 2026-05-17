@@ -1,0 +1,32 @@
+uuid: 9d4e1f53-8a2c-4b6d-9e1f-3d8a4e2b1e11
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_programs
+    - node.type.transfer_pathway
+  module:
+    - group
+id: node.transfer_pathway.field_programs
+field_name: field_programs
+entity_type: node
+bundle: transfer_pathway
+label: 'Source programs'
+description: 'Programs whose entire catalog of credentials this pathway applies to. A program-level pathway shows up on every certificate under that program automatically. Leave empty for credential-specific pathways — use "Source certificates" instead.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:group'
+  handler_settings:
+    target_bundles:
+      program: program
+      program_culinary: program_culinary
+      program_design: program_design
+    sort:
+      field: label
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

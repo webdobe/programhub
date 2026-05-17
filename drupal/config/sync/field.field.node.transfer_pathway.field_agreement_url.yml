@@ -1,0 +1,23 @@
+uuid: 9d4e1f53-8a2c-4b6d-9e1f-3d8a4e2b1e17
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_agreement_url
+    - node.type.transfer_pathway
+  module:
+    - link
+id: node.transfer_pathway.field_agreement_url
+field_name: field_agreement_url
+entity_type: node
+bundle: transfer_pathway
+label: 'Agreement document'
+description: 'Link to the official articulation agreement (PDF, partner page, NIC registrar doc).'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  link_type: 17
+  title: 0
+field_type: link

@@ -1,0 +1,82 @@
+uuid: 9d4e1f53-8a2c-4b6d-9e1f-3d8a4e2b1f01
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.partner_institution.field_description
+    - field.field.node.partner_institution.field_hero
+    - field.field.node.partner_institution.field_institution_type
+    - field.field.node.partner_institution.field_location
+    - field.field.node.partner_institution.field_logo
+    - field.field.node.partner_institution.field_path
+    - field.field.node.partner_institution.field_url
+    - node.type.partner_institution
+  module:
+    - address
+    - link
+    - options
+    - text
+    - user
+id: node.partner_institution.default
+targetEntityType: node
+bundle: partner_institution
+mode: default
+content:
+  field_hero:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: -10
+    region: content
+  field_logo:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_institution_type:
+    type: list_default
+    label: inline
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_location:
+    type: address_default
+    label: inline
+    settings: {  }
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_url:
+    type: link
+    label: inline
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: _blank
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_path: true

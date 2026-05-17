@@ -1,0 +1,22 @@
+uuid: 9d4e1f53-8a2c-4b6d-9e1f-3d8a4e2b1e16
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_prerequisites
+    - node.type.transfer_pathway
+  module:
+    - text
+id: node.transfer_pathway.field_prerequisites
+field_name: field_prerequisites
+entity_type: node
+bundle: transfer_pathway
+label: Prerequisites
+description: 'Conditions the student has to meet to transfer under this pathway — GPA, specific NIC courses, application deadlines, etc.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

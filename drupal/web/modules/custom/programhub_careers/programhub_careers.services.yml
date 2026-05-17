@@ -11,6 +11,12 @@ services:
       - '@file_system'
       - '@logger.factory'
 
+  programhub_careers.ep_loader:
+    class: Drupal\programhub_careers\Service\EpLoader
+    arguments:
+      - '@file_system'
+      - '@logger.factory'
+
   programhub_careers.importer:
     class: Drupal\programhub_careers\Service\CareersImporter
     arguments:
@@ -18,6 +24,7 @@ services:
       - '@config.factory'
       - '@programhub_careers.bls_loader'
       - '@programhub_careers.onet_loader'
+      - '@programhub_careers.ep_loader'
       - '@logger.factory'
 
   programhub_careers.batch_builder:
@@ -26,3 +33,4 @@ services:
       - '@config.factory'
       - '@programhub_careers.bls_loader'
       - '@programhub_careers.onet_loader'
+      - '@programhub_careers.ep_loader'

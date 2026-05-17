@@ -93,18 +93,45 @@ class BlsLoader {
   /**
    * Pick the most-local non-suppressed wage row for a SOC.
    *
-   * Returns ['row' => ..., 'source' => 'msa'|'state'|'national'] or null.
+   * SOC fallback: if the requested code has an O*NET-style detail suffix
+   * (e.g. "13-1199.06" = "Search Marketing Strategists") and OEWS has no
+   * row for that exact code, retry with the bare base SOC ("13-1199" =
+   * "Business Operations Specialists, All Other"). OEWS publishes wages
+   * only at the 6-digit base level; the .NN suffixes never appear, so
+   * the only useful number for an extended SOC is the base SOC's.
+   *
+   * Returns:
+   *   [
+   *     'row'           => the wage row,
+   *     'source'        => 'msa' | 'state' | 'national',
+   *     'effective_soc' => the SOC the row was actually found under
+   *                        (== input $soc unless the base-SOC fallback fired),
+   *   ]
+   * or NULL when neither the requested nor base SOC has usable wage data.
    */
   public static function chooseWage(string $soc, array $data): ?array {
-    foreach (['msa', 'state', 'national'] as $source) {
-      $row = $data[$source][$soc] ?? NULL;
-      if (!$row) {
-        continue;
-      }
-      // Accept the row if any of the six wage cells survived suppression.
-      foreach (['pay_low', 'pay_median', 'pay_high', 'hourly_low', 'hourly_median', 'hourly_high'] as $k) {
-        if ($row[$k] !== NULL) {
-          return ['row' => $row, 'source' => $source];
+    // Build the list of SOCs to try: requested first, base second when
+    // applicable. Order matters — most specific match wins.
+    $candidates = [$soc];
+    if (preg_match('/^(\d{2}-\d{4})\.\d+$/', $soc, $m) && $m[1] !== $soc) {
+      $candidates[] = $m[1];
+    }
+
+    foreach ($candidates as $candidate) {
+      foreach (['msa', 'state', 'national'] as $source) {
+        $row = $data[$source][$candidate] ?? NULL;
+        if (!$row) {
+          continue;
+        }
+        // Accept the row if any of the six wage cells survived suppression.
+        foreach (['pay_low', 'pay_median', 'pay_high', 'hourly_low', 'hourly_median', 'hourly_high'] as $k) {
+          if ($row[$k] !== NULL) {
+            return [
+              'row' => $row,
+              'source' => $source,
+              'effective_soc' => $candidate,
+            ];
+          }
         }
       }
     }

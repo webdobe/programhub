@@ -1,0 +1,19 @@
+uuid: 8c1d4f02-9a3b-4d1e-b6f5-1c7e9a3d2fa7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_on_job_training
+    - node.type.career_outcome
+id: node.career_outcome.field_on_job_training
+field_name: field_on_job_training
+entity_type: node
+bundle: career_outcome
+label: 'Typical on-the-job training'
+description: 'Verbatim from BLS Employment Projections — training expected after entry (e.g. "None", "Short-term on-the-job training", "Internship/residency", "Apprenticeship").'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

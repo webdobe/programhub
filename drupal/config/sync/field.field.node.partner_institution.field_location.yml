@@ -1,0 +1,38 @@
+uuid: 9d4e1f53-8a2c-4b6d-9e1f-3d8a4e2b1e02
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_location
+    - node.type.partner_institution
+  module:
+    - address
+id: node.partner_institution.field_location
+field_name: field_location
+entity_type: node
+bundle: partner_institution
+label: Location
+description: 'Where the partner is based.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  available_countries: {  }
+  langcode_override: ''
+  field_overrides:
+    givenName:
+      override: hidden
+    additionalName:
+      override: hidden
+    familyName:
+      override: hidden
+    organization:
+      override: hidden
+    addressLine1:
+      override: optional
+    addressLine2:
+      override: optional
+    postalCode:
+      override: optional
+field_type: address

@@ -1,0 +1,56 @@
+{#
+/**
+ * @file
+ * Transfer pathway view template.
+ *
+ * One articulation row. Headlines: partner + target credential. Sidebar
+ * carries the quick-fact numbers (credits accepted, time to degree).
+ * Lists which NIC sources (certs or programs) the pathway applies to,
+ * plus prerequisites and the agreement-PDF link.
+ */
+#}
+<article{{ attributes.addClass(['ph-node', 'ph-node--transfer-pathway']) }}>
+  <div class="ph-node__layout">
+    <div class="ph-node__main">
+      <header class="ph-node__header">
+        <h2 class="ph-node__subtitle">
+          {{ 'Transfers to'|t }}: {{ content.field_partner }}
+          {% if node.field_target_credential.value %} — <strong>{{ node.field_target_credential.value }}</strong>{% endif %}
+        </h2>
+      </header>
+
+      {% if content.field_source_certificates|render %}
+        <section class="ph-node__section">
+          <h3 class="ph-node__section-heading">{{ 'For NIC credentials'|t }}</h3>
+          {{ content.field_source_certificates }}
+        </section>
+      {% endif %}
+
+      {% if content.field_programs|render %}
+        <section class="ph-node__section">
+          <h3 class="ph-node__section-heading">{{ 'For NIC programs'|t }}</h3>
+          {{ content.field_programs }}
+        </section>
+      {% endif %}
+
+      {% if content.field_prerequisites|render %}
+        <section class="ph-node__section">
+          <h3 class="ph-node__section-heading">{{ 'Prerequisites'|t }}</h3>
+          {{ content.field_prerequisites }}
+        </section>
+      {% endif %}
+
+      {% if content.field_agreement_url|render %}
+        <p class="ph-node__cta">{{ content.field_agreement_url }}</p>
+      {% endif %}
+    </div>
+
+    <aside class="ph-node__sidebar">
+      <div class="ph-node__meta">
+        {{ content.field_articulation_credits }}
+        {{ content.field_time_to_degree }}
+      </div>
+    </aside>
+  </div>
+  {{ content.links }}
+</article>

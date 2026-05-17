@@ -1,0 +1,178 @@
+uuid: 9d4e1f53-8a2c-4b6d-9e1f-3d8a4e2b1f00
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.partner_institution.field_description
+    - field.field.node.partner_institution.field_hero
+    - field.field.node.partner_institution.field_institution_type
+    - field.field.node.partner_institution.field_location
+    - field.field.node.partner_institution.field_logo
+    - field.field.node.partner_institution.field_path
+    - field.field.node.partner_institution.field_url
+    - node.type.partner_institution
+  module:
+    - address
+    - field_group
+    - link
+    - media_library
+    - options
+    - path
+    - text
+third_party_settings:
+  field_group:
+    group_main:
+      children:
+        - group_basics
+        - group_brand
+        - group_publishing
+      label: ''
+      region: content
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        classes: ph-form-tabs
+        id: partner-tabs
+        direction: horizontal
+        width_breakpoint: 640
+    group_basics:
+      children:
+        - field_url
+        - field_institution_type
+        - field_location
+        - field_description
+      label: Basics
+      region: content
+      parent_name: group_main
+      weight: 0
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: open
+        description: 'Who they are + where they are.'
+    group_brand:
+      children:
+        - field_logo
+        - field_hero
+      label: Imagery
+      region: content
+      parent_name: group_main
+      weight: 1
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Logo for cards; hero image for the partner landing page.'
+    group_publishing:
+      children:
+        - status
+      label: Publishing
+      region: content
+      parent_name: group_main
+      weight: 2
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Admin-managed.'
+id: node.partner_institution.default
+targetEntityType: node
+bundle: partner_institution
+mode: default
+content:
+  created:
+    type: datetime_timestamp
+    weight: 10
+    region: advanced
+    settings: {  }
+    third_party_settings: {  }
+  field_description:
+    type: text_textarea
+    weight: 3
+    region: content
+    settings:
+      rows: 4
+      placeholder: ''
+    third_party_settings: {  }
+  field_hero:
+    type: media_library_widget
+    weight: 1
+    region: content
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
+  field_institution_type:
+    type: options_select
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_location:
+    type: address_default
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_logo:
+    type: media_library_widget
+    weight: 0
+    region: content
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
+  field_url:
+    type: link_default
+    weight: 0
+    region: content
+    settings:
+      placeholder_url: 'https://'
+      placeholder_title: ''
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    region: advanced
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    weight: 15
+    region: advanced
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 0
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    weight: 16
+    region: advanced
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: -10
+    region: content
+    settings:
+      size: 60
+      placeholder: 'Partner name (e.g. Washington State University)'
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 5
+    region: advanced
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  field_path: true

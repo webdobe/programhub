@@ -30,6 +30,7 @@ class CareersBatchBuilder {
     private readonly ConfigFactoryInterface $configFactory,
     private readonly BlsLoader $blsLoader,
     private readonly OnetLoader $onetLoader,
+    private readonly EpLoader $epLoader,
   ) {}
 
   /**
@@ -47,15 +48,19 @@ class CareersBatchBuilder {
     $config = $this->configFactory->get('programhub_careers.settings');
     $blsPath = $this->blsLoader->realPathOrThrow();
     $onetPath = $this->onetLoader->realPathOrThrow();
+    // EP is optional. NULL signals the parseEp op to skip parsing and leave
+    // an empty results['ep'] map; the upsert phase tolerates that.
+    $epPath = $this->epLoader->hasFile() ? $this->epLoader->realPathOrThrow() : NULL;
     $year = '20' . (string) $config->get('bls_year');
     $stateCode = (string) $config->get('bls_state_code');
     $msaCode = (string) $config->get('bls_msa_code');
 
-    // BLS + O*NET parses are each one HTTP request. The BLS pass is the long
-    // pole (~90–120 s on the 414k-row master); we can't break it into smaller
-    // pieces without paying an O(n²) skip-from-start cost on every chunk
-    // (OpenSpout can't persist its reader state between PHP processes). The
-    // upsert phase IS resumable — it's the only place where chunking helps.
+    // BLS + O*NET + EP parses are each one HTTP request. The BLS pass is the
+    // long pole (~90–120 s on the 414k-row master); we can't break it into
+    // smaller pieces without paying an O(n²) skip-from-start cost on every
+    // chunk (OpenSpout can't persist its reader state between PHP processes).
+    // EP is smaller (~830 rows) — single pass is plenty. The upsert phase IS
+    // resumable — it's the only place where chunking helps.
     $operations = [
       [
         [CareersBatchOps::class, 'parseBls'],
@@ -64,6 +69,10 @@ class CareersBatchBuilder {
       [
         [CareersBatchOps::class, 'parseOnet'],
         [$onetPath],
+      ],
+      [
+        [CareersBatchOps::class, 'parseEp'],
+        [$epPath],
       ],
       [
         [CareersBatchOps::class, 'collectSocs'],

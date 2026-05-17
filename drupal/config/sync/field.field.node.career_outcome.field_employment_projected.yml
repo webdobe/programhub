@@ -1,0 +1,23 @@
+uuid: 8c1d4f02-9a3b-4d1e-b6f5-1c7e9a3d2fa1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_employment_projected
+    - node.type.career_outcome
+id: node.career_outcome.field_employment_projected
+field_name: field_employment_projected
+entity_type: node
+bundle: career_outcome
+label: 'Number of jobs (projected)'
+description: 'Verbatim from BLS Employment Projections — total US jobs at end of the 10-year projection (e.g. 2033). Stored at full count.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

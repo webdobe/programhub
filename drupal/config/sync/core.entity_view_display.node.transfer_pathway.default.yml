@@ -1,0 +1,99 @@
+uuid: 9d4e1f53-8a2c-4b6d-9e1f-3d8a4e2b1f11
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.transfer_pathway.field_agreement_url
+    - field.field.node.transfer_pathway.field_articulation_credits
+    - field.field.node.transfer_pathway.field_partner
+    - field.field.node.transfer_pathway.field_path
+    - field.field.node.transfer_pathway.field_prerequisites
+    - field.field.node.transfer_pathway.field_programs
+    - field.field.node.transfer_pathway.field_source_certificates
+    - field.field.node.transfer_pathway.field_target_credential
+    - field.field.node.transfer_pathway.field_time_to_degree
+    - node.type.transfer_pathway
+  module:
+    - link
+    - text
+    - user
+id: node.transfer_pathway.default
+targetEntityType: node
+bundle: transfer_pathway
+mode: default
+content:
+  field_partner:
+    type: entity_reference_label
+    label: inline
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_target_credential:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_articulation_credits:
+    type: number_integer
+    label: inline
+    settings:
+      thousand_separator: ','
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_time_to_degree:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_source_certificates:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_programs:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_prerequisites:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 6
+    region: content
+  field_agreement_url:
+    type: link
+    label: inline
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: _blank
+    third_party_settings: {  }
+    weight: 7
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_path: true

@@ -1,0 +1,188 @@
+uuid: 9d4e1f53-8a2c-4b6d-9e1f-3d8a4e2b1ca0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.site.field_description
+    - field.field.node.site.field_division
+    - field.field.node.site.field_logo
+    - field.field.node.site.field_path
+    - field.field.node.site.field_programs
+    - field.field.node.site.field_url
+    - node.type.site
+  module:
+    - content_moderation
+    - field_group
+    - link
+    - media_library
+    - path
+    - text
+third_party_settings:
+  field_group:
+    group_main:
+      children:
+        - group_basics
+        - group_curation
+        - group_brand
+        - group_publishing
+      label: ''
+      region: content
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        classes: ph-form-tabs
+        id: site-tabs
+        direction: horizontal
+        width_breakpoint: 640
+    group_basics:
+      children:
+        - field_url
+        - field_division
+      label: Basics
+      region: content
+      parent_name: group_main
+      weight: 0
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: open
+        description: 'The live URL and which division owns this site.'
+    group_curation:
+      children:
+        - field_programs
+      label: Programs
+      region: content
+      parent_name: group_main
+      weight: 1
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Which programs this site features. Source of truth for the marketing curation; the Next.js app reads it (or maintains its own matching copy).'
+    group_brand:
+      children:
+        - field_logo
+        - field_description
+      label: Brand
+      region: content
+      parent_name: group_main
+      weight: 2
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Logo + brief pitch — what division landing pages render in the site card.'
+    group_publishing:
+      children:
+        - status
+      label: Publishing
+      region: content
+      parent_name: group_main
+      weight: 3
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Admin-managed.'
+id: node.site.default
+targetEntityType: node
+bundle: site
+mode: default
+content:
+  created:
+    type: datetime_timestamp
+    weight: 10
+    region: advanced
+    settings: {  }
+    third_party_settings: {  }
+  field_description:
+    type: text_textarea
+    weight: 1
+    region: content
+    settings:
+      rows: 4
+      placeholder: 'One- or two-sentence pitch'
+    third_party_settings: {  }
+  field_division:
+    type: entity_reference_autocomplete
+    weight: 1
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: 'Start typing a division name…'
+    third_party_settings: {  }
+  field_logo:
+    type: media_library_widget
+    weight: 0
+    region: content
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
+  field_programs:
+    type: entity_reference_autocomplete_tags
+    weight: 0
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: 'Add programs…'
+    third_party_settings: {  }
+  field_url:
+    type: link_default
+    weight: 0
+    region: content
+    settings:
+      placeholder_url: 'https://'
+      placeholder_title: ''
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    region: advanced
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    weight: 15
+    region: advanced
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 0
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    weight: 16
+    region: advanced
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: -10
+    region: content
+    settings:
+      size: 60
+      placeholder: 'Site name'
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 5
+    region: advanced
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  field_path: true

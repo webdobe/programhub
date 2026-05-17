@@ -38,6 +38,9 @@ const PROGRAMHUB_DISPLAY_NODE_TEMPLATES = [
   'division',
   'venue',
   'career_outcome',
+  'site',
+  'partner_institution',
+  'transfer_pathway',
 ];
 
 /**

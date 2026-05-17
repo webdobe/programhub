@@ -1,0 +1,20 @@
+uuid: 9d4e1f53-8a2c-4b6d-9e1f-3d8a4e2b1d24
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_articulation_credits
+field_name: field_articulation_credits
+entity_type: node
+type: integer
+settings:
+  unsigned: true
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

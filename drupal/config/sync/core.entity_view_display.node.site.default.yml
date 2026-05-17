@@ -1,0 +1,72 @@
+uuid: 9d4e1f53-8a2c-4b6d-9e1f-3d8a4e2b1ca1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.site.field_description
+    - field.field.node.site.field_division
+    - field.field.node.site.field_logo
+    - field.field.node.site.field_path
+    - field.field.node.site.field_programs
+    - field.field.node.site.field_url
+    - node.type.site
+  module:
+    - link
+    - text
+    - user
+id: node.site.default
+targetEntityType: node
+bundle: site
+mode: default
+content:
+  field_logo:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_url:
+    type: link
+    label: inline
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: _blank
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_division:
+    type: entity_reference_label
+    label: inline
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_programs:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_path: true

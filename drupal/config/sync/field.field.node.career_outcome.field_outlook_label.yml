@@ -1,0 +1,19 @@
+uuid: 8c1d4f02-9a3b-4d1e-b6f5-1c7e9a3d2fa4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_outlook_label
+    - node.type.career_outcome
+id: node.career_outcome.field_outlook_label
+field_name: field_outlook_label
+entity_type: node
+bundle: career_outcome
+label: 'Job outlook (label)'
+description: 'Derived from field_outlook_percent using the BLS Occupational Outlook Handbook bands: "Much faster than average" (≥ 8 %), "Faster than average" (5–7 %), "As fast as average" (3–4 %), "Slower than average" (-1 to 2 %), "Decline" (≤ -2 %). Overwritten on every refresh.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

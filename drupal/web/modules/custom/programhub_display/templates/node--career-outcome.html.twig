@@ -3,10 +3,27 @@
  * @file
  * Career outcome node view template.
  *
- * BLS-imported. Pay range is the loudest sidebar stat. SOC code +
- * source citation pinned alongside. Tasks list is the main content.
+ * BLS-imported. The sidebar mirrors the BLS Occupational Outlook Handbook
+ * "Quick Facts" callout — same headline numbers (median pay, jobs, outlook
+ * %, entry requirements). Main column carries the editorial description +
+ * O*NET task list.
+ *
+ * We read raw values via `node.field_*.value` rather than rendering through
+ * `content.*` so the Quick-Facts rows have consistent labels independent of
+ * the entity_view_display config. Source citations stay rendered through
+ * `content.*` so editor edits to the prefix/suffix flow through.
  */
 #}
+{% set pay_annual = node.field_pay_median.value %}
+{% set pay_hourly = node.field_pay_hourly_median.value %}
+{% set jobs_current = node.field_employment_current.value %}
+{% set jobs_change = node.field_employment_change.value %}
+{% set outlook_pct = node.field_outlook_percent.value %}
+{% set outlook_label = node.field_outlook_label.value %}
+{% set education = node.field_education_typical.value %}
+{% set experience = node.field_work_experience.value %}
+{% set training = node.field_on_job_training.value %}
+{% set period = node.field_ep_source.value %}
 <article{{ attributes.addClass(['ph-node', 'ph-node--career-outcome']) }}>
   <div class="ph-node__layout">
     <div class="ph-node__main">
@@ -20,21 +37,100 @@
         </section>
       {% endif %}
     </div>
+
     <aside class="ph-node__sidebar">
-      {% if content.field_pay_range|render %}
-        <div class="ph-node__stat">
-          <span class="ph-node__stat-label">{{ 'Pay range'|t }}</span>
-          <span class="ph-node__stat-value">{{ content.field_pay_range }}</span>
-        </div>
-      {% endif %}
-      <div class="ph-node__meta">
-        {{ content.field_soc_code }}
-        {{ content.field_pay_low }}
-        {{ content.field_pay_median }}
-        {{ content.field_pay_high }}
-        {{ content.field_pay_source }}
-        {{ content.field_career_track }}
+      <section class="ph-node__quickfacts">
+        <h2 class="ph-node__section-heading">{{ 'Quick Facts'|t }}</h2>
+        <dl class="ph-quickfacts">
+          {% if pay_annual is not null or pay_hourly is not null %}
+            <div class="ph-quickfacts__row">
+              <dt class="ph-quickfacts__label">{{ 'Median pay'|t }}</dt>
+              <dd class="ph-quickfacts__value">
+                {% if pay_annual is not null %}
+                  <strong>${{ pay_annual|number_format(0, '.', ',') }}</strong>
+                  <span class="ph-quickfacts__unit">{{ 'per year'|t }}</span>
+                {% endif %}
+                {% if pay_hourly is not null %}
+                  <div class="ph-quickfacts__sub">
+                    ${{ pay_hourly|number_format(2, '.', ',') }}
+                    <span class="ph-quickfacts__unit">{{ 'per hour'|t }}</span>
+                  </div>
+                {% endif %}
+              </dd>
+            </div>
+          {% endif %}
+
+          {% if education %}
+            <div class="ph-quickfacts__row">
+              <dt class="ph-quickfacts__label">{{ 'Typical entry-level education'|t }}</dt>
+              <dd class="ph-quickfacts__value">{{ education }}</dd>
+            </div>
+          {% endif %}
+
+          {% if experience %}
+            <div class="ph-quickfacts__row">
+              <dt class="ph-quickfacts__label">{{ 'Work experience in a related occupation'|t }}</dt>
+              <dd class="ph-quickfacts__value">{{ experience }}</dd>
+            </div>
+          {% endif %}
+
+          {% if training %}
+            <div class="ph-quickfacts__row">
+              <dt class="ph-quickfacts__label">{{ 'On-the-job training'|t }}</dt>
+              <dd class="ph-quickfacts__value">{{ training }}</dd>
+            </div>
+          {% endif %}
+
+          {% if jobs_current is not null %}
+            <div class="ph-quickfacts__row">
+              <dt class="ph-quickfacts__label">{{ 'Number of jobs'|t }}</dt>
+              <dd class="ph-quickfacts__value">{{ jobs_current|number_format(0, '.', ',') }}</dd>
+            </div>
+          {% endif %}
+
+          {% if outlook_pct is not null %}
+            <div class="ph-quickfacts__row">
+              <dt class="ph-quickfacts__label">{{ 'Job outlook'|t }}</dt>
+              <dd class="ph-quickfacts__value">
+                {{ outlook_pct }}%
+                {% if outlook_label %}
+                  <span class="ph-quickfacts__qualifier">({{ outlook_label }})</span>
+                {% endif %}
+              </dd>
+            </div>
+          {% endif %}
+
+          {% if jobs_change is not null %}
+            <div class="ph-quickfacts__row">
+              <dt class="ph-quickfacts__label">{{ 'Employment change'|t }}</dt>
+              <dd class="ph-quickfacts__value">
+                {{ jobs_change < 0 ? '−' : (jobs_change > 0 ? '+' : '') }}{{ jobs_change|abs|number_format(0, '.', ',') }}
+              </dd>
+            </div>
+          {% endif %}
+        </dl>
+      </section>
+
+      <div class="ph-node__meta ph-node__meta--career">
+        {% if content.field_career_track|render %}
+          <div class="ph-node__meta-row">{{ content.field_career_track }}</div>
+        {% endif %}
+        {% if content.field_soc_code|render %}
+          <div class="ph-node__meta-row ph-node__meta-row--code">
+            <span class="ph-node__meta-label">{{ 'SOC'|t }}</span>
+            <code>{{ node.field_soc_code.value }}</code>
+          </div>
+        {% endif %}
       </div>
+
+      <footer class="ph-node__sources">
+        {% if content.field_pay_source|render %}
+          <p class="ph-node__source">{{ node.field_pay_source.value }}</p>
+        {% endif %}
+        {% if period %}
+          <p class="ph-node__source">{{ period }}</p>
+        {% endif %}
+      </footer>
     </aside>
   </div>
   {{ content.links }}

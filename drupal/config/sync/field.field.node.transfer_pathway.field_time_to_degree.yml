@@ -1,0 +1,19 @@
+uuid: 9d4e1f53-8a2c-4b6d-9e1f-3d8a4e2b1e15
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_time_to_degree
+    - node.type.transfer_pathway
+id: node.transfer_pathway.field_time_to_degree
+field_name: field_time_to_degree
+entity_type: node
+bundle: transfer_pathway
+label: 'Time to degree'
+description: 'Typical time at the partner to finish the target credential after transferring — e.g. "1 year", "3 years total", "1.5 years".'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

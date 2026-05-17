@@ -1,0 +1,30 @@
+uuid: 9d4e1f53-8a2c-4b6d-9e1f-3d8a4e2b1c91
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_division
+    - node.type.site
+  module:
+    - group
+id: node.site.field_division
+field_name: field_division
+entity_type: node
+bundle: site
+label: Division
+description: 'The Division that owns this site. The Division''s own landing page lists every Site whose field_division points at it.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:group'
+  handler_settings:
+    target_bundles:
+      division: division
+    sort:
+      field: label
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

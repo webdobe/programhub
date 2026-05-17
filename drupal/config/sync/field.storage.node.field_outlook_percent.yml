@@ -1,0 +1,20 @@
+uuid: 8c1d4f02-9a3b-4d1e-b6f5-1c7e9a3d2f93
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_outlook_percent
+field_name: field_outlook_percent
+entity_type: node
+type: decimal
+settings:
+  precision: 5
+  scale: 1
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

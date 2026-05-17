@@ -1,0 +1,23 @@
+uuid: 9d4e1f53-8a2c-4b6d-9e1f-3d8a4e2b1e00
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_url
+    - node.type.partner_institution
+  module:
+    - link
+id: node.partner_institution.field_url
+field_name: field_url
+entity_type: node
+bundle: partner_institution
+label: Website
+description: 'Main URL for the partner — used as the outbound link on partner cards + pages.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  link_type: 17
+  title: 0
+field_type: link

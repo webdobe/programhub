@@ -1,0 +1,218 @@
+uuid: 9d4e1f53-8a2c-4b6d-9e1f-3d8a4e2b1f10
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.transfer_pathway.field_agreement_url
+    - field.field.node.transfer_pathway.field_articulation_credits
+    - field.field.node.transfer_pathway.field_partner
+    - field.field.node.transfer_pathway.field_path
+    - field.field.node.transfer_pathway.field_prerequisites
+    - field.field.node.transfer_pathway.field_programs
+    - field.field.node.transfer_pathway.field_source_certificates
+    - field.field.node.transfer_pathway.field_target_credential
+    - field.field.node.transfer_pathway.field_time_to_degree
+    - node.type.transfer_pathway
+  module:
+    - field_group
+    - link
+    - path
+    - text
+third_party_settings:
+  field_group:
+    group_main:
+      children:
+        - group_target
+        - group_sources
+        - group_articulation
+        - group_publishing
+      label: ''
+      region: content
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        classes: ph-form-tabs
+        id: pathway-tabs
+        direction: horizontal
+        width_breakpoint: 640
+    group_target:
+      children:
+        - field_partner
+        - field_target_credential
+      label: Target
+      region: content
+      parent_name: group_main
+      weight: 0
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: open
+        description: 'Where the student is transferring to and what they earn.'
+    group_sources:
+      children:
+        - field_source_certificates
+        - field_programs
+      label: Sources
+      region: content
+      parent_name: group_main
+      weight: 1
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: open
+        description: 'Set at least one. Certificate refs are credential-specific; program refs apply to every credential in the program.'
+    group_articulation:
+      children:
+        - field_articulation_credits
+        - field_time_to_degree
+        - field_prerequisites
+        - field_agreement_url
+      label: Articulation
+      region: content
+      parent_name: group_main
+      weight: 2
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Per-pathway specifics from the articulation agreement.'
+    group_publishing:
+      children:
+        - status
+      label: Publishing
+      region: content
+      parent_name: group_main
+      weight: 3
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'Admin-managed.'
+id: node.transfer_pathway.default
+targetEntityType: node
+bundle: transfer_pathway
+mode: default
+content:
+  created:
+    type: datetime_timestamp
+    weight: 10
+    region: advanced
+    settings: {  }
+    third_party_settings: {  }
+  field_agreement_url:
+    type: link_default
+    weight: 3
+    region: content
+    settings:
+      placeholder_url: 'https://'
+      placeholder_title: ''
+    third_party_settings: {  }
+  field_articulation_credits:
+    type: number
+    weight: 0
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_partner:
+    type: entity_reference_autocomplete
+    weight: 0
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: 'Start typing a partner name…'
+    third_party_settings: {  }
+  field_prerequisites:
+    type: text_textarea
+    weight: 2
+    region: content
+    settings:
+      rows: 4
+      placeholder: 'GPA, course prereqs, deadlines…'
+    third_party_settings: {  }
+  field_programs:
+    type: entity_reference_autocomplete_tags
+    weight: 1
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: 'Programs this pathway covers…'
+    third_party_settings: {  }
+  field_source_certificates:
+    type: entity_reference_autocomplete_tags
+    weight: 0
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: 'Specific NIC credentials…'
+    third_party_settings: {  }
+  field_target_credential:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: 'Bachelor of Science in Nursing'
+    third_party_settings: {  }
+  field_time_to_degree:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 30
+      placeholder: '3 years'
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    region: advanced
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    weight: 15
+    region: advanced
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 0
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    weight: 16
+    region: advanced
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: -10
+    region: content
+    settings:
+      size: 60
+      placeholder: 'e.g. AAS Nursing → BSN at WSU'
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 5
+    region: advanced
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  field_path: true

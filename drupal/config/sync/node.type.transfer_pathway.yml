@@ -1,0 +1,11 @@
+uuid: 9d4e1f53-8a2c-4b6d-9e1f-3d8a4e2b1d20
+langcode: en
+status: true
+dependencies: {  }
+name: 'Transfer Pathway'
+type: transfer_pathway
+description: 'One articulation agreement — joins a NIC credential (certificate node) or program (group) to a target credential at a partner institution. Carries the per-pathway specifics: credits accepted, time-to-degree, prerequisites, agreement PDF link.'
+help: 'Set at least one of "Source certificates" or "Source programs". A program-level pathway shows up on every certificate under that program; a cert-level pathway is specific to that one credential.'
+new_revision: true
+preview_mode: 1
+display_submitted: false

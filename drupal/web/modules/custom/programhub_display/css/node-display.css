@@ -343,6 +343,123 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ── career-outcome Quick Facts ─────────────────────────────────────
+   BLS Occupational Outlook Handbook-style sidebar callout. Each row
+   is a labelled fact (median pay, education, outlook, …). Lives in
+   .ph-node__sidebar but isn't part of the .ph-node__meta card so it
+   can stand out. */
+
+.ph-node__quickfacts {
+  background: var(--gin-bg-layer2);
+  border-radius: var(--gin-border-s);
+  padding: var(--gin-spacing-m) var(--gin-spacing-l);
+}
+
+.ph-node__quickfacts .ph-node__section-heading {
+  margin: 0 0 var(--gin-spacing-s);
+  font-size: var(--gin-font-size-s);
+  font-weight: var(--gin-font-weight-semibold);
+  color: var(--gin-color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border: 0;
+}
+
+.ph-quickfacts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gin-spacing-s);
+  margin: 0;
+  padding: 0;
+}
+
+.ph-quickfacts__row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding-bottom: var(--gin-spacing-s);
+  border-bottom: var(--gin-border-xs) solid var(--gin-border-color-layer);
+}
+.ph-quickfacts__row:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.ph-quickfacts__label {
+  margin: 0;
+  font-size: var(--gin-font-size-xs);
+  font-weight: var(--gin-font-weight-semibold);
+  color: var(--gin-color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ph-quickfacts__value {
+  margin: 0;
+  color: var(--gin-color-title);
+  font-variant-numeric: tabular-nums;
+}
+
+.ph-quickfacts__value strong {
+  font-size: var(--gin-font-size-h3);
+  font-weight: var(--gin-font-weight-bold);
+}
+
+.ph-quickfacts__unit {
+  color: var(--gin-color-text-light);
+  font-size: var(--gin-font-size-s);
+  font-weight: var(--gin-font-weight-normal);
+  margin-left: 0.25em;
+}
+
+.ph-quickfacts__sub {
+  color: var(--gin-color-text);
+  font-size: var(--gin-font-size-s);
+  margin-top: 0.125rem;
+}
+
+.ph-quickfacts__qualifier {
+  color: var(--gin-color-text-light);
+  font-size: var(--gin-font-size-s);
+  font-weight: var(--gin-font-weight-normal);
+  margin-left: 0.25em;
+}
+
+/* Sources footer below the Quick Facts + meta — small print citations. */
+.ph-node__sources {
+  margin-top: var(--gin-spacing-s);
+  padding-top: var(--gin-spacing-s);
+  border-top: var(--gin-border-xs) solid var(--gin-border-color-layer);
+}
+.ph-node__source {
+  margin: 0 0 0.25rem;
+  font-size: var(--gin-font-size-xs);
+  color: var(--gin-color-text-light);
+}
+.ph-node__source:last-child {
+  margin-bottom: 0;
+}
+
+/* Meta-row inside career sidebar (career_track, SOC) — single line each. */
+.ph-node__meta-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--gin-spacing-s);
+  margin: var(--gin-spacing-xs) 0;
+  font-size: var(--gin-font-size-s);
+}
+.ph-node__meta-row--code code {
+  font-family: var(--gin-font-family-mono, ui-monospace, monospace);
+  font-size: var(--gin-font-size-s);
+}
+.ph-node__meta-label {
+  font-size: var(--gin-font-size-xs);
+  font-weight: var(--gin-font-weight-semibold);
+  color: var(--gin-color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 /* ═══════════════════════════════════════════════════════════════════
  * Paragraph types — small composable cards rendered inside parent
  * entity content (graduate profile, project, certificate, menu, etc.)

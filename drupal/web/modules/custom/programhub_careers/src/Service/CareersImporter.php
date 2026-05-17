@@ -26,6 +26,7 @@ class CareersImporter {
     private readonly ConfigFactoryInterface $configFactory,
     private readonly BlsLoader $blsLoader,
     private readonly OnetLoader $onetLoader,
+    private readonly EpLoader $epLoader,
     private readonly LoggerChannelFactoryInterface $loggerFactory,
   ) {}
 
@@ -50,6 +51,9 @@ class CareersImporter {
       (string) $config->get('bls_msa_code'),
     );
     $tasks = $this->onetLoader->load();
+    // EP is optional — admin may not have uploaded it. When absent the
+    // projection/education fields stay null without blocking the wage refresh.
+    $ep = $this->epLoader->hasFile() ? $this->epLoader->load() : [];
 
     $stats = ['created' => 0, 'updated' => 0, 'skipped' => 0, 'missing' => []];
     $year = '20' . (string) $config->get('bls_year');
@@ -65,6 +69,7 @@ class CareersImporter {
         $soc,
         $wage,
         $tasks[$soc] ?? [],
+        $ep[$soc] ?? NULL,
         $programsBySoc[$soc] ?? [],
         $year,
         $dryRun,
@@ -115,10 +120,13 @@ class CareersImporter {
   }
 
   /**
-   * Upsert a single career_outcome from a chosen wage row + tasks.
+   * Upsert a single career_outcome from a chosen wage row, tasks, and
+   * (optionally) the projection-and-characteristics row from EP.
    *
    * @param array{row: array, source: string} $wage
    * @param string[] $tasks
+   * @param array|null $ep Projection row from EpLoader::load(), or NULL when
+   *                       the EP file isn't uploaded / SOC isn't in it.
    * @param int[] $programIds
    * @return 'created'|'updated'|'skipped'
    */
@@ -126,18 +134,31 @@ class CareersImporter {
     string $soc,
     array $wage,
     array $tasks,
+    ?array $ep,
     array $programIds,
     string $year,
     bool $dryRun,
   ): string {
+    // If chooseWage fell back to the base SOC (e.g. "13-1199.06" → "13-1199"),
+    // surface that in the citation so editors can see why an extended SOC's
+    // pay matches its parent's. Falsy difference means no fallback.
+    $effectiveSoc = $wage['effective_soc'] ?? $soc;
     $payload = [
       'soc_code' => $soc,
       'title' => $wage['row']['title'],
       'pay_low' => $wage['row']['pay_low'],
       'pay_median' => $wage['row']['pay_median'],
       'pay_high' => $wage['row']['pay_high'],
-      'pay_source' => $this->paySourceLabel($wage['source'], $year),
+      'pay_hourly_low' => $wage['row']['hourly_low'] ?? NULL,
+      'pay_hourly_median' => $wage['row']['hourly_median'] ?? NULL,
+      'pay_hourly_high' => $wage['row']['hourly_high'] ?? NULL,
+      'pay_source' => $this->paySourceLabel(
+        $wage['source'],
+        $year,
+        $effectiveSoc !== $soc ? $effectiveSoc : NULL,
+      ),
       'tasks' => $tasks,
+      'ep' => $ep,
       'program_ids' => $programIds,
     ];
     return $this->upsert($payload, $dryRun);
@@ -182,8 +203,25 @@ class CareersImporter {
     $node->set('field_pay_low', $p['pay_low']);
     $node->set('field_pay_median', $p['pay_median']);
     $node->set('field_pay_high', $p['pay_high']);
+    $node->set('field_pay_hourly_low', $p['pay_hourly_low']);
+    $node->set('field_pay_hourly_median', $p['pay_hourly_median']);
+    $node->set('field_pay_hourly_high', $p['pay_hourly_high']);
     $node->set('field_pay_source', $p['pay_source']);
     $node->set('field_tasks', array_map(fn($t) => ['value' => $t], $p['tasks']));
+
+    // EP fields. Always overwrite — including NULL when the EP source is
+    // missing — so removing the EP file from the admin uploads on a future
+    // refresh clears these consistently rather than leaving stale data.
+    $ep = $p['ep'] ?? NULL;
+    $node->set('field_employment_current', $ep['employment_current'] ?? NULL);
+    $node->set('field_employment_projected', $ep['employment_projected'] ?? NULL);
+    $node->set('field_employment_change', $ep['employment_change'] ?? NULL);
+    $node->set('field_outlook_percent', $ep['outlook_percent'] ?? NULL);
+    $node->set('field_outlook_label', EpLoader::outlookLabel($ep['outlook_percent'] ?? NULL));
+    $node->set('field_education_typical', $ep['education_typical'] ?? NULL);
+    $node->set('field_work_experience', $ep['work_experience'] ?? NULL);
+    $node->set('field_on_job_training', $ep['on_job_training'] ?? NULL);
+    $node->set('field_ep_source', $ep !== NULL ? $this->epSourceLabel($ep['projection_period'] ?? NULL) : NULL);
 
     $node->save();
 
@@ -212,12 +250,35 @@ class CareersImporter {
    * (MSA → state → national) shows up in the label so editors can see why a
    * given outcome's pay isn't local.
    */
-  private function paySourceLabel(string $source, string $year): string {
-    return match ($source) {
+  /**
+   * Build the citation string written to field_pay_source. The fallback
+   * locality (MSA → state → national) appears in the label so editors can
+   * see why a given outcome's pay isn't local. When the wage row came from
+   * a base SOC instead of the requested one (e.g. ".06" detail codes that
+   * OEWS doesn't publish), the base SOC is appended too — same reason.
+   */
+  private function paySourceLabel(string $source, string $year, ?string $baseSoc = NULL): string {
+    $base = match ($source) {
       'msa' => "BLS OEWS May $year · Coeur d'Alene MSA",
       'state' => "BLS OEWS May $year · Idaho",
       default => "BLS OEWS May $year · National",
     };
+    if ($baseSoc !== NULL && $baseSoc !== '') {
+      $base .= " · base SOC $baseSoc";
+    }
+    return $base;
+  }
+
+  /**
+   * Build the citation for the EP-sourced fields. Falls back to the bare
+   * "BLS Employment Projections" string when the workbook didn't expose a
+   * projection-period header — better that than fabricating a year range.
+   */
+  private function epSourceLabel(?string $period): string {
+    if ($period === NULL || $period === '') {
+      return 'BLS Employment Projections';
+    }
+    return 'BLS Employment Projections, ' . $period;
   }
 
 }

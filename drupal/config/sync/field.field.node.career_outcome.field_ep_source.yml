@@ -1,0 +1,19 @@
+uuid: 8c1d4f02-9a3b-4d1e-b6f5-1c7e9a3d2fa8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ep_source
+    - node.type.career_outcome
+id: node.career_outcome.field_ep_source
+field_name: field_ep_source
+entity_type: node
+bundle: career_outcome
+label: 'EP source'
+description: 'Citation for the projection-and-characteristics fields. Built from the projection period in the uploaded EP workbook (e.g. "BLS Employment Projections, 2023-33").'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,11 @@
+uuid: 9d4e1f53-8a2c-4b6d-9e1f-3d8a4e2b1c70
+langcode: en
+status: true
+dependencies: {  }
+name: Site
+type: site
+description: 'Marketing site (one per live Next.js frontend). Owns URL + brand + which programs the site features. A Division landing page renders one Site card per record.'
+help: 'One node per live website. The actual page lives in the Next.js app at field_url; this node just gives Drupal a place to describe and index the site (which division owns it, which programs it covers, the logo and brief to render on listing pages).'
+new_revision: true
+preview_mode: 1
+display_submitted: false

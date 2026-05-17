@@ -9,6 +9,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\programhub_careers\Service\BlsLoader;
 use Drupal\programhub_careers\Service\CareersBatchBuilder;
+use Drupal\programhub_careers\Service\EpLoader;
 use Drupal\programhub_careers\Service\OnetLoader;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -31,6 +32,7 @@ class RefreshForm extends ConfigFormBase {
     private readonly CareersBatchBuilder $batchBuilder,
     private readonly BlsLoader $blsLoader,
     private readonly OnetLoader $onetLoader,
+    private readonly EpLoader $epLoader,
     private readonly FileSystemInterface $fileSystem,
   ) {
     parent::__construct($config_factory, $typed_config_manager);
@@ -43,6 +45,7 @@ class RefreshForm extends ConfigFormBase {
       $container->get('programhub_careers.batch_builder'),
       $container->get('programhub_careers.bls_loader'),
       $container->get('programhub_careers.onet_loader'),
+      $container->get('programhub_careers.ep_loader'),
       $container->get('file_system'),
     );
   }
@@ -98,6 +101,19 @@ class RefreshForm extends ConfigFormBase {
       '#description' => $this->t(
         'Download the database TSV bundle from <a href=":onet" target="_blank">onetcenter.org/database.html</a>, extract it, and upload <code>Task Statements.txt</code>.',
         [':onet' => 'https://www.onetcenter.org/database.html'],
+      ),
+    ];
+
+    $epLabel = $this->t('BLS Employment Projections XLSX (optional)');
+    if ($this->epLoader->hasFile()) {
+      $epLabel = $this->t('BLS Employment Projections XLSX <em>(currently uploaded — re-upload to replace)</em>');
+    }
+    $form['uploads']['ep_file'] = [
+      '#type' => 'file',
+      '#title' => $epLabel,
+      '#description' => $this->t(
+        'Optional — adds the Quick-Facts fields (number of jobs, projected change, typical education, on-the-job training, etc.). Download <code>Occupation.xlsx</code> from <a href=":ep" target="_blank">bls.gov/emp/tables/occupational-projections-and-characteristics.htm</a>.',
+        [':ep' => 'https://www.bls.gov/emp/tables/occupational-projections-and-characteristics.htm'],
       ),
     ];
 
@@ -205,6 +221,19 @@ class RefreshForm extends ConfigFormBase {
       $this->fileSystem->move($onetFile->getFileUri(), OnetLoader::CANONICAL_PATH, FileSystemInterface::EXISTS_REPLACE);
       $onetFile->delete();
       $this->messenger()->addStatus($this->t('O*NET tasks TSV uploaded.'));
+    }
+
+    $epFile = file_save_upload(
+      'ep_file',
+      ['FileExtension' => ['extensions' => 'xlsx']],
+      $dir,
+      0,
+      FileSystemInterface::EXISTS_REPLACE,
+    );
+    if ($epFile) {
+      $this->fileSystem->move($epFile->getFileUri(), EpLoader::CANONICAL_PATH, FileSystemInterface::EXISTS_REPLACE);
+      $epFile->delete();
+      $this->messenger()->addStatus($this->t('BLS Employment Projections XLSX uploaded.'));
     }
   }
 

@@ -123,3 +123,4 @@ drush cim -y && drush cr
 drush deploy:hook
 drush pgesync
 drush phcert
+drush phcr

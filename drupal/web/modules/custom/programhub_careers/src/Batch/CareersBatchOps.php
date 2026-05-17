@@ -4,6 +4,7 @@ namespace Drupal\programhub_careers\Batch;
 
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\programhub_careers\Service\BlsLoader;
+use Drupal\programhub_careers\Service\EpLoader;
 
 /**
  * Static callbacks for the careers refresh Batch.
@@ -69,7 +70,28 @@ final class CareersBatchOps {
   }
 
   /**
-   * Phase 3 — collect SOC → program-nid map. Single pass, fast.
+   * Phase 3 — full EP workbook read into SOC → projection map.
+   * Optional: when `$path` is NULL the EP file isn't uploaded, so we
+   * record an empty map and the upsert phase leaves EP fields null.
+   */
+  public static function parseEp(?string $path, array &$context): void {
+    if ($path === NULL) {
+      $context['results']['ep'] = [];
+      $context['message'] = t('EP file not uploaded — skipping Quick-Facts fields.');
+      $context['finished'] = 1;
+      return;
+    }
+    @set_time_limit(0);
+
+    /** @var EpLoader $loader */
+    $loader = \Drupal::service('programhub_careers.ep_loader');
+    $context['results']['ep'] = $loader->load();
+    $context['message'] = t('EP parsed: @n SOC rows', ['@n' => count($context['results']['ep'])]);
+    $context['finished'] = 1;
+  }
+
+  /**
+   * Phase 4 — collect SOC → program-nid map. Single pass, fast.
    */
   public static function collectSocs(array &$context): void {
     $importer = \Drupal::service('programhub_careers.importer');
@@ -81,7 +103,7 @@ final class CareersBatchOps {
   }
 
   /**
-   * Phase 4 — chunked upsert of career_outcome nodes. Resumable.
+   * Phase 5 — chunked upsert of career_outcome nodes. Resumable.
    */
   public static function upsert(
     int $chunkSize,
@@ -105,6 +127,7 @@ final class CareersBatchOps {
     $importer = \Drupal::service('programhub_careers.importer');
     $bls = $context['results']['bls'] ?? ['national' => [], 'state' => [], 'msa' => []];
     $tasks = $context['results']['onet'] ?? [];
+    $ep = $context['results']['ep'] ?? [];
     $programsBySoc = $context['results']['programsBySoc'] ?? [];
     $stats = &$context['results']['stats'];
 
@@ -120,6 +143,7 @@ final class CareersBatchOps {
         $soc,
         $wage,
         $tasks[$soc] ?? [],
+        $ep[$soc] ?? NULL,
         $programsBySoc[$soc] ?? [],
         $year,
         $dryRun,

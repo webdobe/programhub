@@ -1,0 +1,29 @@
+uuid: 9d4e1f53-8a2c-4b6d-9e1f-3d8a4e2b1e05
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_hero
+    - media.type.image
+    - node.type.partner_institution
+id: node.partner_institution.field_hero
+field_name: field_hero
+entity_type: node
+bundle: partner_institution
+label: 'Hero image'
+description: 'Larger image for the partner landing page (campus shot, building, etc.). Optional.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      image: image
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

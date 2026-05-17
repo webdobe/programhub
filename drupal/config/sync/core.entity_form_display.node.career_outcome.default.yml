@@ -5,14 +5,26 @@ dependencies:
   config:
     - field.field.node.career_outcome.field_career_track
     - field.field.node.career_outcome.field_description
+    - field.field.node.career_outcome.field_education_typical
+    - field.field.node.career_outcome.field_employment_change
+    - field.field.node.career_outcome.field_employment_current
+    - field.field.node.career_outcome.field_employment_projected
+    - field.field.node.career_outcome.field_ep_source
+    - field.field.node.career_outcome.field_on_job_training
+    - field.field.node.career_outcome.field_outlook_label
+    - field.field.node.career_outcome.field_outlook_percent
     - field.field.node.career_outcome.field_path
     - field.field.node.career_outcome.field_pay_high
+    - field.field.node.career_outcome.field_pay_hourly_high
+    - field.field.node.career_outcome.field_pay_hourly_low
+    - field.field.node.career_outcome.field_pay_hourly_median
     - field.field.node.career_outcome.field_pay_low
     - field.field.node.career_outcome.field_pay_median
     - field.field.node.career_outcome.field_pay_range
     - field.field.node.career_outcome.field_pay_source
     - field.field.node.career_outcome.field_soc_code
     - field.field.node.career_outcome.field_tasks
+    - field.field.node.career_outcome.field_work_experience
     - node.type.career_outcome
   module:
     - content_moderation
@@ -26,6 +38,7 @@ third_party_settings:
         - group_career
         - group_description
         - group_pay
+        - group_outlook
         - group_tasks
         - group_publishing
       label: ''
@@ -67,6 +80,7 @@ third_party_settings:
       children:
         - field_pay_range
         - group_pay_row
+        - group_pay_hourly_row
         - field_pay_source
       label: Pay
       region: content
@@ -82,7 +96,7 @@ third_party_settings:
         - field_pay_low
         - field_pay_median
         - field_pay_high
-      label: ''
+      label: Annual
       region: content
       parent_name: group_pay
       weight: 1
@@ -91,7 +105,65 @@ third_party_settings:
         classes: 'ph-form-row ph-form-row--three-col'
         id: ''
         element: div
-        show_label: false
+        show_label: true
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+    group_pay_hourly_row:
+      children:
+        - field_pay_hourly_low
+        - field_pay_hourly_median
+        - field_pay_hourly_high
+      label: Hourly
+      region: content
+      parent_name: group_pay
+      weight: 2
+      format_type: html_element
+      format_settings:
+        classes: 'ph-form-row ph-form-row--three-col'
+        id: ''
+        element: div
+        show_label: true
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+    group_outlook:
+      children:
+        - group_outlook_row
+        - field_education_typical
+        - field_work_experience
+        - field_on_job_training
+        - field_ep_source
+      label: Outlook
+      region: content
+      parent_name: group_main
+      weight: 3
+      format_type: tab
+      format_settings:
+        classes: ph-form-tab
+        formatter: closed
+        description: 'BLS Employment Projections — Quick-Facts fields. Overwritten on phcr refresh when the EP workbook is uploaded.'
+    group_outlook_row:
+      children:
+        - field_employment_current
+        - field_employment_projected
+        - field_employment_change
+        - field_outlook_percent
+        - field_outlook_label
+      label: 'Employment numbers'
+      region: content
+      parent_name: group_outlook
+      weight: 0
+      format_type: html_element
+      format_settings:
+        classes: 'ph-form-row ph-form-row--three-col'
+        id: ''
+        element: div
+        show_label: true
         label_element: h3
         label_element_classes: ''
         attributes: ''
@@ -116,7 +188,7 @@ third_party_settings:
       label: Publishing
       region: content
       parent_name: group_main
-      weight: 4
+      weight: 5
       format_type: tab
       format_settings:
         classes: ph-form-tab
@@ -151,9 +223,90 @@ content:
       rows: 8
       placeholder: ''
     third_party_settings: {  }
+  field_education_typical:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: "Bachelor's degree"
+    third_party_settings: {  }
+  field_employment_change:
+    type: number
+    weight: 2
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_employment_current:
+    type: number
+    weight: 0
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_employment_projected:
+    type: number
+    weight: 1
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_ep_source:
+    type: string_textfield
+    weight: 4
+    region: content
+    settings:
+      size: 60
+      placeholder: 'BLS Employment Projections, 2023-33'
+    third_party_settings: {  }
+  field_on_job_training:
+    type: string_textfield
+    weight: 3
+    region: content
+    settings:
+      size: 60
+      placeholder: None
+    third_party_settings: {  }
+  field_outlook_label:
+    type: string_textfield
+    weight: 4
+    region: content
+    settings:
+      size: 30
+      placeholder: 'Auto from %'
+    third_party_settings: {  }
+  field_outlook_percent:
+    type: number
+    weight: 3
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
   field_pay_high:
     type: number
     weight: 2
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_pay_hourly_high:
+    type: number
+    weight: 2
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_pay_hourly_low:
+    type: number
+    weight: 0
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_pay_hourly_median:
+    type: number
+    weight: 1
     region: content
     settings:
       placeholder: ''
@@ -203,6 +356,14 @@ content:
     settings:
       rows: 2
       placeholder: ''
+    third_party_settings: {  }
+  field_work_experience:
+    type: string_textfield
+    weight: 2
+    region: content
+    settings:
+      size: 60
+      placeholder: None
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default

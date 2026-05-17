@@ -1,0 +1,39 @@
+uuid: 9d4e1f53-8a2c-4b6d-9e1f-3d8a4e2b1d11
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.field_institution_type
+field_name: field_institution_type
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: university
+      label: University
+    -
+      value: college
+      label: College
+    -
+      value: community_college
+      label: 'Community college'
+    -
+      value: vocational
+      label: 'Vocational / technical'
+    -
+      value: military
+      label: 'Military / service academy'
+    -
+      value: other
+      label: Other
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

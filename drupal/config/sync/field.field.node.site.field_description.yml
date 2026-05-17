@@ -1,0 +1,22 @@
+uuid: 9d4e1f53-8a2c-4b6d-9e1f-3d8a4e2b1c94
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_description
+    - node.type.site
+  module:
+    - text
+id: node.site.field_description
+field_name: field_description
+entity_type: node
+bundle: site
+label: Brief
+description: 'One- or two-sentence marketing pitch shown under the link card on division landing pages.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

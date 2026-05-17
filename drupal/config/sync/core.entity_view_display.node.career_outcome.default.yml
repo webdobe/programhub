@@ -5,14 +5,26 @@ dependencies:
   config:
     - field.field.node.career_outcome.field_career_track
     - field.field.node.career_outcome.field_description
+    - field.field.node.career_outcome.field_education_typical
+    - field.field.node.career_outcome.field_employment_change
+    - field.field.node.career_outcome.field_employment_current
+    - field.field.node.career_outcome.field_employment_projected
+    - field.field.node.career_outcome.field_ep_source
+    - field.field.node.career_outcome.field_on_job_training
+    - field.field.node.career_outcome.field_outlook_label
+    - field.field.node.career_outcome.field_outlook_percent
     - field.field.node.career_outcome.field_path
     - field.field.node.career_outcome.field_pay_high
+    - field.field.node.career_outcome.field_pay_hourly_high
+    - field.field.node.career_outcome.field_pay_hourly_low
+    - field.field.node.career_outcome.field_pay_hourly_median
     - field.field.node.career_outcome.field_pay_low
     - field.field.node.career_outcome.field_pay_median
     - field.field.node.career_outcome.field_pay_range
     - field.field.node.career_outcome.field_pay_source
     - field.field.node.career_outcome.field_soc_code
     - field.field.node.career_outcome.field_tasks
+    - field.field.node.career_outcome.field_work_experience
     - node.type.career_outcome
   module:
     - text
@@ -37,6 +49,76 @@ content:
     third_party_settings: {  }
     weight: 2
     region: content
+  field_education_typical:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 30
+    region: content
+  field_employment_change:
+    type: number_integer
+    label: inline
+    settings:
+      thousand_separator: ','
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 22
+    region: content
+  field_employment_current:
+    type: number_integer
+    label: inline
+    settings:
+      thousand_separator: ','
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 20
+    region: content
+  field_employment_projected:
+    type: number_integer
+    label: inline
+    settings:
+      thousand_separator: ','
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 21
+    region: content
+  field_ep_source:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 40
+    region: content
+  field_on_job_training:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 32
+    region: content
+  field_outlook_label:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 24
+    region: content
+  field_outlook_percent:
+    type: number_decimal
+    label: inline
+    settings:
+      thousand_separator: ','
+      decimal_separator: .
+      scale: 1
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 23
+    region: content
   field_pay_high:
     type: number_integer
     label: inline
@@ -45,6 +127,39 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     weight: 7
+    region: content
+  field_pay_hourly_high:
+    type: number_decimal
+    label: inline
+    settings:
+      thousand_separator: ','
+      decimal_separator: .
+      scale: 2
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 12
+    region: content
+  field_pay_hourly_low:
+    type: number_decimal
+    label: inline
+    settings:
+      thousand_separator: ','
+      decimal_separator: .
+      scale: 2
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 10
+    region: content
+  field_pay_hourly_median:
+    type: number_decimal
+    label: inline
+    settings:
+      thousand_separator: ','
+      decimal_separator: .
+      scale: 2
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 11
     region: content
   field_pay_low:
     type: number_integer
@@ -94,6 +209,14 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 9
+    region: content
+  field_work_experience:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 31
     region: content
   links:
     settings: {  }
