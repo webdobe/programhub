@@ -207,6 +207,11 @@ final class GenEdScraper {
   /**
    * Extract normalized course numbers from a courselist table body.
    *
+   * Skips "course" anchors whose prefix is actually a category label
+   * (GEM-3, AASID-…). Those are how the registrar cross-references one
+   * category section from inside another — they're not real course codes
+   * and shouldn't go into the spider queue.
+   *
    * @return array<int,string>
    *   Deduplicated, in document order ("MATH-123" form).
    */
@@ -222,6 +227,9 @@ final class GenEdScraper {
       if (!preg_match('/^([A-Z]{2,5})[- ](\d+[A-Z]?)$/u', $text, $m)) {
         continue;
       }
+      if (in_array(strtoupper($m[1]), self::PSEUDO_COURSE_PREFIXES, TRUE)) {
+        continue;
+      }
       $number = strtoupper($m[1]) . '-' . $m[2];
       if (isset($seen[$number])) {
         continue;
@@ -231,6 +239,13 @@ final class GenEdScraper {
     }
     return $out;
   }
+
+  /**
+   * Prefixes the catalog uses inside category tables as labels rather than
+   * as real course identifiers. Must stay in sync with the same list in
+   * {@see \Drupal\programhub_course_import\Service\CourseImporter}.
+   */
+  private const PSEUDO_COURSE_PREFIXES = ['GEM', 'AASID', 'AAS', 'INST'];
 
   /**
    * Derive the canonical short label for a category — what gets stored as the

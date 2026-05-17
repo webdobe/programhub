@@ -330,6 +330,15 @@ final class CourseImporter {
       return $courseCache[$number];
     }
 
+    // Pseudo-course codes the registrar uses inside degree pages but never
+    // publishes a description for (GEM categories, AASID designation, etc.).
+    // We model these elsewhere (gen_ed_category taxonomy) — short-circuit
+    // here so the spider doesn't 404 chasing a non-existent prefix.
+    if ($this->isPseudoCourseCode($number)) {
+      $logger->info('Skipping pseudo-course code "@num" — handled by the gen-ed category model.', ['@num' => $number]);
+      return NULL;
+    }
+
     // Check if it already exists anywhere in the system.
     $existing = $this->loadCourseByNumberAnywhere($number);
     if ($existing !== NULL) {
@@ -354,8 +363,28 @@ final class CourseImporter {
 
     $rows = $this->fetchPrefix($prefix, $rowCache);
     $row = $this->findRowByNumber($rows, $number);
+
+    // Lab-suffix fallback: the catalog publishes "BIOL-100" with its lab
+    // implicit; degree-plan references use "BIOL-100L". If we can't find
+    // "BIOL-100L", retry against "BIOL-100" — both DB lookup and the row
+    // from the catalog. Same Drupal node represents both citations.
+    $baseNumber = NULL;
+    if ($row === NULL && preg_match('/^(\d+[A-Z]?)L$/', substr($number, strpos($number, '-') + 1), $m)) {
+      $baseNumber = substr($number, 0, strpos($number, '-') + 1) . $m[1];
+      $existingBase = $this->loadCourseByNumberAnywhere($baseNumber);
+      if ($existingBase !== NULL) {
+        $logger->info('Lab-suffix "@num" resolved to base "@base".', ['@num' => $number, '@base' => $baseNumber]);
+        $courseCache[$number] = $existingBase;
+        return $existingBase;
+      }
+      $row = $this->findRowByNumber($rows, $baseNumber);
+      if ($row !== NULL) {
+        $logger->info('Lab-suffix "@num" not in catalog; falling back to base "@base" row.', ['@num' => $number, '@base' => $baseNumber]);
+      }
+    }
+
     if ($row === NULL) {
-      $logger->warning('Spider: course "@num" not found at @url.', [
+      $logger->notice('Spider: course "@num" has no description published at @url — leaving unresolved. (Reference can be added by hand if the registrar publishes it later.)', [
         '@num' => $number,
         '@url' => CatalogScraper::urlForPrefix($prefix),
       ]);
@@ -493,6 +522,26 @@ final class CourseImporter {
     }
     $value = trim((string) $program->get('field_abbreviation')->value);
     return $value === '' ? NULL : strtolower($value);
+  }
+
+  /**
+   * Prefixes used as labels inside catalog tables but never published as
+   * their own course-description pages — gen-ed category placeholders and
+   * AAS Institutionally Designated marker. {@see GenEdImporter} handles
+   * these as `gen_ed_category` taxonomy terms instead.
+   */
+  private const PSEUDO_COURSE_PREFIXES = [
+    'GEM',
+    'AASID',
+    'AAS',
+    'INST',
+  ];
+
+  private function isPseudoCourseCode(string $number): bool {
+    if (!preg_match('/^([A-Z]{2,5})[- ]/u', $number, $m)) {
+      return FALSE;
+    }
+    return in_array(strtoupper($m[1]), self::PSEUDO_COURSE_PREFIXES, TRUE);
   }
 
   private function prefixFromCourseNumber(string $number): ?string {

@@ -47,15 +47,28 @@ function programhub_transfer_entity_bundle_field_info(EntityTypeInterface $entit
     return [];
   }
 
+  // Defer the target_bundles restriction until the transfer_pathway bundle
+  // actually exists. On a fresh install / first cim pass this hook fires
+  // before node.type.transfer_pathway has been imported — declaring a
+  // target on a non-existent bundle triggers "references entity type that
+  // does not exist" warnings. The runtime query in TransferPathwaysItemList
+  // restricts by `type = transfer_pathway` regardless, so leaving the
+  // handler unbounded for the first cycle is harmless; once the bundle
+  // exists, the constraint kicks back in for editorial UI + JSON:API
+  // discovery (Drupal rebuilds bundle field info on cache clear).
+  $handlerSettings = [];
+  $bundleInfo = \Drupal::service('entity_type.bundle.info')->getBundleInfo('node');
+  if (isset($bundleInfo['transfer_pathway'])) {
+    $handlerSettings['target_bundles'] = ['transfer_pathway' => 'transfer_pathway'];
+  }
+
   $fields = [];
   $fields['field_transfer_pathways'] = BaseFieldDefinition::create('entity_reference')
     ->setLabel(t('Transfer pathways'))
     ->setDescription(t('Computed list of transfer_pathway nodes that reference this entity. Reverse-lookup; not stored.'))
     ->setSetting('target_type', 'node')
     ->setSetting('handler', 'default:node')
-    ->setSetting('handler_settings', [
-      'target_bundles' => ['transfer_pathway' => 'transfer_pathway'],
-    ])
+    ->setSetting('handler_settings', $handlerSettings)
     ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
     ->setComputed(TRUE)
     ->setReadOnly(TRUE)

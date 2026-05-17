@@ -118,9 +118,8 @@ in [`drupal/web/modules/custom/programhub_careers/README.md`](drupal/web/modules
   varnish_purge integration; see `revalidate` callback in the Next sites.
 
 ## Latest OG to Groups upgrade
-drush phupgrade
-drush cim -y && drush cr
-drush deploy:hook
-drush pgesync
-drush phcert
-drush phcr
+drush phupgrade && drush cim -y && drush cr && drush deploy:hook -y && drush pgesync && drush phcert && drush phcr
+
+
+
+
