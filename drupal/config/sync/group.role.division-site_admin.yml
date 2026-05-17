@@ -1,0 +1,15 @@
+uuid: 4cd2f6a1-7b3c-4e9f-8d1a-5c6b7e8a9f01
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.division
+    - user.role.administrator
+id: division-site_admin
+label: 'Site Admin'
+weight: 50
+admin: true
+scope: outsider
+global_role: administrator
+group_type: division
+permissions: {  }

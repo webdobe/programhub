@@ -119,6 +119,19 @@ final class PhUpgradeCommands extends DrushCommands {
       $logger->success(sprintf('Attached %d programs to CTE as subgroups.', $attached));
     }
 
+    // 5b. Backfill group-Administrator role on every existing membership
+    //     held by a Drupal global Administrator user. The OG → Group
+    //     migrator preserves memberships but assigns the base group role
+    //     only, which means even global admins lose edit/members access
+    //     on the migrated groups until they're upgraded. (Going forward,
+    //     the `*-site_admin` synchronized group roles in config/sync
+    //     handle this for any *new* user-group combination — this step
+    //     is the one-shot catch-up for migrated memberships.)
+    $upgraded = $this->ensureAdminMemberships($logger);
+    if ($upgraded !== NULL) {
+      $logger->success(sprintf('Upgraded %d existing memberships to include the group-administrator role.', $upgraded));
+    }
+
     // 6. Drop stranded program/division node entities.
     $etm = \Drupal::entityTypeManager();
     $nodes = $etm->getStorage('node')->getQuery()
@@ -205,6 +218,71 @@ final class PhUpgradeCommands extends DrushCommands {
     $this->runConfigImport();
 
     $logger->success('phupgrade complete.');
+  }
+
+  /**
+   * Walk every group and ensure each member who holds the Drupal global
+   * Administrator role also has the per-group `{type}-administrator`
+   * role attached to their group_membership row.
+   *
+   * The OG → Group migrator preserves memberships but only assigns the
+   * base "member" role, leaving global admins unable to edit/admin the
+   * migrated groups. The `*-site_admin` group roles in config (scope:
+   * outsider, global_role: administrator) handle this declaratively for
+   * any future user-group combination — but they don't retroactively
+   * upgrade rows the migrator already inserted with the base role only.
+   * This catch-up loop closes that gap.
+   *
+   * Idempotent: skips memberships that already carry the admin role,
+   * skips group types whose `{type}-administrator` role doesn't exist.
+   *
+   * @return int|null
+   *   Count of memberships upgraded, or NULL if no global admins exist.
+   */
+  private function ensureAdminMemberships($logger): ?int {
+    $etm = \Drupal::entityTypeManager();
+
+    $adminIds = $etm->getStorage('user')->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('roles', 'administrator')
+      ->execute();
+    // uid=1 doesn't always carry an explicit roles row but is always admin.
+    $adminIds[1] = 1;
+    if (!$adminIds) {
+      return NULL;
+    }
+    $admins = $etm->getStorage('user')->loadMultiple($adminIds);
+
+    $upgraded = 0;
+    foreach ($etm->getStorage('group')->loadMultiple() as $group) {
+      $roleId = $group->bundle() . '-administrator';
+      $role = \Drupal\group\Entity\GroupRole::load($roleId);
+      if (!$role) {
+        continue;
+      }
+      foreach ($admins as $admin) {
+        $member = $group->getMember($admin);
+        if (!$member) {
+          continue;
+        }
+        $rel = $member->getGroupRelationship();
+        $current = array_map(
+          static fn(array $v) => $v['target_id'],
+          $rel->get('group_roles')->getValue(),
+        );
+        if (in_array($roleId, $current, TRUE)) {
+          continue;
+        }
+        $current[] = $roleId;
+        $rel->set('group_roles', array_map(
+          static fn(string $r) => ['target_id' => $r],
+          $current,
+        ));
+        $rel->save();
+        $upgraded++;
+      }
+    }
+    return $upgraded;
   }
 
   /**
