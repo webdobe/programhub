@@ -12,7 +12,7 @@ field_name: field_division
 entity_type: node
 bundle: site
 label: Division
-description: 'The Division that owns this site. The Division''s own landing page lists every Site whose field_division points at it.'
+description: "The Division that owns this site. The Division's own landing page lists every Site whose field_division points at it."
 required: true
 translatable: false
 default_value: {  }

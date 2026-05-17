@@ -35,4 +35,5 @@ settings:
       override: optional
     postalCode:
       override: optional
+  fields: {  }
 field_type: address

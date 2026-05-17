@@ -19,6 +19,21 @@ targetEntityType: node
 bundle: site
 mode: default
 content:
+  field_description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_division:
+    type: entity_reference_label
+    label: inline
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 3
+    region: content
   field_logo:
     type: entity_reference_entity_view
     label: hidden
@@ -28,12 +43,13 @@ content:
     third_party_settings: {  }
     weight: 0
     region: content
-  field_description:
-    type: text_default
-    label: hidden
-    settings: {  }
+  field_programs:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
     third_party_settings: {  }
-    weight: 1
+    weight: 4
     region: content
   field_url:
     type: link
@@ -46,22 +62,6 @@ content:
       target: _blank
     third_party_settings: {  }
     weight: 2
-    region: content
-  field_division:
-    type: entity_reference_label
-    label: inline
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 3
-    region: content
-  field_programs:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 4
     region: content
   links:
     settings: {  }

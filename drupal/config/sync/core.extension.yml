@@ -55,6 +55,7 @@ module:
   programhub_media: 0
   programhub_newsletters: 0
   programhub_profile_paths: 0
+  programhub_transfer: 0
   programhub_webform_simplenews: 0
   programhub_webforms: 0
   rest: 0

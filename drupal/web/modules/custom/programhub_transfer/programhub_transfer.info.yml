@@ -1,0 +1,8 @@
+name: 'ProgramHub Transfer'
+type: module
+description: 'Computed reverse-reference fields for transfer_pathway. Adds field_transfer_pathways to certificate and partner_institution nodes so JSON:API consumers can include + render pathways inline without a second request, and so view displays / templates can read content.field_transfer_pathways directly.'
+package: ProgramHub
+core_version_requirement: ^10 || ^11
+dependencies:
+  - drupal:node
+  - drupal:group

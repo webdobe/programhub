@@ -11,7 +11,7 @@ field_name: field_logo
 entity_type: node
 bundle: partner_institution
 label: Logo
-description: 'Partner''s logo or wordmark.'
+description: "Partner's logo or wordmark."
 required: false
 translatable: false
 default_value: {  }

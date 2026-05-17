@@ -5,7 +5,7 @@ dependencies: {  }
 name: 'Partner Institution'
 type: partner_institution
 description: 'A college / university / vocational school NIC has transfer or articulation agreements with. Each transfer_pathway references one of these.'
-help: 'Add the partner''s name, logo, main website, and a brief. The dedicated page (/partners/<slug>) lists every NIC transfer_pathway that points here, so editors create the partner once and every articulation reuses it.'
+help: "Add the partner's name, logo, main website, and a brief. The dedicated page (/partners/<slug>) lists every NIC transfer_pathway that points here, so editors create the partner once and every articulation reuses it."
 new_revision: true
 preview_mode: 1
 display_submitted: false

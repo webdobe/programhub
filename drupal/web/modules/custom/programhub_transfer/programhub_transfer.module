@@ -1,0 +1,193 @@
+<?php
+
+/**
+ * @file
+ * ProgramHub Transfer.
+ *
+ * Provides a computed `field_transfer_pathways` base field on certificate
+ * and partner_institution nodes. The field has no storage — its values are
+ * recomputed on access by querying `transfer_pathway` nodes that reference
+ * the host entity:
+ *
+ *  - On a certificate: pathways where the cert appears in
+ *    `field_source_certificates`, OR where the cert's owning program group
+ *    appears in `field_programs`.
+ *
+ *  - On a partner_institution: pathways where `field_partner` is this node.
+ *
+ * Because the field is a real (computed) entity reference, JSON:API exposes
+ * it as a relationship — clients can use `?include=field_transfer_pathways`
+ * without a second request. Cache invalidation is wired manually in
+ * hook_ENTITY_TYPE_presave / _delete below so editor saves to a pathway
+ * bust the cache of every cert + partner the pathway touches.
+ */
+
+declare(strict_types=1);
+
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\node\NodeInterface;
+use Drupal\programhub_transfer\ComputedField\TransferPathwaysItemList;
+
+/**
+ * Implements hook_entity_bundle_field_info().
+ *
+ * Adds `field_transfer_pathways` to certificate and partner_institution.
+ * Display-configurable so editors can toggle it on the view display via the
+ * regular Field UI; not display-configurable on the form (computed fields
+ * can't be edited).
+ */
+function programhub_transfer_entity_bundle_field_info(EntityTypeInterface $entity_type, string $bundle, array $base_field_definitions): array {
+  if ($entity_type->id() !== 'node') {
+    return [];
+  }
+  if (!in_array($bundle, ['certificate', 'partner_institution'], TRUE)) {
+    return [];
+  }
+
+  $fields = [];
+  $fields['field_transfer_pathways'] = BaseFieldDefinition::create('entity_reference')
+    ->setLabel(t('Transfer pathways'))
+    ->setDescription(t('Computed list of transfer_pathway nodes that reference this entity. Reverse-lookup; not stored.'))
+    ->setSetting('target_type', 'node')
+    ->setSetting('handler', 'default:node')
+    ->setSetting('handler_settings', [
+      'target_bundles' => ['transfer_pathway' => 'transfer_pathway'],
+    ])
+    ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
+    ->setComputed(TRUE)
+    ->setReadOnly(TRUE)
+    ->setClass(TransferPathwaysItemList::class)
+    ->setDisplayOptions('view', [
+      'label' => 'above',
+      'type' => 'entity_reference_label',
+      'settings' => ['link' => TRUE],
+      'weight' => 90,
+    ])
+    ->setDisplayConfigurable('view', TRUE);
+  return $fields;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave() for node.
+ *
+ * Tracks the pre-save state of source/partner references on a transfer_pathway
+ * so the post-save invalidator can union the OLD and NEW reference sets and
+ * invalidate cache tags for both. Without this, a pathway moving from cert A
+ * to cert B would leave cert A's cached response with the stale pathway.
+ */
+function programhub_transfer_node_presave(NodeInterface $node): void {
+  if ($node->bundle() !== 'transfer_pathway' || $node->isNew()) {
+    return;
+  }
+  /** @var \Drupal\node\NodeStorageInterface $storage */
+  $storage = \Drupal::entityTypeManager()->getStorage('node');
+  $original = $storage->loadUnchanged($node->id());
+  if ($original) {
+    $node->original = $original;
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update() for node.
+ */
+function programhub_transfer_node_update(NodeInterface $node): void {
+  if ($node->bundle() !== 'transfer_pathway') {
+    return;
+  }
+  $tags = _programhub_transfer_invalidation_tags($node);
+  /** @var \Drupal\node\NodeInterface|null $original */
+  $original = $node->original ?? NULL;
+  if ($original) {
+    $tags = array_merge($tags, _programhub_transfer_invalidation_tags($original));
+  }
+  if ($tags) {
+    Cache::invalidateTags(array_values(array_unique($tags)));
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert() for node.
+ */
+function programhub_transfer_node_insert(NodeInterface $node): void {
+  if ($node->bundle() !== 'transfer_pathway') {
+    return;
+  }
+  $tags = _programhub_transfer_invalidation_tags($node);
+  if ($tags) {
+    Cache::invalidateTags(array_values(array_unique($tags)));
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete() for node.
+ */
+function programhub_transfer_node_delete(NodeInterface $node): void {
+  if ($node->bundle() !== 'transfer_pathway') {
+    return;
+  }
+  $tags = _programhub_transfer_invalidation_tags($node);
+  if ($tags) {
+    Cache::invalidateTags(array_values(array_unique($tags)));
+  }
+}
+
+/**
+ * Cache tags to invalidate for a single transfer_pathway entity.
+ *
+ * Includes the host certificate node tags (so cert pages re-render with the
+ * updated pathway list), the host partner_institution tag, plus the program
+ * group tags via the gnode relationships of each affected certificate (a
+ * program-level pathway change affects every cert in the program).
+ *
+ * @return array<int, string>
+ */
+function _programhub_transfer_invalidation_tags(NodeInterface $pathway): array {
+  $tags = [];
+
+  // Direct cert references — bust each cert node tag.
+  if ($pathway->hasField('field_source_certificates')) {
+    foreach ($pathway->get('field_source_certificates') as $item) {
+      $tid = $item->target_id ?? NULL;
+      if ($tid) {
+        $tags[] = 'node:' . $tid;
+      }
+    }
+  }
+  // Direct partner reference.
+  if ($pathway->hasField('field_partner') && !$pathway->get('field_partner')->isEmpty()) {
+    $partnerId = $pathway->get('field_partner')->target_id;
+    if ($partnerId) {
+      $tags[] = 'node:' . $partnerId;
+    }
+  }
+  // Program references — bust every cert in those programs via group_relationship.
+  if ($pathway->hasField('field_programs')) {
+    $gids = [];
+    foreach ($pathway->get('field_programs') as $item) {
+      $gid = $item->target_id ?? NULL;
+      if ($gid) {
+        $gids[] = (int) $gid;
+      }
+    }
+    if ($gids) {
+      $relStorage = \Drupal::entityTypeManager()->getStorage('group_relationship');
+      $relIds = $relStorage->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('gid', $gids, 'IN')
+        ->condition('plugin_id', 'group_node:certificate')
+        ->execute();
+      foreach ($relStorage->loadMultiple($relIds) as $rel) {
+        $eid = (int) $rel->getEntityId();
+        if ($eid) {
+          $tags[] = 'node:' . $eid;
+        }
+      }
+    }
+  }
+  // Belt-and-braces: bust the list tag so anything listing pathways resyncs.
+  $tags[] = 'node_list:transfer_pathway';
+  return $tags;
+}

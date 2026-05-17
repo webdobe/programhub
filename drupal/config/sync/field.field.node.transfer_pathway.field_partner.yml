@@ -11,7 +11,7 @@ field_name: field_partner
 entity_type: node
 bundle: transfer_pathway
 label: 'Partner institution'
-description: 'The receiving school. Create the partner under /node/add/partner_institution first if it doesn''t exist yet.'
+description: "The receiving school. Create the partner under /node/add/partner_institution first if it doesn't exist yet."
 required: true
 translatable: false
 default_value: {  }

@@ -88,7 +88,7 @@ third_party_settings:
       format_settings:
         classes: ph-form-tab
         formatter: closed
-        description: 'Admin-managed.'
+        description: Admin-managed.
 id: node.transfer_pathway.default
 targetEntityType: node
 bundle: transfer_pathway
@@ -168,6 +168,12 @@ content:
     settings:
       size: 30
       placeholder: '3 years'
+    third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    region: content
+    settings: {  }
     third_party_settings: {  }
   path:
     type: path
